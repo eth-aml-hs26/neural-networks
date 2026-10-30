@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hinge-chain networks</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h1>Hinge-chain networks</h1>
+  <div class="formula">
+    <span data-tex="h_\ell=\mathrm{ReLU}(h_{\ell-1}-\htmlClass{kn}{d_\ell})"></span>
+    <span data-tex="g_\ell=\mathrm{ReLU}(g_{\ell-1}+\htmlClass{kn}{\Delta_{\ell-1}}\,h_{\ell-1})"></span>
+    <span data-tex="y=\htmlClass{kn}{\Delta_k}\,h_k+g_k-C"></span>
+  </div>
+  <button id="theme-btn" class="icon" type="button" title="Theme (t)" aria-label="Switch the theme">&#9680;</button>
+</header>
+
+<main class="page">
+  <div class="menu-row">
+    <nav id="menu" class="menu" role="radiogroup" aria-label="Target function"></nav>
+    <div class="mse" title="Mean squared error"><span>MSE</span> <output id="mse-val"></output></div>
+  </div>
+
+  <section class="card plot-card">
+    <div id="plot" class="plot"></div>
+  </section>
+
+  <section class="card net-card">
+    <div class="net-tools">
+      <button id="btn-remove" type="button" title="Remove the last layer (key -)" aria-label="Remove a layer">&#8722;</button>
+      <output id="layer-count" class="count" title="Layers"></output>
+      <button id="btn-add" type="button" title="Add a layer (key +)" aria-label="Add a layer">+</button>
+      <button id="btn-fit" type="button" class="primary" title="Set every d and &#916; by the construction (key f)">fit</button>
+    </div>
+    <div id="net" class="net-wrap"></div>
+  </section>
+</main>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/hcn-math.js"></script>
+<script src="js/targets.js"></script>
+<script src="js/tex.js"></script>
+<script src="js/plot.js"></script>
+<script src="js/diagram.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

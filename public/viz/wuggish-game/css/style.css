@@ -1,0 +1,114 @@
+/* style.css : theme tokens and the art palette.
+ *
+ * Page chrome follows the course-viz editorial standard (warm cream, serif
+ * headers, hairline rules).  The objects are cartoons, filled and outlined,
+ * but every colour is a token here, never inline in the SVG, so the theme
+ * swap recolours the drawings too.
+ *
+ * Rule for the art: no modifier may be signalled by colour alone.  Stripes,
+ * grain, fangs, the drop, the bell, the snapped leg are all shapes; colour is
+ * only there to make them prettier.
+ */
+
+:root {
+  --bg: #f9f7f1;
+  --ink: #1a1a1a;
+  --ink2: #6b6b6b;
+  --rule: #d8d4ca;
+  --card: #fffdf8;
+
+  /* art palette, light */
+  --cat: #ecc99c;
+  --cat-inner: #f6e2c9;
+  --cat-stripe: #a05a2c;
+  --snake: #4a8b6b;
+  --snake-belly: #7fb597;
+  --snake-stripe: #c08a3e;
+  --chair: #9dbbdc;
+  --wood: #c08a4a;
+  --grain: #7a4e22;
+  --venom: #7a5c8c;
+  --mouth: #3a2432;
+  --fang: #ffffff;
+  --eye: #3a2432;
+  --pupil: #ff5050;
+  --collar: #2f6cb1;
+  --bell: #d9a441;
+  --boot: #5a3a22;
+  --cuff: #d9a441;
+  --floor: #d8d4ca;
+}
+
+[data-theme="dark"] {
+  --bg: #181612;
+  --ink: #ece7d9;
+  --ink2: #8a8579;
+  --rule: #383530;
+  --card: #201d18;
+
+  /* lighter, less saturated companions */
+  --cat: #d4b58a;
+  --cat-inner: #e3cbaa;
+  --cat-stripe: #8a4f27;
+  --snake: #5f9e7f;
+  --snake-belly: #8cc2a7;
+  --snake-stripe: #d5a35a;
+  --chair: #8fb0d4;
+  --wood: #b8834a;
+  --grain: #5e3a16;
+  --venom: #9a7bb0;
+  --mouth: #2a1a24;
+  --fang: #f5f0e6;
+  --eye: #2a1a24;
+  --pupil: #ff6b6b;
+  --collar: #4f8bd0;
+  --bell: #e0b054;
+  --boot: #6b4730;
+  --cuff: #e0b054;
+  --floor: #3a3630;
+}
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+h1, h2, h3 {
+  font-family: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+  font-weight: 500;
+  margin: 0 0 0.4em;
+}
+
+/* art classes: f- fills, s- strokes */
+.art { display: block; overflow: visible; }
+.f-ink { fill: var(--ink); }
+.f-bg { fill: var(--bg); }
+.s-ink { stroke: var(--ink); }
+.s-floor { stroke: var(--floor); }
+
+.f-cat { fill: var(--cat); }
+.f-cat-inner { fill: var(--cat-inner); }
+.s-cat { stroke: var(--cat); }
+.s-cat-stripe { stroke: var(--cat-stripe); }
+.s-collar { stroke: var(--collar); }
+.f-bell { fill: var(--bell); }
+.f-boot { fill: var(--boot); }
+.f-cuff { fill: var(--cuff); }
+
+.f-snake { fill: var(--snake); }
+.s-snake { stroke: var(--snake); }
+.s-snake-belly { stroke: var(--snake-belly); }
+.s-snake-stripe { stroke: var(--snake-stripe); }
+.f-mouth { fill: var(--mouth); }
+.f-fang { fill: var(--fang); }
+.f-eye { fill: var(--eye); }
+.f-pupil { fill: var(--pupil); }
+.f-venom { fill: var(--venom); }
+
+.f-chair { fill: var(--chair); }
+.f-wood { fill: var(--wood); }
+.s-grain { stroke: var(--grain); }

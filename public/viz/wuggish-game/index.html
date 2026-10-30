@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Wuggish in ten minutes</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+<div class="topbar">
+  <button class="iconbtn" id="backbtn" title="look back (left arrow)" hidden>&larr;</button>
+  <span class="brand">Wuggish</span>
+  <div class="progress" aria-label="progress"><i id="bar"></i></div>
+  <span class="count" id="count"></span>
+  <button class="iconbtn" id="ffbtn" title="skip to the reveal (f)" hidden>&#9654;&#9654;</button>
+  <button class="iconbtn" id="themebtn" title="toggle theme (t)">theme</button>
+</div>
+<main class="stage" id="stage"></main>
+
+<script src="js/theme.js"></script>
+<script src="js/rng.js"></script>
+<script src="js/art.js"></script>
+<script src="data/lexicon.js"></script>
+<script src="data/items.js"></script>
+<script src="js/vectors.js"></script>
+<script src="js/reveal.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

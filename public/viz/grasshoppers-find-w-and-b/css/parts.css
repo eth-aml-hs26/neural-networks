@@ -1,0 +1,50 @@
+/* parts.css: what this page adds to the look of the page before it (css/style.css): the hop's
+ * numbers in blue, the little plot of the ReLU, the join of w's and b's arrows, the grounds and
+ * their hops, the pair of the gradient, and the closing plot. Colours come from the tokens in
+ * css/style.css and from currentColor. */
+
+/* the numbers of a test hop, in the black boxes */
+.box .val.hop, .box .calc .piece.hop { color: var(--blue); }
+
+/* w's arrow and b's line meet before they enter a */
+.join-line { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; }
+.join-dot { fill: currentColor; }
+
+/* the little plot of the ReLU, on a card of its own above its arrow */
+.relu-card { fill: var(--paper); stroke: currentColor; stroke-width: 1.6; stroke-opacity: 0.35; }
+.relu .axis .line { stroke-width: 1.8; }
+.relu-curve { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.relu .point { stroke-width: 2.4; }
+.relu-word { font-size: 19px; }
+
+/* ===== the grounds */
+
+.leg { fill: none; stroke: currentColor; stroke-width: 3; stroke-dasharray: 7 5; stroke-linecap: round; }
+.hop-end { fill: var(--bg); stroke: currentColor; stroke-width: 3; }
+.leg-lab { font-size: 21px; }
+.slope-row { font-size: 24px; }
+.slope-row .piece { display: inline-block; margin: 0 0.12em; }
+.guide.k-blue { stroke-opacity: 0.55; }
+.ground.zoomed .axis { color: var(--blue); }
+.glass-lens { fill: var(--blue-soft); stroke: currentColor; stroke-width: 3.5; }
+.glass-handle { fill: none; stroke: currentColor; stroke-width: 9; stroke-linecap: round; }
+.glass-fly { opacity: 0; }
+
+/* ===== the pair of the gradient: one box, two cells */
+
+.box.pair { flex-direction: row; align-items: stretch; padding-top: 0; }
+.box.pair .cell {
+  flex: 1 1 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.box.pair .cell + .cell { border-left: 3px solid currentColor; }
+.box.pair .cell .calc { display: none; }
+.box.pair .val { height: 44px; line-height: 44px; font-size: 31px; white-space: nowrap; }
+
+/* ===== the closing plot: the energy against the temperature */
+
+.coda-box { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+.hinge { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.hinge.other { stroke-dasharray: 12 9; color: var(--muted); }
+.pair-lab { font-size: 22px; }
+.pair-lab.other { color: var(--muted); }
+.coda .point { fill: currentColor; stroke: var(--bg); stroke-width: 3; }

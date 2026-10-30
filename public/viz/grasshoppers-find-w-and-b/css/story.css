@@ -1,0 +1,107 @@
+/* story.css: the four cards of the story (js/story.js). The frame and the words follow the tokens of
+ * css/style.css; the pictures are illustrations with colours of their own, the same in both themes.
+ * Lina's colours are copied from ../will-it-last/css/story.css. */
+
+.story { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+.story-pic, .story-words { opacity: 0; visibility: hidden; transition: opacity 0.45s ease, visibility 0s linear 0.45s; }
+.story-pic.cur, .story-words.cur { opacity: 1; visibility: visible; transition: opacity 0.45s ease, visibility 0s; }
+.story-pic {
+  position: absolute; box-sizing: border-box; overflow: hidden;
+  border: 3px solid var(--ink); border-radius: 18px; background: var(--paper);
+  box-shadow: 6px 7px 0 var(--shadow);
+}
+.story-svg { display: block; width: 100%; height: 100%; }
+.story-words { position: absolute; color: var(--ink); font-family: var(--serif); }
+.story-words h2 { margin: 0 0 26px; font-weight: 500; font-size: 50px; line-height: 1.08; letter-spacing: 0.005em; }
+.story-words p { margin: 0; font-size: 29px; line-height: 1.42; }
+.story-pic.enter { animation: card-in 0.6s ease-out; }
+.story-words.enter { animation: words-in 0.7s ease-out; }
+@keyframes card-in { 0% { transform: translateX(-26px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes words-in { 0% { transform: translateY(14px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.story-dots { position: absolute; display: flex; gap: 12px; }
+.story-dots .dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--muted); box-sizing: border-box; }
+.story-dots .dot.cur { background: var(--ink); border-color: var(--ink); }
+#stage.in-story #title { opacity: 0.55; }
+
+/* ===== the board of the last card: the day in chalk */
+
+.story-pic.board {
+  background: linear-gradient(180deg, #2f5d4a 0%, #264d3d 100%);
+  border-color: #6b4a2b; border-width: 14px;
+  display: flex; flex-direction: column; justify-content: center; padding: 0 0 0 92px; gap: 42px;
+}
+.chalk { color: #f4f1e6; font-size: 64px; text-shadow: 0 0 2px rgba(244, 241, 230, 0.35); }
+.chalk-2 { font-size: 66px; color: #ffe9a8; }
+
+/* ===== the scenes */
+
+.sky-n0 { stop-color: #18224a; }
+.sky-n1 { stop-color: #3d4f8a; }
+.sky-d0 { stop-color: #aebfd3; }
+.sky-d1 { stop-color: #e3e9f0; }
+.moon { fill: #f6efd2; }
+.flake { fill: #ffffff; opacity: 0.9; }
+.snow-ground { fill: #eef3f8; }
+.snow-edge { fill: none; stroke: #d6e0ea; stroke-width: 2; }
+.hs-wall { fill: #d8c3a0; }
+.hs-roof { fill: #8c4a3a; }
+.hs-snow { fill: #f7fafc; }
+.hs-chim { fill: #7a4034; }
+.hs-win { fill: #b9c9d8; stroke: #6f5a43; stroke-width: 2; }
+.hs-win.lit { fill: #ffcf6b; }
+.hs-bar { fill: none; stroke: #6f5a43; stroke-width: 2; }
+.hs-door { fill: #6f4b35; }
+.hs-knob { fill: #e8c46a; }
+.hp-box { fill: #e7e9ec; stroke: #9aa3ad; stroke-width: 1.2; }
+.hp-fan { fill: #c9ced4; stroke: #8b949e; stroke-width: 1.2; }
+.hp-grille { fill: none; stroke: #8b949e; stroke-width: 1; }
+
+.zoom-ring, .zoom-lead { fill: none; stroke: #ffffff; stroke-width: 1.1; opacity: 0.75; }
+.zoom-lead { stroke-dasharray: 3 2.6; }
+
+/* the phone blown up, and its apps */
+.ph-body { fill: #1d2142; }
+.ph-screen { fill: #f7f4ec; }
+.ph-notch { fill: #1d2142; }
+.ph-axis { fill: none; stroke: #9a927f; stroke-width: 1.2; }
+.ph-bar { fill: #e8833a; }
+.ph-unit { font: 600 11px var(--sans); fill: #5b5446; }
+.ph-card { fill: #ffffff; stroke: #ddd6c6; stroke-width: 1; }
+.ph-big { font: 600 25px var(--sans); fill: #1d1a16; text-anchor: middle; }
+.ph-small { font: 600 9px var(--sans); fill: #5b5446; text-anchor: middle; letter-spacing: 0.06em; }
+.ic-flame { fill: #e8833a; }
+.ic-flame-in { fill: #ffd06b; }
+.ic-cloud { fill: #9fb3c8; }
+
+/* the chart of the days */
+.chart-paper { fill: #fffdf8; }
+.chart-axis { fill: none; stroke: #1d1a16; stroke-width: 1.6; }
+.chart-bar { fill: #e8833a; }
+.chart-zero { fill: none; stroke: #e8833a; stroke-width: 3; stroke-linecap: round; }
+.chart-t { font: 600 10.5px var(--sans); fill: #1d1a16; text-anchor: middle; }
+.chart-unit { font: 600 10px var(--sans); fill: #5b5446; }
+.chart-unit.end { text-anchor: end; }
+.ic-snow { fill: none; stroke: #5f8fc2; stroke-width: 2; stroke-linecap: round; }
+.ic-sun { fill: #f2c14e; }
+.ic-sun-ray { fill: none; stroke: #f2c14e; stroke-width: 2; stroke-linecap: round; }
+
+/* ===== Lina */
+
+.ln-shadow { fill: #1b1630; opacity: 0.18; }
+.ln-skin { fill: #e3a983; }
+.ln-skin-dk { fill: #c98c66; }
+.ln-cheek { fill: #f07e70; opacity: 0.45; }
+.ln-hair { fill: #2c2140; }
+.ln-top { fill: #109c7b; }
+.ln-top-dk { fill: #0b7a60; }
+.ln-arm { fill: none; stroke: #0c876a; stroke-width: 5.6; stroke-linecap: round; }
+.ln-string { fill: none; stroke: #f4efe6; stroke-width: 0.9; stroke-linecap: round; }
+.ln-leg { fill: none; stroke: #2b3a67; stroke-width: 8; stroke-linecap: round; }
+.ln-shoe { fill: #f4f1ea; }
+.ln-phone { fill: #1d2142; }
+.ln-cam { fill: #59608f; }
+.ln-eye { fill: #2c2140; }
+.ln-brow { fill: none; stroke: #2c2140; stroke-width: 1.1; stroke-linecap: round; }
+.ln-mouth { fill: none; stroke: #6b2a2a; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.ln-mouth-o { fill: #6b2a2a; }
+.ln-scarf { fill: #c2352b; }

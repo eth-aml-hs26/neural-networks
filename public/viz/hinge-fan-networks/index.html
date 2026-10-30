@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hinge-fan networks</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h1>Hinge-fan networks</h1>
+  <div class="formula" data-tex="y=c+\sum_{j=1}^{n}w_j\,\mathrm{ReLU}(x-t_j)"></div>
+  <button id="theme-btn" class="icon" type="button" title="Theme (t)" aria-label="Switch the theme">&#9680;</button>
+</header>
+
+<main class="page">
+  <div class="menu-row">
+    <nav id="menu" class="menu" role="radiogroup" aria-label="Target function"></nav>
+    <div class="mse" title="Mean squared error"><span>MSE</span> <output id="mse-val"></output></div>
+  </div>
+
+  <section class="card plot-card">
+    <div id="plot" class="plot"></div>
+  </section>
+
+  <section class="card net-card">
+    <div class="net-tools">
+      <button id="btn-remove" type="button" title="Remove the hinge that changes the curve least (key -)" aria-label="Remove a hinge">&#8722;</button>
+      <output id="hinge-count" class="count" title="Hinges"></output>
+      <button id="btn-add" type="button" title="Add a hinge with w = 0 (key +)" aria-label="Add a hinge">+</button>
+      <button id="btn-fit" type="button" class="primary" title="Set every t, w and c (key f)">fit</button>
+      <button id="btn-fitw" type="button" title="Keep every t, set c and every w by least squares (key w)">fit w</button>
+    </div>
+    <div id="net" class="net-wrap"></div>
+  </section>
+</main>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/hfn-math.js"></script>
+<script src="js/targets.js"></script>
+<script src="js/tex.js"></script>
+<script src="js/plot.js"></script>
+<script src="js/diagram.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

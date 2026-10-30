@@ -1,0 +1,583 @@
+/* Will it last? The story page, between the title card and round 1: a
+   picture on the left, the words of the card on the right.
+
+   The pictures of cards 1 to 4 are a street at four hours of the day with
+   Lina and her phone; card 5 is a blackboard. Their colours are fixed, like
+   a film on the studio's screen, so they are the same in both studios; only
+   the frame follows the studio. The phone inside the street pictures is the
+   phone of the rounds and takes its colours from css/round.css and
+   css/verdict.css. js/story.js draws the pictures and writes no colour. */
+
+.page-story {
+  display: grid;
+  grid-template-columns: 50rem minmax(0, 1fr);
+  column-gap: 2.4rem;
+  align-items: center;
+}
+
+/* ===== the picture ===== */
+
+/* 50 x 37.5 rem is the 4:3 of the pictures' viewBox, so the frame's corners
+   are the picture's corners. */
+.story-pics {
+  position: relative;
+  width: 50rem;
+  height: 37.5rem;
+  border-radius: 1.4rem;
+  overflow: hidden;
+  background: var(--panel-solid);
+  box-shadow: var(--shadow);
+  touch-action: pan-y;
+}
+.story-pics::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  pointer-events: none;
+}
+.story-pic {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s ease, visibility 0s linear 0.45s;
+}
+.story-pic.on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.45s ease, visibility 0s;
+}
+
+/* ===== the words ===== */
+
+.story-side {
+  display: flex;
+  flex-direction: column;
+  height: 37.5rem;
+  min-width: 0;
+  padding: 0.3rem 0 0.1rem;
+}
+.story-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.story-step {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.story-texts {
+  display: grid;
+  margin-top: 1.7rem;
+}
+/* all cards share one cell, as tall as the tallest, so nothing below moves */
+.story-card {
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition: opacity 0.35s ease, transform 0.45s var(--ease-out), visibility 0s linear 0.35s;
+}
+.story-card.on {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.35s ease 0.08s, transform 0.45s var(--ease-out) 0.08s, visibility 0s;
+}
+.story-title {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 3.1rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.story-card.ask .story-title { color: var(--gold-ink); }
+.story-text {
+  margin: 0.95rem 0 0;
+  font-size: 1.42rem;
+  line-height: 1.42;
+  color: var(--ink-2);
+}
+.story-text b {
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* card 5: the problem in the letters of round 1, as given, find, such that */
+.story-sym {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  column-gap: 1rem;
+  row-gap: 0.1rem;
+  align-items: baseline;
+  margin-top: 1.4rem;
+  padding: 0.85rem 1.2rem 0.95rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+}
+.sym-k {
+  font-family: var(--f-sans);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.sym-a {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.sym-a.ask { color: var(--gold-ink); }
+.sym-b {
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+.sym-rule {
+  grid-column: 1 / -1;
+  height: 1px;
+  margin: 0.45rem 0 0.3rem;
+  background: var(--line);
+}
+.sym-f {
+  grid-column: 2 / -1;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 2.1rem;
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+  color: var(--gold-ink);
+  white-space: nowrap;
+}
+
+.story-foot { margin-top: auto; }
+.story-dots {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+}
+.story-dots i {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--line-2);
+  transition: background 0.25s ease, transform 0.25s var(--ease-out);
+}
+.story-dots i.on {
+  background: var(--gold);
+  transform: scale(1.25);
+  box-shadow: 0 0 0.6rem var(--gold-glow);
+}
+.story-nav {
+  display: flex;
+  gap: 0.9rem;
+}
+.story-btn {
+  flex: 1;
+  height: 3.3rem;
+  border: 0;
+}
+.story-btn > .loz-in {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.story-btn svg { width: 1.1em; height: 1.1em; }
+.story-back {
+  --cut: 1rem;
+  --loz-line: var(--line-2);
+  --loz-fill: var(--panel-solid);
+  color: var(--ink-2);
+  transition: color 0.2s ease;
+}
+.story-back:hover { color: var(--ink); --loz-line: var(--muted); }
+.story-next { flex: 1.35; }
+
+/* the strip's tab for the story has a book where the others have a number */
+.tab-story .tab-num svg { width: 0.85rem; height: 0.85rem; }
+
+/* ===== the pictures: the sky at four hours ===== */
+
+.t-morning .sky0 { stop-color: #86C3EC; }
+.t-morning .sky1 { stop-color: #CDE6F4; }
+.t-morning .sky2 { stop-color: #F8E2C2; }
+.t-day .sky0 { stop-color: #4FA9E3; }
+.t-day .sky1 { stop-color: #A4D5F2; }
+.t-day .sky2 { stop-color: #DDF0FA; }
+.t-dusk .sky0 { stop-color: #2B3672; }
+.t-dusk .sky1 { stop-color: #8F5A97; }
+.t-dusk .sky2 { stop-color: #F0965E; }
+.t-night .sky0 { stop-color: #0A1136; }
+.t-night .sky1 { stop-color: #1A2458; }
+.t-night .sky2 { stop-color: #2F3B77; }
+
+.sun { fill: #FFD27A; }
+.sun-halo { fill: #FFFFFF; opacity: 0.38; }
+.cloud { fill: #FFFFFF; opacity: 0.85; }
+.moon { fill: #FFF0C4; }
+.star { fill: #FFF6DA; }
+
+.t-morning .bld-b { fill: #B9CFE3; }
+.t-morning .bld-f { fill: #90AFCD; }
+.t-morning .win { fill: #DDEAF5; }
+.t-day .bld-b { fill: #A3C5E1; }
+.t-day .bld-f { fill: #7BA3C7; }
+.t-day .win { fill: #D6E7F4; }
+.t-dusk .bld-b { fill: #5D5189; }
+.t-dusk .bld-f { fill: #3C3A70; }
+.t-dusk .win { fill: #2F2D5C; }
+.t-night .bld-b { fill: #232B60; }
+.t-night .bld-f { fill: #171D4A; }
+.t-night .win { fill: #11163B; }
+.win.lit { fill: #FFCF6B; }
+
+.walk { fill: #D8D1C2; }
+.kerb { fill: #B7AE9E; }
+.joint { stroke: #C7BFAF; stroke-width: 0.8; }
+.t-dusk .walk { fill: #695D80; }
+.t-dusk .kerb { fill: #574C6D; }
+.t-dusk .joint { stroke: #5C5174; }
+.t-night .walk { fill: #2B3061; }
+.t-night .kerb { fill: #222651; }
+.t-night .joint { stroke: #252A56; }
+
+/* the zoom from her phone to the big one: dark lines by day, light by night */
+.zoom-ring,
+.zoom-lead {
+  fill: none;
+  stroke: #26456E;
+  stroke-width: 1.1;
+  opacity: 0.55;
+}
+.zoom-lead { stroke-dasharray: 3 2.6; }
+.t-dusk .zoom-ring,
+.t-dusk .zoom-lead,
+.t-night .zoom-ring,
+.t-night .zoom-lead { stroke: #FFFFFF; opacity: 0.7; }
+
+/* ===== Lina ===== */
+
+.ln-shadow { fill: #1B1630; opacity: 0.18; }
+.ln-skin { fill: #E3A983; }
+.ln-skin-dk { fill: #C98C66; }
+.ln-cheek { fill: #F07E70; opacity: 0.45; }
+.ln-hair { fill: #2C2140; }
+.ln-top { fill: #109C7B; }
+.ln-top-dk { fill: #0B7A60; }
+.ln-arm {
+  fill: none;
+  stroke: #0C876A;
+  stroke-width: 5.6;
+  stroke-linecap: round;
+}
+.ln-string {
+  fill: none;
+  stroke: #F4EFE6;
+  stroke-width: 0.9;
+  stroke-linecap: round;
+}
+.ln-leg {
+  fill: none;
+  stroke: #2B3A67;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+.ln-shoe { fill: #F4F1EA; }
+.ln-phone { fill: #1D2142; }
+.ln-cam { fill: #59608F; }
+.ln-eye { fill: #2C2140; }
+.ln-lid,
+.ln-brow {
+  fill: none;
+  stroke: #2C2140;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+.ln-mouth {
+  fill: none;
+  stroke: #6B2A2A;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ln-mouth-o { fill: #6B2A2A; }
+.ln-sweat { fill: #8FD3FF; }
+.ln-hp { fill: #CC79A7; }
+.ln-hp-band {
+  fill: none;
+  stroke: #B4628F;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+/* ===== the props ===== */
+
+.cal-shadow { fill: #1B1630; opacity: 0.2; }
+.cal-page { fill: #F7F3EA; }
+.cal-top { fill: #F2C14E; }
+.cal-ring { fill: #3A3550; }
+.cal-head {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 6.4px;
+  letter-spacing: 1.2px;
+  fill: #4A3500;
+  text-anchor: middle;
+}
+.cal-n {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 22px;
+  fill: #26456E;
+  text-anchor: middle;
+}
+.cal-sub {
+  font-family: var(--f-sans);
+  font-weight: 600;
+  font-size: 5.6px;
+  fill: #6B7390;
+  text-anchor: middle;
+}
+
+.badge-bg { fill: #FFFFFF; }
+.ico,
+.ico-cat { fill: #26456E; }
+.ico-cat { fill: #E69F00; }
+.ico-hole { fill: #FFFFFF; }
+.ico-play { fill: #FFFFFF; }
+.ico-line {
+  fill: none;
+  stroke: #26456E;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ico-whisk {
+  fill: none;
+  stroke: #26456E;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+
+.callout-bg { fill: #FFFFFF; }
+.callout-a {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 12px;
+  fill: #26456E;
+  text-anchor: middle;
+}
+.callout-b {
+  font-family: var(--f-sans);
+  font-weight: 600;
+  font-size: 7.6px;
+  fill: #4A5378;
+  text-anchor: middle;
+}
+.callout-lead {
+  fill: none;
+  stroke: #FFFFFF;
+  stroke-width: 1.1;
+  stroke-dasharray: 2.4 2.4;
+  opacity: 0.85;
+}
+.callout-dot { fill: #FFFFFF; }
+
+.sn-shadow { fill: #000000; opacity: 0.25; }
+.sn-body { fill: #E9D3A8; }
+.sn-stalk {
+  fill: none;
+  stroke: #E9D3A8;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.sn-eye { fill: #2C2140; }
+.sn-smile {
+  fill: none;
+  stroke: #6B4A2A;
+  stroke-width: 0.9;
+  stroke-linecap: round;
+}
+.sn-shell { fill: #E8641A; }
+.sn-spiral {
+  fill: none;
+  stroke: #A9430D;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.sn-wheel-bg { fill: #FFFFFF; opacity: 0.25; }
+.sn-wheel-arc {
+  fill: none;
+  stroke: #FFFFFF;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* ===== card 5: the blackboard, in chalk white and chalk yellow ===== */
+
+.t-board .bd0 { stop-color: #284A40; }
+.t-board .bd1 { stop-color: #1A342D; }
+.bd-wood { fill: #87562F; }
+.bd-dust { fill: #FFFFFF; opacity: 0.045; }
+.bd-tray { fill: #6B4223; }
+.bd-tray-hi { fill: #A6764A; }
+.bd-felt { fill: #3E3A52; }
+.bd-eraser { fill: #C9A46B; }
+.bd-chalk { fill: #F2EFE6; }
+.bd-chalk.y { fill: #F6D365; }
+.bd-axis {
+  fill: none;
+  stroke: #E9EEE7;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+.bd-brick {
+  fill: rgba(233, 238, 231, 0.13);
+  stroke: #E9EEE7;
+  stroke-width: 0.8;
+}
+.bd-brick.w {
+  fill: rgba(246, 211, 101, 0.38);
+  stroke: #F6D365;
+  stroke-width: 1.3;
+}
+.bd-line {
+  fill: none;
+  stroke: #F6D365;
+  stroke-width: 1.3;
+  stroke-dasharray: 4 3;
+  stroke-linecap: round;
+}
+.bd-guide {
+  fill: none;
+  stroke: #F6D365;
+  stroke-width: 0.9;
+  stroke-dasharray: 2 2.6;
+  opacity: 0.75;
+}
+.bd-dot { fill: #F6D365; }
+.bd-lead {
+  fill: none;
+  stroke: #F6D365;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+.bd-lab {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 11px;
+  fill: #E9EEE7;
+  text-anchor: middle;
+}
+.bd-lab.g { fill: #F6D365; font-size: 13px; }
+.bd-lab.end { text-anchor: end; }
+.bd-lab.mid { dominant-baseline: central; }
+.bd-w {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 14px;
+  fill: #F6D365;
+  dominant-baseline: central;
+}
+.bd-f {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.4px;
+  fill: #F6D365;
+  text-anchor: end;
+}
+
+/* the phone's extra marks on card 4 */
+.st-free { fill: var(--gold-wash); }
+.st-q {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 12px;
+  fill: var(--gold-ink);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* ===== motion, each time a card comes up ===== */
+
+.story-pic.play .st-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: st-pop 0.55s var(--ease-out) both;
+  animation-delay: 0.25s;
+}
+.story-pic.play .b2 { animation-delay: 0.95s; }
+.story-pic.play .b3 { animation-delay: 1.65s; }
+.story-pic.play .b4 { animation-delay: 2.35s; }
+@keyframes st-pop {
+  from { opacity: 0; transform: scale(0.55); }
+  70% { opacity: 1; transform: scale(1.06); }
+  to { opacity: 1; transform: none; }
+}
+/* card 1: the plan's column rises from the floor */
+.t-morning.play .st-col {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: st-grow 0.9s var(--ease-out) 0.2s both;
+}
+@keyframes st-grow {
+  from { transform: scaleY(0); }
+  to { transform: none; }
+}
+/* card 4: the question mark breathes, the snail crawls, its wheel spins.
+   The endless two run only while card 4 is on screen. */
+.page-story.on .story-pic.on.play .st-q {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: st-breathe 1.8s ease-in-out infinite;
+}
+@keyframes st-breathe {
+  0%, 100% { transform: none; opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.75; }
+}
+.story-pic.play .snail-crawl { animation: st-crawl 9s linear both; }
+@keyframes st-crawl {
+  from { transform: translateX(46px); }
+  to { transform: none; }
+}
+.page-story.on .story-pic.on .sn-wheel-spin { animation: st-spin 1.2s linear infinite; }
+@keyframes st-spin { to { transform: rotate(360deg); } }
+/* card 5: the bricks pop in one a day (each brick carries its own delay),
+   then the line, the point on the axes, w = ? and the rule */
+.story-pic.play .bd-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: st-pop 0.45s var(--ease-out) both;
+}
+.story-pic.play .bd-dot { animation-delay: 1.55s; }
+.story-pic.play .bd-name { animation-delay: 1.85s; }
+.story-pic.play .bd-f { animation-delay: 2.2s; }
+.story-pic.play .bd-line { animation: bd-fade 0.6s ease 1.35s both; }
+.story-pic.play .bd-guide { animation: bd-fade 0.5s ease 1.55s both; }
+@keyframes bd-fade { from { opacity: 0; } }

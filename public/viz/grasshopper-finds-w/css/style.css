@@ -1,0 +1,248 @@
+/* style.css: tokens, the stage, and the shared look of the four parts.
+ *
+ * Every colour is a token here. A part's elements take its colour from the class on its layer
+ * (k-black, k-red, k-blue, k-purple) through currentColor, so the theme switch (key t) recolours
+ * everything. Light is the lecture default; dark is for study at home.
+ *
+ * The colours are colour-blind safe: scripts/check-palette.js holds every pair that shares the page
+ * (the four parts, the grasshopper on the red curve and under the purple arrow) at CIEDE2000 20 or
+ * more under normal vision, protanopia and deuteranopia and 12 or more under tritanopia, and every
+ * text colour at contrast 4.5 or more on the paper and the background. Until 31 October 2026 the
+ * purple (#7d2fa3) came within 3.4 of the blue under deuteranopia; it is a raspberry purple now.
+ */
+
+:root,
+:root[data-theme="light"] {
+  --bg: #f7f2e7;
+  --paper: #fffdf8;
+  --ink: #1d1a16;
+  --muted: #6e675c;
+  --shadow: rgba(70, 50, 20, 0.18);
+  --red: #d32a17;
+  --red-soft: rgba(211, 42, 23, 0.06);
+  --blue: #1969e1;
+  --blue-soft: rgba(25, 105, 225, 0.07);
+  --purple: #9c1868;
+  --purple-soft: rgba(156, 24, 104, 0.06);
+  --tick: #8a8276;
+  --fresh: #ffd84d;
+  --focus: rgba(255, 216, 77, 0.55);
+  --hop-body: #3d86e6;
+  --hop-deep: #1a55ad;
+  --hop-ink: #1d1a16;
+  --hop-eye: #fffdf8;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+}
+
+:root[data-theme="dark"] {
+  --bg: #191714;
+  --paper: #25221d;
+  --ink: #ede7da;
+  --muted: #a39b8c;
+  --shadow: rgba(0, 0, 0, 0.55);
+  --red: #fe4614;
+  --red-soft: rgba(254, 70, 20, 0.09);
+  --blue: #8cbcff;
+  --blue-soft: rgba(140, 188, 255, 0.09);
+  --purple: #c86e96;
+  --purple-soft: rgba(200, 110, 150, 0.1);
+  --tick: #7d766a;
+  --fresh: #7a6416;
+  --focus: rgba(122, 100, 22, 0.7);
+  --hop-body: #8cbcff;
+  --hop-deep: #4f86d6;
+  --hop-ink: #e8e2d4;
+  --hop-eye: #fffdf8;
+}
+
+/* ===== the stage: 1600 x 900, scaled to the window by js/engine.js */
+
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+#viewport {
+  position: fixed; inset: 0; overflow: hidden; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+#stage {
+  position: relative; width: 1600px; height: 900px; flex: 0 0 auto;
+  transform-origin: center center; font-family: var(--sans);
+}
+.layer { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; pointer-events: none; }
+#svg-back { z-index: 1; }
+#html-mid { z-index: 2; }
+#svg-front { z-index: 3; }
+#html-top { z-index: 4; }
+.layer > .part { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+
+.k-black { color: var(--ink); }
+.k-red { color: var(--red); }
+.k-blue { color: var(--blue); }
+.k-purple { color: var(--purple); }
+
+/* shown or not: a part toggles the class "on"; a forward click fades, a jump does not */
+.vis { opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0s linear 0.4s; }
+.vis.on { opacity: 1; visibility: visible; transition: opacity 0.4s ease, visibility 0s; }
+#stage.still, #stage.still * { transition: none !important; }
+
+#title {
+  position: absolute; left: 40px; top: 22px; z-index: 5;
+  font: 500 30px var(--serif); color: var(--ink); letter-spacing: 0.01em;
+}
+#title .w { font-style: italic; }
+
+/* ===== boxes */
+
+.box {
+  position: absolute; box-sizing: border-box;
+  background: var(--paper); border: 3px solid currentColor; border-radius: 9px;
+  box-shadow: 4px 5px 0 var(--shadow);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding-top: 4px;
+}
+.box .calc {
+  height: 26px; line-height: 26px; font-size: 17px; white-space: nowrap;
+  color: color-mix(in srgb, currentColor 72%, var(--paper));
+}
+.box .calc .piece { display: inline-block; margin: 0 0.1em; }
+.box .val { height: 44px; line-height: 44px; font-size: 33px; white-space: nowrap; }
+.box .unit {
+  height: 16px; line-height: 16px; font-size: 13px; letter-spacing: 0.06em;
+  color: color-mix(in srgb, currentColor 60%, var(--paper));
+}
+.box.guessing { box-shadow: 4px 5px 0 var(--shadow), 0 0 0 6px var(--focus); }
+.w-input {
+  display: none; position: absolute; left: 6px; right: 6px; top: 30px; height: 44px;
+  font: 32px KaTeX_Main, "Latin Modern Roman", "Times New Roman", serif;
+  text-align: center; border: none; outline: none; padding: 0;
+  background: transparent; color: var(--ink); caret-color: var(--ink);
+  pointer-events: auto;
+}
+.w-input.on { display: block; }
+.w-input::placeholder { color: var(--muted); }
+
+/* ===== labels and words */
+
+.lab { position: absolute; white-space: nowrap; font-size: 27px; }
+.word { position: absolute; white-space: nowrap; font: italic 21px var(--serif); letter-spacing: 0.02em; }
+.tick { font-size: 18px; }
+.axis-lab { font-size: 27px; }
+.question { font-size: 30px; }
+.plot-formula { font-size: 23px; }
+
+/* ===== SVG: arrows, the bands of the passes, the plot */
+
+.arrow .line { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.arrow .head { fill: currentColor; stroke: none; }
+.axis .line { stroke-width: 2.4; }
+
+/* a pass: a broad arrow behind the boxes, a light fill and a firm outline in the part's colour */
+.pass-fill { fill: currentColor; fill-opacity: 0.075; stroke: none; }
+.pass-line { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linejoin: round; stroke-opacity: 0.85; }
+.pass-mask { fill: none; stroke: #fff; stroke-linecap: butt; stroke-linejoin: round; }
+.pass.pulse .pass-fill { animation: band-glow 1.1s ease-in-out; }
+@keyframes band-glow {
+  0% { fill-opacity: 0.075; }
+  40% { fill-opacity: 0.2; }
+  100% { fill-opacity: 0.075; }
+}
+
+.curve { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; }
+.guide { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-dasharray: 5 6; stroke-opacity: 0.7; }
+.point { fill: currentColor; stroke: var(--bg); stroke-width: 3; transform-box: fill-box; transform-origin: center; }
+.trail-dot { fill: var(--bg); stroke: currentColor; stroke-width: 2.2; stroke-opacity: 0.65; }
+.tick-mark { stroke: var(--tick); stroke-width: 1.5; }
+.grid-line { stroke: var(--tick); stroke-width: 1; stroke-opacity: 0.22; }
+.tick-num {
+  position: absolute; white-space: nowrap; font: 15px KaTeX_Main, "Latin Modern Roman", "Times New Roman", serif;
+  color: var(--muted); transform: translate(-50%, 0);
+}
+.tick-num.l { transform: translate(-100%, -50%); }
+
+/* ===== the purple part: the box dl/dw, the backward arrow, the update, the jump */
+
+.arrow.back .line { stroke-width: 3.5; }
+.arrow .line.pulse { animation: glow 1.1s ease-in-out; }
+.update-row { font-size: 27px; }
+.update-row .piece { display: inline-block; margin: 0 0.1em; }
+.alpha-lab { font-size: 23px; }
+.tangent { fill: none; stroke: currentColor; stroke-width: 3; stroke-dasharray: 10 7; stroke-linecap: round; }
+.way .line { stroke-width: 6; }
+.way.pulse .line { animation: glow 1.1s ease-in-out; }
+.thought { fill: var(--paper); stroke: currentColor; stroke-width: 2; }
+.step-lab { font-size: 19px; }
+
+/* ===== the grasshopper */
+
+.hop-body { fill: var(--hop-body); }
+.hop-deep { fill: var(--hop-deep); }
+.hop-ink { fill: var(--hop-ink); }
+.hop-eye { fill: var(--hop-eye); }
+.hop-shadow { fill: var(--shadow); }
+
+/* ===== animation helpers (js/kit.js) */
+
+.fly { position: absolute; white-space: nowrap; pointer-events: none; font-size: 20px; z-index: 10; }
+
+.flash { animation: flash 1.6s ease-out; border-radius: 6px; }
+@keyframes flash {
+  0% { background: var(--fresh); }
+  100% { background: transparent; }
+}
+
+.curve.pulse { animation: glow 1.1s ease-in-out; }
+@keyframes glow {
+  0% { stroke-width: 3.5; }
+  35% { stroke-width: 10; }
+  100% { stroke-width: 3.5; }
+}
+.point.pulse { animation: pop 0.7s ease-out; }
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.9); }
+  100% { transform: scale(1); }
+}
+
+.box.shake { animation: shake 0.45s ease-in-out; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-9px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+
+/* ===== controls, bottom left */
+
+#controls {
+  position: absolute; left: 40px; top: 822px; z-index: 20;
+  display: flex; align-items: center; gap: 18px;
+}
+#next {
+  font: 600 20px var(--sans); letter-spacing: 0.02em;
+  padding: 9px 24px 10px; border: 2.5px solid var(--ink); border-radius: 10px;
+  background: var(--paper); color: var(--ink); box-shadow: 3px 4px 0 var(--shadow); cursor: pointer;
+}
+#next:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+#next .chev { font-size: 24px; line-height: 0; }
+#where { font: 14px var(--sans); color: var(--muted); letter-spacing: 0.04em; }
+/* the three Play buttons: one, two or three triangles; the one playing shows a pause sign */
+#play { display: flex; gap: 8px; }
+.play {
+  height: 44px; min-width: 50px; padding: 0 12px; border: 2px solid var(--muted); border-radius: 10px;
+  background: var(--paper); color: var(--ink); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 1px;
+}
+.play .tri {
+  width: 0; height: 0; border-style: solid; border-width: 8px 0 8px 12px;
+  border-color: transparent transparent transparent currentColor;
+}
+.play.picked { border-color: var(--ink); box-shadow: 2px 3px 0 var(--shadow); }
+.play.playing .tri { display: none; }
+.play.playing::before, .play.playing::after {
+  content: ""; width: 5px; height: 17px; margin: 0 2px; background: currentColor; border-radius: 1px;
+}
+#theme { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vis, .vis.on { transition-duration: 0.01s; }
+}

@@ -1,0 +1,20 @@
+# dependencies
+node_modules
+
+# build output
+dist
+dist-ssr
+
+# written by scripts/list-public-files.mjs before every dev and build run
+src/data/public-files.ts
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.DS_Store
+*.local
+
+# typescript incremental build state
+tsconfig.tsbuildinfo

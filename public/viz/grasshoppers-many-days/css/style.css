@@ -1,0 +1,231 @@
+/* style.css: tokens, the stage, and the shared look of the four parts (from step 0,
+ * ../grasshopper-finds-w/, with the columns, their cells and the plot of y against x added).
+ *
+ * Every colour is a token here. A part's elements take its colour from the class on its layer
+ * (k-black, k-red, k-blue, k-purple) through currentColor, so the theme switch (key t) recolours
+ * everything. Light is the lecture default; dark is for study at home.
+ */
+
+:root,
+:root[data-theme="light"] {
+  --bg: #f7f2e7;
+  --paper: #fffdf8;
+  --ink: #1d1a16;
+  --muted: #756e62;
+  --rule: #d9d1c1;
+  --shadow: rgba(70, 50, 20, 0.18);
+  --red: #c2352b;
+  --red-soft: rgba(194, 53, 43, 0.04);
+  --blue: #1f62b8;
+  --blue-soft: rgba(31, 98, 184, 0.07);
+  --purple: #7d2fa3;
+  --purple-soft: rgba(125, 47, 163, 0.07);
+  --fresh: #ffd84d;
+  --fresh-soft: rgba(255, 216, 77, 0.32);
+  --focus: rgba(255, 216, 77, 0.55);
+  --hop-body: #2f74c8;
+  --hop-deep: #174f93;
+  --hop-ink: #1d1a16;
+  --hop-eye: #fffdf8;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+}
+
+:root[data-theme="dark"] {
+  --bg: #191714;
+  --paper: #25221d;
+  --ink: #ede7da;
+  --muted: #a39b8c;
+  --rule: #4a443a;
+  --shadow: rgba(0, 0, 0, 0.55);
+  --red: #f07466;
+  --red-soft: rgba(240, 116, 102, 0.08);
+  --blue: #6ea9f0;
+  --blue-soft: rgba(110, 169, 240, 0.09);
+  --purple: #c792e8;
+  --purple-soft: rgba(199, 146, 232, 0.09);
+  --fresh: #7a6416;
+  --fresh-soft: rgba(122, 100, 22, 0.45);
+  --focus: rgba(122, 100, 22, 0.7);
+  --hop-body: #5d9be6;
+  --hop-deep: #2e6bb8;
+  --hop-ink: #e8e2d4;
+  --hop-eye: #fffdf8;
+}
+
+/* ===== the stage: 1600 x 900, scaled to the window by js/engine.js */
+
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+#viewport {
+  position: fixed; inset: 0; overflow: hidden; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+#stage {
+  position: relative; width: 1600px; height: 900px; flex: 0 0 auto;
+  transform-origin: center center; font-family: var(--sans);
+}
+.layer { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; pointer-events: none; }
+#svg-back { z-index: 1; }
+#html-mid { z-index: 2; }
+#svg-front { z-index: 3; }
+#html-top { z-index: 4; }
+.layer > .part { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+
+.k-black { color: var(--ink); }
+.k-red { color: var(--red); }
+.k-blue { color: var(--blue); }
+.k-purple { color: var(--purple); }
+
+/* shown or not: a part toggles the class "on"; a forward click fades, a jump does not */
+.vis { opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0s linear 0.4s; }
+.vis.on { opacity: 1; visibility: visible; transition: opacity 0.4s ease, visibility 0s; }
+#stage.still, #stage.still * { transition: none !important; }
+
+#title {
+  position: absolute; left: 40px; top: 22px; z-index: 5;
+  font: 500 30px var(--serif); color: var(--ink); letter-spacing: 0.01em;
+}
+
+/* ===== boxes: the single numbers w, b and lbar */
+
+.box {
+  position: absolute; box-sizing: border-box;
+  background: var(--paper); border: 3px solid currentColor; border-radius: 9px;
+  box-shadow: 4px 5px 0 var(--shadow);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.box .val { height: 38px; line-height: 38px; font-size: 30px; white-space: nowrap; border-radius: 6px; padding: 0 4px; }
+.box .unit {
+  height: 14px; line-height: 14px; font-size: 12px; letter-spacing: 0.05em; white-space: nowrap;
+  color: color-mix(in srgb, currentColor 60%, var(--paper));
+}
+.box .val.hopped { color: var(--blue); }
+
+/* ===== columns: one frame, eight cells, the unit at the foot */
+
+.col {
+  position: absolute; box-sizing: border-box;
+  background: var(--paper); border: 3px solid currentColor; border-radius: 9px;
+  box-shadow: 4px 5px 0 var(--shadow);
+}
+.cell {
+  position: absolute; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px; white-space: nowrap;
+}
+.cell.sep { border-top: 1px solid var(--rule); }
+.cell .v { border-radius: 5px; padding: 0 3px; }
+.cell.day3 { background: var(--fresh-soft); }
+.cell.flat .v { color: var(--muted); }
+.cell.hopped .v { color: var(--blue); }
+.cell.worked { box-shadow: inset 0 0 0 2.5px var(--fresh); }
+.col-unit {
+  position: absolute; text-align: center; height: 14px; line-height: 14px;
+  font-size: 12px; letter-spacing: 0.05em;
+  color: color-mix(in srgb, currentColor 60%, var(--paper));
+}
+.day-index { position: absolute; font: 13px var(--sans); color: var(--muted); text-align: right; width: 20px; }
+
+/* ===== labels and words */
+
+.lab { position: absolute; white-space: nowrap; font-size: 26px; }
+.name { font-size: 24px; }
+.col-name { font-size: 22px; }
+.op { font-size: 19px; }
+.word { position: absolute; white-space: nowrap; font: italic 21px var(--serif); letter-spacing: 0.02em; }
+.tick { font-size: 16px; color: var(--muted); }
+.axis-lab { font-size: 25px; }
+.plot-unit { font: 13px var(--sans); color: var(--muted); letter-spacing: 0.04em; }
+.strip, .band-row { font-size: 26px; }
+.strip .piece, .band-row .piece, .update-row .piece { display: inline-block; margin: 0 0.03em; border-radius: 5px; }
+.piece.hide { visibility: hidden; }
+.grad-lab { font-size: 25px; }
+.alpha-lab { font-size: 23px; }
+
+/* ===== SVG: arrows, the loop, the plot */
+
+.arrow .line { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.arrow .head { fill: currentColor; stroke: none; }
+.axis .line { stroke-width: 2.4; }
+.tick-mark { stroke: currentColor; stroke-width: 2; fill: none; }
+.grid-line { stroke: var(--rule); stroke-width: 1; fill: none; stroke-dasharray: 3 6; }
+
+.loop { fill: var(--red-soft); stroke: currentColor; stroke-width: 3.5; stroke-linejoin: round; }
+.hinge { fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.trail-line { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.pt { fill: currentColor; stroke: var(--bg); stroke-width: 2.5; }
+.mark { fill: var(--bg); stroke: currentColor; stroke-width: 2.5; }
+.gap { fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; }
+
+/* ===== the small plot of the ReLU on its arrow */
+
+.relu-bg { fill: var(--paper); stroke: currentColor; stroke-width: 1.6; stroke-opacity: 0.35; }
+.relu .axis .line { stroke-width: 1.6; }
+.relu-curve { fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.relu-dot { fill: currentColor; stroke: var(--paper); stroke-width: 1.6; }
+
+/* ===== the purple part: the pair of the gradient */
+
+.box.pair { flex-direction: row; align-items: stretch; justify-content: flex-start; }
+.pcell { flex: 1 1 0; display: flex; align-items: center; justify-content: center; }
+.pcell + .pcell { border-left: 2px solid currentColor; }
+.pcell .val { font-size: 27px; }
+.pair-lab { font-size: 21px; }
+
+.arrow.back .line { stroke-width: 3.5; }
+.arrow .line.pulse { animation: glow 1.1s ease-in-out; }
+
+/* ===== the grasshopper */
+
+.hop-body { fill: var(--hop-body); }
+.hop-deep { fill: var(--hop-deep); }
+.hop-ink { fill: var(--hop-ink); }
+.hop-eye { fill: var(--hop-eye); }
+.hop-shadow { fill: var(--shadow); }
+
+/* ===== animation helpers (js/kit.js) */
+
+.fly { position: absolute; white-space: nowrap; pointer-events: none; font-size: 20px; z-index: 10; }
+.fly-dot { width: 13px; height: 13px; border-radius: 50%; background: currentColor; }
+
+.flash { animation: flash 1.6s ease-out; }
+@keyframes flash {
+  0% { background: var(--fresh); }
+  100% { background: transparent; }
+}
+
+.loop.pulse, .hinge.pulse { animation: glow 1.1s ease-in-out; }
+@keyframes glow {
+  0% { stroke-width: 3.5; }
+  35% { stroke-width: 10; }
+  100% { stroke-width: 3.5; }
+}
+.pt.pulse, .mark.pulse { animation: pop 0.7s ease-out; transform-box: fill-box; transform-origin: center; }
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.8); }
+  100% { transform: scale(1); }
+}
+
+/* ===== controls, bottom left */
+
+#controls {
+  position: absolute; left: 40px; top: 822px; z-index: 20;
+  display: flex; align-items: center; gap: 14px;
+}
+#controls button.btn {
+  font: 600 20px var(--sans); letter-spacing: 0.02em;
+  padding: 9px 20px 10px; border: 2.5px solid var(--ink); border-radius: 10px;
+  background: var(--paper); color: var(--ink); box-shadow: 3px 4px 0 var(--shadow); cursor: pointer;
+}
+#controls button.btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+#controls button.run { font-size: 17px; padding: 9px 14px 10px; }
+#controls .runs { display: none; gap: 10px; }
+#controls .runs.on { display: flex; }
+#next .chev { font-size: 24px; line-height: 0; }
+#where { font: 14px var(--sans); color: var(--muted); letter-spacing: 0.04em; min-width: 110px; }
+#theme { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vis, .vis.on { transition-duration: 0.01s; }
+}

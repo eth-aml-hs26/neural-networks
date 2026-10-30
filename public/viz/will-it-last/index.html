@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Will it last?</title>
+  <!-- Offline by design: every file below is in this folder. No CDN, no
+       fetch, no server. Double click this file and it runs from file://. -->
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/title.css">
+  <link rel="stylesheet" href="css/story.css">
+  <link rel="stylesheet" href="css/round.css">
+  <link rel="stylesheet" href="css/verdict.css">
+  <link rel="stylesheet" href="css/code.css">
+  <link rel="stylesheet" href="css/run.css">
+  <link rel="stylesheet" href="css/phone.css">
+</head>
+<body>
+
+  <div class="lights" aria-hidden="true"></div>
+
+  <nav class="strip" id="strip" aria-label="Show progress">
+    <button class="brand" type="button" data-go="0" title="Start (0)"><span class="brand-logo"></span>WILL IT LAST?</button>
+    <div class="tabs" role="tablist">
+      <button class="tab tab-story" type="button" data-go="story" title="The story"><span class="tab-num"><span class="icon-slot" data-icon="book"></span></span><span class="tab-name">The story</span></button>
+      <span class="tab-sep" aria-hidden="true"></span>
+      <button class="tab" type="button" data-go="1" title="Round 1 (1)"><span class="tab-num">1</span><span class="tab-name">The rate</span><span class="tab-check-slot"></span></button>
+      <button class="tab" type="button" data-go="2" title="Round 2 (2)"><span class="tab-num">2</span><span class="tab-name">The verdict</span></button>
+      <span class="tab-sep" aria-hidden="true"></span>
+      <button class="tab" type="button" data-go="3" title="Final: live coding (3)"><span class="tab-num">3</span><span class="tab-name">The machine</span></button>
+      <button class="tab" type="button" data-go="4" title="Final: the code (4)"><span class="tab-num">4</span><span class="tab-name">The code</span></button>
+      <button class="tab" type="button" data-go="5" title="Final: the run (5)"><span class="tab-num">5</span><span class="tab-name">The run</span></button>
+    </div>
+    <div class="strip-tools">
+      <button class="icon-btn" type="button" id="theme-btn" title="Night or daylight studio (t)"></button>
+      <button class="icon-btn" type="button" id="full-btn" title="Full screen (f)"></button>
+    </div>
+  </nav>
+
+  <main class="stage" id="stage">
+
+    <!-- ===== 0: the title card ===== -->
+    <section class="page page-title" data-page="0" aria-label="Will it last?">
+      <div class="title-wrap">
+        <svg class="logo" viewBox="0 0 120 120" aria-hidden="true">
+          <line class="lg-ground" x1="6" y1="110" x2="116" y2="110"/>
+          <rect class="lg-bar-bg" x="21" y="86" width="20" height="24"/>
+          <rect class="lg-bar lg-draw d1" x="21" y="86" width="20" height="24"/>
+          <rect class="lg-bar-bg" x="45" y="62" width="20" height="48"/>
+          <rect class="lg-bar lg-draw d2" x="45" y="62" width="20" height="48"/>
+          <rect class="lg-bar-bg" x="69" y="38" width="20" height="72"/>
+          <rect class="lg-bar lg-draw d3" x="69" y="38" width="20" height="72"/>
+          <rect class="lg-target lg-draw d4" x="93" y="14" width="20" height="96"/>
+          <path class="lg-line lg-draw d5" d="M7 110 L117 8"/>
+        </svg>
+        <h1 class="show-title">WILL IT LAST?</h1>
+        <p class="tagline">Guess. Check. Correct.</p>
+        <div class="rounds">
+          <button class="round-card" type="button" data-go="1" id="card-1">
+            <span class="rc-kicker">Round 1</span>
+            <span class="rc-name">The rate</span>
+            <span class="rc-icon-slot" data-icon="stack"></span>
+            <span class="rc-check-slot"></span>
+          </button>
+          <button class="round-card" type="button" data-go="2" id="card-2">
+            <span class="rc-kicker">Round 2</span>
+            <span class="rc-name">The verdict</span>
+            <span class="rc-icon-slot" data-icon="calendar"></span>
+          </button>
+          <button class="round-card" type="button" data-go="3" id="card-3">
+            <span class="rc-kicker">Final</span>
+            <span class="rc-name">The machine</span>
+            <span class="rc-icon-slot" data-icon="code"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== the story: five cards between the title card and round 1.
+         js/story.js draws the pictures into the five svgs. ===== -->
+    <section class="page page-story" data-page="story" id="story" aria-label="The story">
+      <div class="story-pics">
+        <svg class="story-pic" data-card="1"></svg>
+        <svg class="story-pic" data-card="2"></svg>
+        <svg class="story-pic" data-card="3"></svg>
+        <svg class="story-pic" data-card="4"></svg>
+        <svg class="story-pic" data-card="5"></svg>
+      </div>
+      <div class="story-side">
+        <div class="story-kicker">
+          <span class="chip loz"><span class="loz-in">The story</span></span>
+          <span class="story-step">1 of 5</span>
+        </div>
+        <div class="story-texts" aria-live="polite">
+          <div class="story-card" data-card="1">
+            <h2 class="story-title">Five gigabytes a&nbsp;month</h2>
+            <p class="story-text">Lina&rsquo;s phone plan gives her <b>5&nbsp;GB</b> of mobile data for every <b>30&nbsp;days</b>. On day&nbsp;1 the counter starts again at zero.</p>
+          </div>
+          <div class="story-card" data-card="2">
+            <h2 class="story-title">A little every day</h2>
+            <p class="story-text">Maps on the way to class, music on the tram, a cat video at lunch. Every day adds about the same <b>brick of data</b>, and Lina never checks.</p>
+          </div>
+          <div class="story-card" data-card="3">
+            <h2 class="story-title">Day 17</h2>
+            <p class="story-text">On <b>day&nbsp;17</b> she finally looks. The phone says <b>3&nbsp;GB used</b>, with 13 days to go.</p>
+          </div>
+          <div class="story-card ask" data-card="4">
+            <h2 class="story-title">Will it last?</h2>
+            <p class="story-text">If the 5&nbsp;GB run out before day&nbsp;30, her phone crawls like a <b>snail</b> until the month is over. Will they last?</p>
+          </div>
+          <div class="story-card ask" data-card="5">
+            <h2 class="story-title">What is w?</h2>
+            <p class="story-text">Every day adds the same <b>w&nbsp;GB</b>, so <b>x</b> days use <b>w&nbsp;&times;&nbsp;x</b>.</p>
+            <div class="story-sym">
+              <span class="sym-k">Given</span><span class="sym-a">x = 17</span><span class="sym-b">days so far</span>
+              <span class="sym-k"></span><span class="sym-a">y = 3</span><span class="sym-b">GB used</span>
+              <span class="sym-k">find</span><span class="sym-a ask">w</span><span class="sym-b">GB a day</span>
+              <i class="sym-rule" aria-hidden="true"></i>
+              <span class="sym-k">such that</span><span class="sym-f">y = w &times; x</span>
+            </div>
+          </div>
+        </div>
+        <div class="story-foot">
+          <div class="story-dots" aria-hidden="true"></div>
+          <div class="story-nav">
+            <button class="story-btn story-back loz" type="button" data-act="back" title="Back (left arrow)"><span class="loz-in"><span class="icon-slot" data-icon="chevLeft"></span>Back</span></button>
+            <button class="story-btn story-next btn-gold loz" type="button" data-act="next" title="Next (right arrow or space)"><span class="loz-in"><span class="nx-label">Next</span><span class="icon-slot" data-icon="chevRight"></span></span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 1: round 1, the rate. The game in one line, and as few
+         words as the game needs. ===== -->
+    <section class="page page-round page-r1" data-page="1" id="round1" aria-label="Round 1: find w such that y = w times x, with y = 3 and x = 17">
+      <header class="round-head">
+        <div class="round-kicker">
+          <span class="chip loz"><span class="loz-in">Round 1</span></span>
+          <h2 class="round-game">Find <span class="rg-w">w</span> such that <span class="rg-eq">y = <span class="rg-w">w</span>&nbsp;&times;&nbsp;x</span></h2>
+        </div>
+      </header>
+      <div class="round-left">
+        <div class="bignum bignum-sym"><span class="unit">y =</span><span class="bignum-val" id="r1-gb">3</span><span class="unit sep">x =</span><span class="bignum-val" id="r1-days">17</span></div>
+        <div class="view-panel panel"><svg class="r1-view" role="img" aria-label="A phone: y = 3 is the gold column, and the guess w is drawn as x = 17 bricks"></svg></div>
+      </div>
+      <div class="round-right">
+        <div class="guess-row">
+          <form class="guess-bar loz" autocomplete="off">
+            <div class="loz-in">
+              <label class="guess-label" for="r1-input">w&nbsp;=</label>
+              <input class="guess-input" id="r1-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="24">
+              <button class="btn-check btn-gold loz" type="submit"><span class="loz-in">Check<span class="icon-slot" data-icon="enter"></span></span></button>
+            </div>
+          </form>
+          <div class="round-tools">
+            <button class="icon-btn" type="button" data-act="undo" title="Undo last guess (Ctrl+Z)"><span class="icon-slot" data-icon="undo"></span></button>
+            <button class="icon-btn" type="button" data-act="reset" title="Reset round (click twice)"><span class="icon-slot" data-icon="reset"></span></button>
+          </div>
+          <div class="nudge" role="status" aria-live="polite"></div>
+        </div>
+        <div class="tbl round-table">
+          <div class="tbl-head">
+            <div class="th"><span class="th-math">w</span></div>
+            <div class="th"><span class="th-math">w&thinsp;&times;&thinsp;17</span></div>
+            <div class="th"><span class="th-math">|3 &minus; w&thinsp;&times;&thinsp;17|</span></div>
+            <div class="th upd"><span class="th-math">&nbsp;</span></div>
+          </div>
+          <div class="tbl-body" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 2: round 2, the verdict ===== -->
+    <section class="page page-round page-verdict" data-page="2" id="verdict" aria-label="Round 2, the verdict">
+      <header class="round-head">
+        <div class="round-kicker">
+          <span class="chip loz"><span class="loz-in">Round 2</span></span>
+          <h2 class="round-title">The verdict</h2>
+        </div>
+        <p class="round-sub">The plan gives 5&nbsp;GB for 30 days. At this rate, will it last?</p>
+      </header>
+      <div class="round-left">
+        <div class="bignum"><span class="bignum-val">5</span><span class="unit">GB for</span><span class="bignum-val">30</span><span class="unit">days</span></div>
+        <div class="view-panel panel"><svg class="month-view" role="img" aria-label="A phone: the plan's 5 GB as a gold column, and one brick per day of use"></svg></div>
+      </div>
+      <div class="round-right verdict-right">
+        <div class="rate-row">
+          <div class="rate-bar loz">
+            <div class="loz-in">
+              <span class="guess-label">w&nbsp;=</span>
+              <button class="rate-val" type="button" title="Click to change"></button>
+              <span class="rate-unit">GB a day</span>
+              <span class="rate-src"></span>
+            </div>
+          </div>
+          <div class="round-tools">
+            <button class="icon-btn" type="button" data-act="rewind" title="Back to day 17 (r)"><span class="icon-slot" data-icon="restart"></span></button>
+          </div>
+        </div>
+        <div class="answers" role="group" aria-label="The room's answer">
+          <button class="answer loz" type="button" data-answer="lasts" aria-pressed="false" title="Lock A (a)"><span class="loz-in"><span class="ans-key">A</span><span class="ans-text">It lasts</span><span class="ans-tag">Final answer</span></span></button>
+          <button class="answer loz" type="button" data-answer="out" aria-pressed="false" title="Lock B (b)"><span class="loz-in"><span class="ans-key">B</span><span class="ans-text">It runs out</span><span class="ans-tag">Final answer</span></span></button>
+        </div>
+        <div class="calendar" aria-label="The 30 days of the plan"></div>
+        <div class="verdict-row">
+          <button class="btn-gold loz play-month" type="button" data-act="play-month" title="Play the month (space)"><span class="loz-in">Play the month<span class="icon-slot i-play" data-icon="play"></span><span class="icon-slot i-pause" data-icon="pause"></span></span></button>
+          <div class="verdict-banner" aria-live="polite"></div>
+        </div>
+        <div class="calc" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ===== 3: the final, live coding. Deliberately empty. ===== -->
+    <section class="page page-live" data-page="3" aria-label="Live coding">
+      <div class="editor" id="editor">
+        <div class="ed-gutter" aria-hidden="true"><pre class="ed-nums"></pre></div>
+        <div class="ed-body">
+          <div class="ed-curline" aria-hidden="true"></div>
+          <pre class="ed-hl" aria-hidden="true"><code></code></pre>
+          <textarea class="ed-input" wrap="off" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-label="Code"></textarea>
+        </div>
+        <div class="ed-tools">
+          <button class="icon-btn" type="button" data-act="smaller" title="Smaller text">A<span class="pm">&minus;</span></button>
+          <button class="icon-btn" type="button" data-act="bigger" title="Bigger text">A<span class="pm">+</span></button>
+          <button class="icon-btn" type="button" data-act="clear" title="Clear (click twice)"><span class="icon-slot" data-icon="trash"></span></button>
+        </div>
+        <button class="btn-gold loz ed-run" type="button" data-act="run" title="Run (Ctrl+Enter)"><span class="loz-in">Run<span class="icon-slot" data-icon="play"></span></span></button>
+      </div>
+    </section>
+
+    <!-- ===== 4: the final, the code ===== -->
+    <section class="page page-code" data-page="4" aria-label="The code">
+      <div class="code-wrap">
+        <pre class="code-card" id="code-card"></pre>
+        <button class="btn-gold loz code-run" type="button" data-act="run" title="Run (Enter)"><span class="loz-in">Run<span class="icon-slot" data-icon="play"></span></span></button>
+      </div>
+    </section>
+
+    <!-- ===== 5: the final, the run ===== -->
+    <section class="page page-run" data-page="5" id="run" aria-label="The run">
+      <div class="run-top">
+        <div class="call-row">
+          <div class="call" aria-label="The call"></div>
+          <div class="call-in" aria-label="The two lines inside rate that set the first guess and the step size"></div>
+        </div>
+        <div class="run-controls">
+          <button class="icon-btn" type="button" data-act="restart" title="Restart (r)"><span class="icon-slot" data-icon="restart"></span></button>
+          <button class="icon-btn" type="button" data-act="step" title="One step (s)"><span class="icon-slot" data-icon="step"></span></button>
+          <button class="play-btn" type="button" data-act="play" title="Play or pause (space)"><span class="icon-slot i-play" data-icon="play"></span><span class="icon-slot i-pause" data-icon="pause"></span></button>
+          <div class="speed" role="group" aria-label="Speed">
+            <button type="button" data-speed="0.5">0.5&times;</button>
+            <button type="button" data-speed="1" class="on">1&times;</button>
+            <button type="button" data-speed="2">2&times;</button>
+            <button type="button" data-speed="4">4&times;</button>
+          </div>
+          <button class="icon-btn" type="button" data-act="end" title="To the end (e)"><span class="icon-slot" data-icon="end"></span></button>
+        </div>
+      </div>
+      <div class="run-main">
+        <div class="tbl run-table">
+          <div class="tbl-head">
+            <div class="th"><span class="th-word">Step</span><span class="th-math">&nbsp;</span></div>
+            <div class="th"><span class="th-word">Guess</span><span class="th-math">w</span></div>
+            <div class="th"><span class="th-word">Estimate</span><span class="th-math">w * days</span></div>
+            <div class="th"><span class="th-word">Loss</span><span class="th-math">l</span></div>
+            <div class="th upd"><span class="th-word">Update</span><span class="th-math">alpha * l</span></div>
+          </div>
+          <div class="tbl-body"></div>
+        </div>
+        <div class="run-side">
+          <div class="view-panel panel"><svg class="run-view" role="img" aria-label="A phone: the 3 GB as a gold column, and the machine's guess as 17 daily bricks"></svg></div>
+          <div class="info-card panel" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/logic.js"></script>
+  <script src="js/highlight.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/story.js"></script>
+  <script src="js/round.js"></script>
+  <script src="js/verdict.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/run.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

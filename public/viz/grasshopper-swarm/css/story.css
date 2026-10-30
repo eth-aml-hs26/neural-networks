@@ -1,0 +1,220 @@
+/* story.css: the five cards of the story (js/story.js). The frame and the words follow the tokens of
+ * css/style.css and the cards of step 1 (../grasshoppers-find-w-and-b/css/story.css); the pictures
+ * are illustrations with colours of their own, the same in both themes. The street, Lina, the phone,
+ * the calendar, the callout and the blackboard take their colours from ../will-it-last/css/story.css
+ * and css/round.css; the balcony, the rose, the aphids and the shop are new. */
+
+.story { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+.story-pic, .story-words { opacity: 0; visibility: hidden; transition: opacity 0.45s ease, visibility 0s linear 0.45s; }
+.story-pic.cur, .story-words.cur { opacity: 1; visibility: visible; transition: opacity 0.45s ease, visibility 0s; }
+.story-pic {
+  position: absolute; box-sizing: border-box; overflow: hidden;
+  border: 3px solid var(--ink); border-radius: 18px; background: var(--paper);
+  box-shadow: 6px 7px 0 var(--shadow);
+}
+.story-svg { display: block; width: 100%; height: 100%; }
+.story-words { position: absolute; color: var(--ink); font-family: var(--serif); }
+.story-words h2 { margin: 0 0 26px; font-weight: 500; font-size: 50px; line-height: 1.08; letter-spacing: 0.005em; }
+.story-words p { margin: 0; font-size: 29px; line-height: 1.42; }
+.story-pic.enter { animation: card-in 0.6s ease-out; }
+.story-words.enter { animation: words-in 0.7s ease-out; }
+@keyframes card-in { 0% { transform: translateX(-26px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes words-in { 0% { transform: translateY(14px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.story-dots { position: absolute; display: flex; gap: 12px; }
+.story-dots .dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--muted); box-sizing: border-box; }
+.story-dots .dot.cur { background: var(--ink); border-color: var(--ink); }
+
+/* the symbols of card 5, in the grid of Will it last?: a key, the symbols, the words */
+.sym { margin-top: 34px; display: grid; grid-template-columns: 74px auto; column-gap: 18px; row-gap: 12px; align-items: baseline; }
+.sym .key { font: 600 14px var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.sym .what { font-size: 25px; }
+.sym .what .say { display: block; font: italic 19px var(--serif); color: var(--muted); margin-top: 2px; }
+.sym .rule { grid-column: 1 / -1; border-top: 1.5px solid var(--rule); height: 0; }
+
+/* ===== the sky at four hours, the city across the street (../will-it-last) */
+
+.t-morning .sky0 { stop-color: #86C3EC; }
+.t-morning .sky1 { stop-color: #CDE6F4; }
+.t-morning .sky2 { stop-color: #F8E2C2; }
+.t-day .sky0 { stop-color: #4FA9E3; }
+.t-day .sky1 { stop-color: #A4D5F2; }
+.t-day .sky2 { stop-color: #DDF0FA; }
+.t-dusk .sky0 { stop-color: #2B3672; }
+.t-dusk .sky1 { stop-color: #8F5A97; }
+.t-dusk .sky2 { stop-color: #F0965E; }
+.t-night .sky0 { stop-color: #0A1136; }
+.t-night .sky1 { stop-color: #1A2458; }
+.t-night .sky2 { stop-color: #2F3B77; }
+
+.sun { fill: #FFD27A; }
+.sun-halo { fill: #FFFFFF; opacity: 0.38; }
+.cloud { fill: #FFFFFF; opacity: 0.85; }
+.moon { fill: #FFF0C4; }
+.star { fill: #FFF6DA; }
+
+.t-morning .bld-b { fill: #B9CFE3; }
+.t-morning .bld-f { fill: #90AFCD; }
+.t-morning .win { fill: #DDEAF5; }
+.t-day .bld-b { fill: #A3C5E1; }
+.t-day .bld-f { fill: #7BA3C7; }
+.t-day .win { fill: #D6E7F4; }
+.t-dusk .bld-b { fill: #5D5189; }
+.t-dusk .bld-f { fill: #3C3A70; }
+.t-dusk .win { fill: #2F2D5C; }
+.t-night .bld-b { fill: #232B60; }
+.t-night .bld-f { fill: #171D4A; }
+.t-night .win { fill: #11163B; }
+.win.lit { fill: #FFCF6B; }
+
+/* ===== the balcony: a deck of boards and a railing in front of the street */
+
+.deck { fill: #B9875A; }
+.deck-line { fill: none; stroke: #98693F; stroke-width: 0.9; }
+.rail { fill: #E9E4DA; }
+.rail-bar { fill: none; stroke: #E9E4DA; stroke-width: 1.5; }
+.t-dusk .deck { fill: #7C5A4A; }
+.t-dusk .deck-line { stroke: #634536; }
+.t-dusk .rail, .t-night .rail { fill: #9C97B4; }
+.t-dusk .rail-bar, .t-night .rail-bar { stroke: #9C97B4; }
+.t-night .deck { fill: #3E3B5E; }
+.t-night .deck-line { stroke: #2F2C4C; }
+
+/* the zoom from her phone to the big one: dark lines by day, light by night */
+.zoom-ring, .zoom-lead { fill: none; stroke: #26456E; stroke-width: 1.1; opacity: 0.55; }
+.zoom-lead { stroke-dasharray: 3 2.6; }
+.t-dusk .zoom-ring, .t-dusk .zoom-lead, .t-night .zoom-ring, .t-night .zoom-lead { stroke: #FFFFFF; opacity: 0.7; }
+
+/* ===== the rose in its pot */
+
+.pot { fill: #C8693F; }
+.pot-rim { fill: #B05A33; }
+.stem { fill: none; stroke: #3F7D3A; stroke-width: 2; stroke-linecap: round; }
+.leaf { fill: #4E9645; }
+.petal { fill: #E9819F; }
+.petal-dk { fill: #C9587A; }
+.sepal { fill: #3F7D3A; }
+.t-night .leaf, .t-dusk .leaf { fill: #3C6E3A; }
+
+/* ===== Lina (../will-it-last) */
+
+.ln-shadow { fill: #1B1630; opacity: 0.18; }
+.ln-skin { fill: #E3A983; }
+.ln-skin-dk { fill: #C98C66; }
+.ln-cheek { fill: #F07E70; opacity: 0.45; }
+.ln-hair { fill: #2C2140; }
+.ln-top { fill: #109C7B; }
+.ln-top-dk { fill: #0B7A60; }
+.ln-arm { fill: none; stroke: #0C876A; stroke-width: 5.6; stroke-linecap: round; }
+.ln-string { fill: none; stroke: #F4EFE6; stroke-width: 0.9; stroke-linecap: round; }
+.ln-leg { fill: none; stroke: #2B3A67; stroke-width: 8; stroke-linecap: round; }
+.ln-shoe { fill: #F4F1EA; }
+.ln-phone { fill: #1D2142; }
+.ln-cam { fill: #59608F; }
+.ln-eye { fill: #2C2140; }
+.ln-brow { fill: none; stroke: #2C2140; stroke-width: 1.1; stroke-linecap: round; }
+.ln-mouth { fill: none; stroke: #6B2A2A; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.ln-mouth-o { fill: #6B2A2A; }
+.ln-sweat { fill: #8FD3FF; }
+
+/* ===== the phone blown up (../will-it-last, Views.Phone), in phone units */
+
+.ph-body { fill: #262D52; stroke: rgba(19, 26, 62, 0.55); stroke-width: 0.5; }
+.ph-screen { fill: #FFFFFF; }
+.ph-notch { fill: #10142E; }
+.ph-day { font: 700 2.7px var(--sans); fill: #3A4060; }
+.ph-signal rect, .ph-bat-fill, .ph-bat-tip { fill: #3A4060; }
+.ph-bat { fill: none; stroke: #3A4060; stroke-width: 0.35; }
+.ph-title { font: 600 2.4px var(--sans); letter-spacing: 0.35px; fill: #6B7390; text-anchor: middle; }
+.ph-sep { stroke: #DCDFE8; stroke-width: 0.3; }
+
+/* the photo of the bud, its aphids and the badge with the count */
+.photo-bg { fill: #DCE7D0; }
+.photo-leaf { fill: #A9C98F; opacity: 0.7; }
+.aphid { fill: #A6D66F; stroke: #5F8F33; stroke-width: 0.16; }
+.aphid-leg { fill: none; stroke: #5F8F33; stroke-width: 0.14; stroke-linecap: round; }
+.badge-c { fill: #C2352B; }
+.badge-t { font: 700 2.6px var(--sans); fill: #FFFFFF; text-anchor: middle; dominant-baseline: central; }
+.flash-rect { fill: #FFFFFF; opacity: 0; }
+
+/* the small chart on the phone: the day across, the aphids up */
+.ch-axis { fill: none; stroke: #6B7390; stroke-width: 0.3; }
+.ch-tick { font: 600 1.7px var(--sans); fill: #6B7390; text-anchor: middle; }
+.ch-pt { fill: #1D1A16; }
+.ch-q { fill: none; stroke: #C99A1A; stroke-width: 0.35; stroke-dasharray: 1 0.8; }
+.ch-qm { font: 700 3.4px var(--sans); fill: #C99A1A; text-anchor: middle; }
+
+/* the shop of card 2 */
+.shop-card { fill: #F6F1E7; stroke: #DDD3C0; stroke-width: 0.3; }
+.shop-t { font: 700 2.6px var(--sans); fill: #2B2B2B; text-anchor: middle; }
+.shop-s { font: 600 2.1px var(--sans); fill: #6B6455; text-anchor: middle; }
+.shop-btn { fill: #2E9E55; }
+.shop-btn-t { font: 700 2.4px var(--sans); fill: #FFFFFF; text-anchor: middle; dominant-baseline: central; }
+.shop-check { fill: none; stroke: #FFFFFF; stroke-width: 0.7; stroke-linecap: round; stroke-linejoin: round; }
+.tag { fill: #F2C14E; }
+.tag-t { font: 700 2.3px var(--sans); fill: #4A3500; text-anchor: middle; dominant-baseline: central; }
+
+/* the box of ladybird larvae: kraft, air holes, a ladybird on the lid */
+.kbox { fill: #C99A62; stroke: #8A6236; stroke-width: 0.3; }
+.kbox-lid { fill: #B4834B; stroke: #8A6236; stroke-width: 0.3; }
+.kbox-hole { fill: #6E4A26; }
+.bug { fill: #D23A2A; }
+.bug-head, .bug-spot { fill: #1D1A16; }
+.bug-line { fill: none; stroke: #1D1A16; stroke-width: 0.25; }
+
+/* the desk calendar and the callout (../will-it-last) */
+.cal-shadow { fill: #1B1630; opacity: 0.2; }
+.cal-page { fill: #F7F3EA; }
+.cal-top { fill: #F2C14E; }
+.cal-ring { fill: #3A3550; }
+.cal-head { font: 700 6.4px var(--sans); letter-spacing: 1.2px; fill: #4A3500; text-anchor: middle; }
+.cal-n { font: 800 22px var(--sans); fill: #26456E; text-anchor: middle; }
+.callout-bg { fill: #FFFFFF; }
+.callout-a { font: 800 11px var(--sans); fill: #26456E; text-anchor: middle; }
+.callout-b { font: 600 7.4px var(--sans); fill: #4A5378; text-anchor: middle; }
+.callout-lead { fill: none; stroke: #FFFFFF; stroke-width: 1.1; stroke-dasharray: 2.4 2.4; opacity: 0.85; }
+.callout-dot { fill: none; stroke: #FFFFFF; stroke-width: 1; }
+
+/* ===== card 5: the blackboard, in chalk white and chalk yellow (../will-it-last) */
+
+.bd0 { stop-color: #284A40; }
+.bd1 { stop-color: #1A342D; }
+.bd-wood { fill: #87562F; }
+.bd-dust { fill: #FFFFFF; opacity: 0.045; }
+.bd-tray { fill: #6B4223; }
+.bd-tray-hi { fill: #A6764A; }
+.bd-felt { fill: #3E3A52; }
+.bd-eraser { fill: #C9A46B; }
+.bd-chalk { fill: #F2EFE6; }
+.bd-chalk.y { fill: #F6D365; }
+.bd-axis { fill: none; stroke: #E9EEE7; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; }
+.bd-tick { fill: none; stroke: #E9EEE7; stroke-width: 1.1; opacity: 0.9; }
+.bd-lab { font: 700 10px var(--sans); fill: #E9EEE7; text-anchor: middle; }
+.bd-lab.end { text-anchor: end; dominant-baseline: central; }
+.bd-dot { fill: #F2EFE6; }
+.bd-q { fill: none; stroke: #F6D365; stroke-width: 1.3; stroke-dasharray: 4 3; stroke-linecap: round; }
+.bd-y { font: 800 12px var(--sans); fill: #F6D365; }
+.bd-y.end { text-anchor: end; }
+.bd-qm { font: 800 19px var(--serif); fill: #F6D365; text-anchor: middle; }
+.bd-f { font: italic 700 15px var(--serif); fill: #F6D365; text-anchor: end; }
+.bd-box { fill: none; stroke: #F6D365; stroke-width: 1.1; stroke-linejoin: round; }
+
+/* ===== motion: only on a forward click (the class play); still and Back show the end */
+
+.play .pop { animation: st-pop 0.45s ease-out both; }
+@keyframes st-pop { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+.pop { transform-box: fill-box; transform-origin: center; }
+.play .flash-rect { animation: st-flash 0.5s ease-out 0.25s; }
+@keyframes st-flash { 0% { opacity: 0; } 25% { opacity: 0.95; } 100% { opacity: 0; } }
+.play .slide-up { animation: st-up 0.7s ease-out both; }
+@keyframes st-up { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: none; opacity: 1; } }
+.play .order-btn { animation: st-out 0.3s ease-in 1.4s both; }
+@keyframes st-out { 0% { opacity: 1; } 100% { opacity: 0; } }
+.order-done { opacity: 1; }
+.play .order-done { animation: st-in 0.3s ease-out 1.5s both; }
+@keyframes st-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+.play .draw { stroke-dasharray: 400; animation: st-draw 1.1s ease-in-out both; }
+@keyframes st-draw { 0% { stroke-dashoffset: 400; } 100% { stroke-dashoffset: 0; } }
+.play .pulse-once { animation: st-pulse 0.9s ease-in-out both; }
+@keyframes st-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.5); } 100% { transform: scale(1); } }
+.pulse-once { transform-box: fill-box; transform-origin: center; }
+.play .fade-in { animation: st-in 0.8s ease-out both; }

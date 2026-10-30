@@ -1,0 +1,370 @@
+/* Will it last? Page 2, the verdict: the rate, the room's two answers, the
+   calendar of the 30 days, the play button, the verdict and the calculator
+   strip; and the month view's own marks (what goes over the plan, the day
+   marker, the snail). The page uses the round grid of css/round.css. */
+
+.verdict-right { gap: 0.75rem; }
+
+/* ===== the rate ===== */
+
+.rate-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.rate-bar {
+  --cut: 1.3rem;
+  --loz-line: linear-gradient(90deg, var(--gold-lo), var(--gold-hi) 50%, var(--gold-lo));
+  --loz-fill: linear-gradient(180deg, var(--panel-solid), var(--panel-solid));
+  flex: 1;
+  height: 3.2rem;
+}
+.rate-bar > .loz-in {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 1.6rem 0 1.9rem;
+}
+.rate-bar .guess-label { font-size: 1.6rem; }
+.rate-val,
+.rate-input {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.rate-val {
+  padding: 0 0.05em;
+  border: 0;
+  border-bottom: 2px dotted var(--gold);
+  background: none;
+  cursor: text;
+}
+.rate-val:hover { background: var(--panel-hi); }
+.rate-input {
+  width: 6ch;
+  padding: 0 0.15em;
+  border: 1px solid var(--gold);
+  border-radius: 0.3rem;
+  background: var(--panel-hi);
+  outline: none;
+}
+.rate-unit {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.rate-src {
+  margin-left: auto;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-ink);
+  white-space: nowrap;
+}
+
+/* ===== the room's answer: A or B ===== */
+
+.answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.answer {
+  --cut: 1.3rem;
+  --loz-line: var(--line-2);
+  --loz-fill: linear-gradient(180deg, var(--panel-solid), var(--panel-solid));
+  height: 3.6rem;
+  border: 0;
+  color: var(--ink);
+  transition: transform 0.15s ease, filter 0.2s ease;
+}
+.answer:hover { --loz-line: var(--gold-glow); }
+.answer:active { transform: scale(0.99); }
+.answer > .loz-in {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.5rem 0 1.8rem;
+}
+.ans-key {
+  display: inline-grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--gold-ink);
+  flex: 0 0 auto;
+}
+.ans-text {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  white-space: nowrap;
+}
+.ans-tag {
+  margin-left: auto;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  visibility: hidden;
+}
+/* Locked: the final answer turns gold, as on the television. */
+.answer.locked {
+  --loz-line: linear-gradient(180deg, var(--gold-hi), var(--gold-lo));
+  --loz-fill: linear-gradient(180deg, var(--gold-hi) 0%, var(--gold) 45%, var(--gold-lo) 100%);
+  color: var(--on-gold);
+  filter: drop-shadow(0 0.3rem 0.9rem var(--gold-glow));
+}
+.answer.locked .ans-key { border-color: var(--on-gold); color: var(--on-gold); }
+.answer.locked .ans-tag { visibility: visible; }
+/* After the verdict: the right answer glows, a wrong locked one turns
+   vermillion. Each also keeps its words and its key letter. */
+.answer.right:not(.locked) { --loz-line: linear-gradient(90deg, var(--gold), var(--gold-hi), var(--gold)); animation: right-blink 1.2s ease 2 both; }
+.answer.right .ans-tag { visibility: visible; }
+.answer.right:not(.locked) .ans-tag { color: var(--gold-ink); }
+.answer.wrong {
+  --loz-line: var(--down);
+  --loz-fill: linear-gradient(180deg, var(--down-ink), var(--down));
+  color: #FFFFFF;
+  filter: none;
+}
+.answer.wrong .ans-key { border-color: #FFFFFF; color: #FFFFFF; }
+@keyframes right-blink {
+  0%, 100% { filter: none; }
+  50% { filter: drop-shadow(0 0 0.8rem var(--gold-glow)); }
+}
+
+/* ===== the calendar: 30 days, ten to a row ===== */
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+.day {
+  position: relative;
+  height: 3.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+  border-radius: 0.55rem;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.day .d-num {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--ink-2);
+}
+.day .d-icon:empty { display: none; }
+.day .d-icon svg { display: block; width: 1.7rem; height: 1.7rem; }
+/* a used day carries a small bar of data along its foot */
+.day::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  right: 22%;
+  bottom: 0.32rem;
+  height: 0.22rem;
+  border-radius: 0.2rem;
+  background: var(--sq-guess-line);
+  opacity: 0.55;
+}
+.day.today { border: 2px solid var(--gold); background: var(--gold-wash); }
+.day.today .d-num { color: var(--gold-ink); }
+.day.today::before {
+  content: "today";
+  position: absolute;
+  top: 0.18rem;
+  font-family: var(--f-sans);
+  font-weight: 600;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-ink);
+}
+.day.future {
+  background: none;
+  border: 1px dashed var(--line-2);
+}
+.day.future .d-num { color: var(--faint); }
+.day.future::after { display: none; }
+.day.cur { box-shadow: inset 0 0 0 2px var(--gold-glow); }
+.day.out {
+  border: 1px solid var(--down);
+  background: var(--down-wash);
+}
+.day.out .d-num { font-size: 0.85rem; color: var(--down-ink); }
+.day.out .d-icon { color: var(--down-ink); }
+.day.out::after { display: none; }
+.day.pop { animation: day-pop 0.42s var(--ease-out) both; }
+@keyframes day-pop {
+  from { transform: scale(0.82); }
+  60% { transform: scale(1.06); }
+  to { transform: none; }
+}
+
+/* ===== play, then the verdict ===== */
+
+.verdict-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.4rem;
+}
+.play-month {
+  --cut: 1.1rem;
+  height: 3.3rem;
+  flex: 0 0 auto;
+}
+.play-month > .loz-in { font-size: 1.35rem; padding: 0 1.8rem 0 2rem; }
+.play-month .i-pause { display: none; }
+.play-month.playing .i-play { display: none; }
+.play-month.playing .i-pause { display: inline-flex; }
+.play-month.hidden { display: none; }
+
+.verdict-banner {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: 1rem;
+  align-items: center;
+  padding: 0.45rem 1rem 0.5rem 1.2rem;
+  border-radius: 0.9rem;
+  border: 2px solid var(--line-2);
+  border-left-width: 0.45rem;
+  background: var(--panel);
+}
+.verdict-banner:empty { display: none; }
+.verdict-banner .vb-main {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 2.05rem;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.verdict-banner .vb-icon { width: 2.1rem; height: 2.1rem; flex: 0 0 auto; }
+.verdict-banner .vb-sub {
+  grid-column: 1;
+  font-family: var(--f-sans);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ink-2);
+}
+.verdict-banner .judge { grid-column: 2; grid-row: 1 / span 2; }
+.verdict-banner.out { border-color: var(--down); background: var(--down-wash); }
+.verdict-banner.out .vb-main { color: var(--down-ink); }
+.verdict-banner.lasts { border-color: var(--gold); background: var(--gold-wash); }
+.verdict-banner.lasts .vb-main { color: var(--gold-ink); }
+.verdict-banner.pop { animation: rise 0.6s var(--ease-out) both; }
+
+.judge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 1rem 0.35rem 0.8rem;
+  border-radius: 999px;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.judge svg { width: 1.2rem; height: 1.2rem; }
+.judge.right { background: var(--gold); color: var(--on-gold); box-shadow: 0 0.3rem 1rem var(--gold-glow); }
+.judge.wrong { background: var(--down); color: #FFFFFF; }
+
+/* The calculator strip: the two lines that decide it. */
+.calc {
+  display: none;
+  padding: 0.55rem 1.2rem 0.6rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--line-2);
+  background: linear-gradient(180deg, var(--code-bg-2), var(--code-bg));
+  box-shadow: var(--shadow-soft);
+}
+.calc.show { display: block; }
+.calc.pop { animation: rise 0.6s var(--ease-out) 0.15s both; }
+.calc-line {
+  display: grid;
+  grid-template-columns: 9.5rem auto minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: baseline;
+}
+.calc-line .ck {
+  font-family: var(--f-mono);
+  font-size: 1.15rem;
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+}
+.calc-line .cv {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.calc-line .cc {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  white-space: nowrap;
+}
+.calc-line .cc.out { color: var(--down-ink); }
+.calc-line .cc.lasts { color: var(--gold-ink); }
+
+/* ===== the month view's own marks ===== */
+
+.over { fill: var(--down-fill); }
+.over-pat { opacity: 1; }
+.brick.today { stroke: var(--gold); }
+.brick.pop {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: brick-pop 0.38s var(--ease-out) both;
+}
+@keyframes brick-pop {
+  from { opacity: 0; transform: translateY(-2.5px) scaleY(0.6); }
+  to { opacity: 1; transform: none; }
+}
+.day-mark path { fill: var(--gold); }
+.day-mark text {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 2.8px;
+  fill: var(--gold-ink);
+  dominant-baseline: central;
+}
+.snail { color: var(--down-ink); }
+.view-panel.out-flash { animation: out-flash 1.3s ease both; }
+@keyframes out-flash {
+  0% { box-shadow: var(--shadow-soft), 0 0 0 0 var(--down-fill); }
+  30% { box-shadow: var(--shadow-soft), 0 0 2.4rem 0.3rem var(--down-fill); border-color: var(--down); }
+  100% { box-shadow: var(--shadow-soft), 0 0 1rem 0 rgba(0, 0, 0, 0); }
+}
+/* a what-if rate so high that the data is gone by day 17 */
+.day.today.out::before { display: none; }
