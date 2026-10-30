@@ -62,6 +62,16 @@ export const materials = {
       { label: 'Handout', url: file('slides/attention-handout.pdf') },
     ],
   },
+  'slides/attention-cscs': {
+    kind: 'slides',
+    title: 'Attention and transformers, the workshop version',
+    summary:
+      'The workshop deck that the attention deck grew from, frame for frame: attention on Wuggish in its earlier encoding (sections 1 to 3), then multi-headed attention, cross-attention, masked self-attention, training a transformer, positional encodings, residual blocks and the transformer of Vaswani et al. (sections 4 to 10).',
+    links: [
+      { label: 'Slides', url: file('slides/attention-cscs-slides.pdf') },
+      { label: 'Handout', url: file('slides/attention-cscs-handout.pdf') },
+    ],
+  },
 
   // Visualizations: pages that run in the browser, with nothing to install.
   'viz/will-it-last': {

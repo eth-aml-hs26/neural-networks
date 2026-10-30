@@ -7,7 +7,7 @@ https://eth-aml-hs26.github.io/neural-networks/
 
 | Kind | What |
 |---|---|
-| Slides | Five decks, each as projected (a page for every click) and as a handout (a page per slide): the cold intro on William James, hinge-fan networks, hinge-chain networks, language models, attention. |
+| Slides | Six decks, each as projected (a page for every click) and as a handout (a page per slide): the cold intro on William James, hinge-fan networks, hinge-chain networks, language models, attention, and the workshop version of attention and transformers, whose second half covers the transformer. The decks link the pages of this site wherever they refer to one. |
 | Visualizations | Eight pages that run in the browser: the quiz show *Will it last?*, the four grasshopper pages on gradient descent, the hinge-fan and hinge-chain networks, and the Wuggish game. |
 | Notes | The lecture notes on hinge-chain networks and two explainer notes on ReLU networks. |
 | Notebook | A tiny language model, to run in Google Colab. |

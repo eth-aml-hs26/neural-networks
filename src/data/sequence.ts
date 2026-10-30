@@ -1,5 +1,5 @@
 import type { Block } from '../types';
-import { soon, step } from './steps';
+import { step } from './steps';
 
 /**
  * THE SEQUENCE: the order in which the site lists the material, lecture by lecture. Edit
@@ -7,8 +7,9 @@ import { soon, step } from './steps';
  * materials.ts by its id (tsc rejects an unknown id), and soon() names one still to be made.
  *
  * It follows the running order of the private course repository,
- * docs/lecture-plans/neural-networks-llms-transformers.md at commit e3834ab (30 October
- * 2026). The numbers in the comments are the items of that order. Item 1, the deck on the
+ * docs/lecture-plans/neural-networks-llms-transformers.md at commit 7a143cc (30 October
+ * 2026, after the cold intro and the hinge-fan deck were aligned with it). The numbers in
+ * the comments are the items of that order. Item 1, the deck on the
  * experimental studies, is course administration and stays on Moodle.
  */
 
@@ -32,6 +33,10 @@ export const sequence: Block[] = [
       step('viz/hinge-fan-networks'), // 8, its page
       step('slides/hinge-chain-networks'), // 9
       step('viz/hinge-chain-networks'), // 9, its page
+      step('slides/hinge-fan-networks', {
+        title: 'Hinge-fan networks, frame 9',
+        note: 'The chain and the fan side by side, after the hinge-chain deck.',
+      }), // 9, then the fan deck's last frame
       step('notes/shallow-relu-networks', { note: 'To read after the lecture.' }),
       step('notes/hinge-chain-networks', { note: 'To read after the lecture.' }),
     ],
@@ -59,10 +64,10 @@ export const sequence: Block[] = [
         note: 'The network of the notebook, every block with its size, and its results.',
       }), // 14
       step('notebooks/tiny_language_model', { note: 'Run it in Colab after the lecture.' }), // 14
-      soon(
-        'Transformers',
-        'Masked self-attention, positional encodings, residual blocks, multi-headed attention, the transformer of a language model, cross-attention, and writing one token at a time.',
-      ), // 15
+      step('slides/attention-cscs', {
+        title: 'Transformers',
+        note: 'Sections 4 to 10 of the workshop version, in this order: masked self-attention, positional encodings, residual blocks, multi-headed attention, cross-attention and the full transformer, then the last frame of section 7, one token at a time. Its sections 1 to 3 cover attention as the deck above does, in an earlier encoding of Wuggish.',
+      }), // 15, for now the CSCS frames
     ],
   },
 ];

@@ -62,17 +62,29 @@ folders by hand: the script rebuilds them from scratch on every run.
 ## Content state
 
 - **DRAFT.** The sequence follows the running order that a session wrote on 30 October 2026,
-  `docs/lecture-plans/neural-networks-llms-transformers.md` of `aml-hs26` at commit `e3834ab`:
-  Monday 2 November (items 2 to 9 of that order, then the two notes to read), Thursday 5 November
-  (item 10) and the slot after (items 11 to 15). Its item 1, the deck on the experimental studies,
-  is course administration and stays on Moodle. Carlos has not confirmed the order yet, so
-  `SEQUENCE_IS_DRAFT` is `true`.
-- **OPEN.** The transformer part is a `soon()` step until its deck is ported from CSCS (section
-  "The transformer part, in order" of the running order).
-- **OPEN.** The running order asks for changes that are not made yet: the cold intro's excerpts in
-  the new order, the archived ladder cut from the hinge-fan deck, the dates on the title pages. When
-  a deck is rebuilt for them, refresh the copies here.
-- The copies match `aml-hs26` at commit `e3834ab` (30 October 2026).
+  `docs/lecture-plans/neural-networks-llms-transformers.md` of `aml-hs26` at commit `7a143cc`:
+  Monday 2 November (items 2 to 9 of that order, frame 9 of the hinge-fan deck after the chain, then
+  the two notes to read), Thursday 5 November (item 10) and the slot after (items 11 to 15). Its
+  item 1, the deck on the experimental studies, is course administration and stays on Moodle.
+  Carlos agreed to the order that evening and had the cold intro and the hinge-fan deck aligned with
+  it; `SEQUENCE_IS_DRAFT` stays `true` while the date of the slot after is open.
+- The transformer step shows sections 4 to 10 of the workshop version (`slides/attention-cscs`, the
+  CSCS deck in the course's format), in the order of the section "The transformer part, in order"
+  of the running order, until a port in the new encoding of Wuggish exists.
+- **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
+  is rebuilt for them, refresh the copies here. The attention deck and the game will be rebuilt on a
+  new Wuggish (`docs/visualizations/wuggish-game/SPEC.md` of `aml-hs26`); refresh them here then.
+- The copies match `aml-hs26` at commit `7a143cc` (30 October 2026).
+
+## The decks link this site
+
+Since 30 October 2026 the decks of `aml-hs26` link this site wherever a slide refers to a page:
+every mention of a page links `viz/<page>/`, a frame that sends the room to a page prints its
+address (the Wuggish game's frame adds a QR code), and the language model deck opens the notebook
+in Colab from `public/notebooks/tiny_language_model.ipynb` on `main`. The addresses are written in
+`docs/slides/nn-site.tex` of `aml-hs26`, and `scripts/publish_nn_site.py` refuses to run when a deck
+links a page or notebook that it would not publish. PDFs that students have keep those links, so
+keep the folder names of the pages, the name of the notebook and the base `./` of the build.
 
 ## Deployment
 
