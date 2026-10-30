@@ -72,11 +72,10 @@ folders by hand: the script rebuilds them from scratch on every run.
   CSCS deck in the course's format), in the order of the section "The transformer part, in order"
   of the running order, until a port in the new encoding of Wuggish exists.
 - **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
-  is rebuilt for them, refresh the copies here. The game runs on the new Wuggish
-  (`docs/visualizations/wuggish-game/SPEC.md` of `aml-hs26`) since its refresh of 30 October 2026.
-  The attention deck is being rebuilt on it: once it lands, refresh it here together with its
-  summary in `src/data/materials.ts`, which still says "eight words".
-- The copies match `aml-hs26` at commit `ebdeb2c` (30 October 2026).
+  is rebuilt for them, refresh the copies here. The game and the attention deck run on the new
+  Wuggish (`docs/visualizations/wuggish-game/SPEC.md` of `aml-hs26`) since their refreshes of
+  30 October 2026.
+- The copies match `aml-hs26` at commit `f6032e8` (30 October 2026).
 
 ## The decks link this site
 

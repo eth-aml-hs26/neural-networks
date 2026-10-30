@@ -56,7 +56,7 @@ export const materials = {
     kind: 'slides',
     title: 'Attention',
     summary:
-      'How a word reads the words around it, on Wuggish, a toy language of eight words: queries, keys, scores and values by hand with zeros and ones, then the three blocks of weights, the softmax and the formula.',
+      'How a word reads the words around it, on Wuggish, a toy language of eleven words in which a word is a row and a feature a column: queries, keys, scores and values by hand with zeros and ones, until the new row of “kat” lands on the row of “lepperd”; then the three blocks of weights, the softmax and the formula.',
     links: [
       { label: 'Slides', url: file('slides/attention-slides.pdf') },
       { label: 'Handout', url: file('slides/attention-handout.pdf') },
