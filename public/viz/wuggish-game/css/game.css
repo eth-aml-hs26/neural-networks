@@ -1,20 +1,28 @@
-/* game.css : layout of the game screens.  Tokens live in style.css. */
+/* game.css : layout of the game screens.  The page and art tokens live in
+ * style.css; the feedback tokens are here.  scripts/check-palette.js gates
+ * both (2026-10-30): the three answer colours stay apart for colour-blind
+ * viewers, so a wrong picture is a vermilion or a clear yellow swatch, and
+ * its text and glyph take the darker -ink colour that reads on the page. */
 
 :root {
   --ok: #0072b2;      /* Okabe-Ito blue: correct */
-  --bad: #d55e00;     /* Okabe-Ito vermilion: a word of the sentence is missing */
-  --add: #876800;     /* yellow: nothing missing, something added that was never said */
+  --bad: #c95400;     /* vermilion swatch: a word of the sentence is missing */
+  --bad-ink: #b84a00; /* its text */
+  --add: #f3d63e;     /* yellow swatch: nothing missing, something added that was never said */
+  --add-ink: #7a6200; /* its text */
   --ok-soft: rgba(0, 114, 178, 0.16);
-  --bad-soft: rgba(213, 94, 0, 0.14);
-  --add-soft: rgba(233, 196, 26, 0.3);
+  --bad-soft: rgba(201, 84, 0, 0.13);
+  --add-soft: rgba(243, 214, 62, 0.34);
   --ft: #5a527e;      /* a feature's name on the reveal; a word stays in ink */
 }
 [data-theme="dark"] {
   --ok: #5ba7e0;
-  --bad: #f28e3b;
+  --bad: #d9601a;
+  --bad-ink: #f28e3b;
   --add: #f0e442;     /* Okabe-Ito yellow */
+  --add-ink: #f0e442;
   --ok-soft: rgba(91, 167, 224, 0.22);
-  --bad-soft: rgba(242, 142, 59, 0.2);
+  --bad-soft: rgba(217, 96, 26, 0.2);
   --add-soft: rgba(240, 228, 66, 0.17);
   --ft: #b3abdc;
 }
@@ -63,9 +71,25 @@ h2 { font-size: 30px; margin: 0 0 4px; }
   font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 64px; line-height: 1.1;
   margin: 0 0 14px;
 }
-.pair { display: flex; gap: 48px; justify-content: center; align-items: flex-end; flex-wrap: wrap; }
+.pair { display: flex; gap: 30px; justify-content: center; align-items: flex-end; flex-wrap: wrap; }
 .pair .art { max-width: 100%; }
 .pair .cap { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 26px; margin-top: 6px; min-height: 1.3em; }
+/* an adjective's card: one pair per thing it fits, side by side */
+.pairs { display: flex; gap: 22px 64px; justify-content: center; align-items: flex-end; flex-wrap: wrap; }
+.pairs .pair { min-width: 0; max-width: 100%; }
+/* a word with a look beside its phrase: one picture, two ways to say it */
+.wordcard.same .art { margin: 0 auto; max-width: 100%; height: auto; }
+.wordcard .names { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 30px; margin: 10px 0 0; }
+.wordcard .names .eq { color: var(--ink2); margin: 0 16px; }
+.wordcard.same .small { margin: 4px 0 0; }
+/* on a phone each pair keeps its two pictures on one row, each half wide */
+@media (max-width: 880px) {
+  .pairs .pair { flex-wrap: nowrap; gap: 12px; width: 100%; }
+  .pairs .pair > div { flex: 1 1 0; }
+  .pairs .pair .art { width: 100%; height: auto; }
+  .pair .cap { font-size: 21px; }
+  .wordcard .word { font-size: 52px; }
+}
 
 /* items */
 .bag { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 4px 0 20px; }
@@ -99,15 +123,15 @@ h2 { font-size: 30px; margin: 0 0 4px; }
 .opt.wrong[disabled] { opacity: 0.62; }
 .opt.correct::after, .opt.wrong::after { position: absolute; top: 5px; right: 9px; font-size: 17px; line-height: 1; }
 .opt.correct::after { content: "\2713"; color: var(--ok); }
-.opt.wrong::after { content: "\2715"; color: var(--bad); }
+.opt.wrong::after { content: "\2715"; color: var(--bad-ink); }
 /* .added: the picture leaves nothing out, it shows a change the sentence never
    asked for.  Yellow, against vermilion for a word of the sentence missing. */
 .opt.wrong.added { border-color: var(--add); background: var(--add-soft); }
-.opt.wrong.added::after { color: var(--add); }
-.feedback.bad.added { color: var(--add); }
+.opt.wrong.added::after { color: var(--add-ink); }
+.feedback.bad.added { color: var(--add-ink); }
 .feedback { font-size: 19px; margin: 18px 0 0; min-height: 1.6em; text-align: center; }
 .feedback.ok { color: var(--ok); }
-.feedback.bad { color: var(--bad); }
+.feedback.bad { color: var(--bad-ink); }
 .feedback .w { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 22px; }
 .actions { text-align: center; }
 
@@ -125,31 +149,45 @@ h2 { font-size: 30px; margin: 0 0 4px; }
 
 /* reveal */
 .reveal .lead { margin-bottom: 20px; }
-.map { display: inline-block; border: 1px solid var(--rule); border-radius: 4px; padding: 14px 18px; background: var(--card); }
+.reveal .lead.punch {
+  font-size: 22px; background: var(--ok-soft); border-left: 4px solid var(--ok);
+  border-radius: 4px; padding: 10px 16px; margin: 14px 0 6px;
+}
+
+/* screen 2: the map, one row and one column per word of the sentence */
+.map { display: inline-block; box-sizing: border-box; max-width: 100%; overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; padding: 14px 18px; background: var(--card); }
 .map table { border-collapse: collapse; }
-.map th { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 500; font-size: 22px; padding: 6px 12px; text-align: center; }
+.map th { font-weight: 500; font-size: 22px; padding: 6px 12px; text-align: center; }
 .map th.q { text-align: right; }
+.map th.top .w { font-size: 20px; }
 .map td { width: 76px; height: 46px; border: 1px solid var(--rule); text-align: center; }
+.map td.side { border: 0; width: auto; font-size: 13px; color: var(--ink2); text-align: left; padding-left: 10px; white-space: nowrap; }
+.map tr.faded th, .map tr.faded td { opacity: .45; }
 .map td.lit { background: var(--ok-soft); }
 .map td.lit::after { content: ""; display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--ok); }
 .map td.dim::after { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--rule); }
 .axis { font-size: 13px; color: var(--ink2); }
 .sum { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+.sum > * { min-width: 0; }
 .sum .op { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 34px; color: var(--ink2); }
-.sum .layer { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 26px; border: 1px dashed var(--rule); border-radius: 6px; padding: 8px 14px; }
+.sum .layer { font-size: 26px; border: 1px dashed var(--rule); border-radius: 6px; padding: 8px 14px; }
 .gloss { border-collapse: collapse; font-size: 20px; }
-.gloss td { padding: 6px 22px 6px 0; border-bottom: 1px solid var(--rule); }
-.gloss td:first-child { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 26px; }
-.gloss td:last-child { color: var(--ink2); }
+.gloss td { padding: 4px 22px 4px 0; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.gloss td.gw .w { font-size: 26px; }
+.gloss td.gl { color: var(--ink2); }
+.gloss td.gp { font-size: 17px; color: var(--ink2); white-space: nowrap; }
+.gloss td.gthumb { width: 52px; padding-right: 10px; }
+.gloss td.gthumb .art { display: block; }
 
 /* the tables and the matrix product, reveal screens 3 to 7.  Every number
    shown on these screens is computed in js/vectors.js from the lexicon;
    nothing here knows what the values are, only how to set a 1 apart from a
-   0, and a word apart from a feature. */
+   0, and a word, a feature and a slot apart from each other. */
 
 /* A Wuggish word keeps the game's serif, as on the chips of the bag.  A
-   feature is set in small capitals of the sans, in its own colour, so the
-   two can never be taken for each other (AML, 2026-10-30). */
+   feature is set in small capitals of the sans, in its own colour, and a
+   slot is a number in a small square, so the three can never be taken for
+   each other (AML, 2026-10-30). */
 .reveal .w { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 1.1em; }
 .reveal th .w, .reveal td .w { font-size: 1em; }
 .ft {
@@ -157,21 +195,30 @@ h2 { font-size: 30px; margin: 0 0 4px; }
   font-variant-caps: all-small-caps; letter-spacing: 0.05em; font-weight: 600; font-style: normal;
   color: var(--ft); white-space: nowrap;
 }
+.sl {
+  display: inline-block; min-width: 1.35em; padding: 0 3px; line-height: 1.3;
+  font-family: "SF Mono", Menlo, monospace; font-size: 0.82em; font-weight: 700; font-style: normal;
+  text-align: center; color: var(--ink); border: 1px solid var(--ink2); border-radius: 3px;
+}
+.slothead { font-size: 12px; color: var(--ink2); white-space: nowrap; }
+.ftab.slots tr.heads > th:first-child { text-align: right; vertical-align: bottom; padding: 0 8px 6px 0; font-weight: 400; }
 .worked .op { color: var(--ink2); padding: 0 2px; }   /* NOT .reveal .op: that would restyle screen 2's value sums */
 .reveal .dim { color: var(--ink2); }
 
-.vecpanels { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+.vecpanels { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
 /* min-width: 0, or a flex item keeps its table's width and a phone scrolls
    the whole page sideways; with it, the table scrolls inside the panel */
-.vpanel { border: 1px solid var(--rule); border-radius: 4px; background: var(--card); padding: 14px 18px 10px; max-width: 100%; min-width: 0; }
-.vpanel h3 { font-size: 21px; margin: 0 0 6px; }
-.vpanel .axis { margin: 10px 0 0; max-width: 31em; }
-.vpanel .ftab th.fh { min-width: 46px; }       /* two panels side by side must fit 1120px */
+.vpanel { border: 1px solid var(--rule); border-radius: 4px; background: var(--card); padding: 14px 12px 10px; max-width: 100%; min-width: 0; flex: 1 1 440px; }
+.vpanel h3 { font-size: 21px; margin: 0 0 8px; }
+.vpanel .axis { margin: 10px 0 0; max-width: 34em; }
+.wpair { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.wblock { min-width: 0; max-width: 100%; }
+.wblock .mxname { text-align: left; margin: 0 0 4px 2px; }
 
-/* a table on the features: a row per word, a column per feature */
+/* a table on the features or the slots: a row per word, a column per feature */
 .tablewrap { max-width: 100%; overflow-x: auto; }
 .vtab { border-collapse: separate; border-spacing: 4px 4px; }
-.vtab th.wlab { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-weight: 500; font-size: 24px; text-align: right; padding-right: 8px; white-space: nowrap; }
+.vtab th.wlab { font-weight: 500; font-size: 24px; text-align: right; padding-right: 8px; white-space: nowrap; }
 .vtab td.thumb { text-align: center; padding: 0 4px 0 0; }
 .vtab td.thumb .art { display: inline-block; }
 .vtab td.n { width: 38px; text-align: center; padding: 0; }
@@ -185,26 +232,44 @@ h2 { font-size: 30px; margin: 0 0 4px; }
 .vtab td.n i.one { background: var(--ok-soft); border-color: var(--ok); color: var(--ink); font-weight: 700; }
 .vtab td.vnote { font-size: 13px; color: var(--ink2); padding-left: 10px; white-space: nowrap; }
 .vtab .gap { width: 12px; min-width: 12px; padding: 0; }
+.ftab.slots th.wlab { font-size: 20px; }
+.ftab.slots td.n i { width: 32px; height: 28px; line-height: 27px; font-size: 15px; }
+.ftab.slots td.n { width: 32px; }
+.ftab.wtab th.wlab { font-size: 14px; }
+.ftab.slots th.fh { min-width: 36px; padding: 0 0 4px; }
 
-.ftab th.fh { vertical-align: bottom; text-align: center; font-weight: 400; padding: 0 2px 4px; min-width: 54px; }
+.ftab th.fh { vertical-align: bottom; text-align: center; font-weight: 400; padding: 0 2px 4px; min-width: 50px; }
 .ftab th.fh .ft { display: block; font-size: 14px; line-height: 1.15; }
-.ftab th.fh .qn { display: block; font-size: 12px; line-height: 1.2; color: var(--ink2); font-style: italic; margin: 2px auto 0; max-width: 62px; }
+.ftab th.fh .qn { display: block; font-size: 12px; line-height: 1.2; color: var(--ink2); font-style: italic; margin: 2px auto 0; max-width: 66px; }
 .ftab tr.grp th { padding: 0 0 2px; font-weight: 400; }
 .ftab tr.grp th > span {
   display: block; margin: 0 2px; padding-bottom: 3px; border-bottom: 1px solid var(--ink2);
   font-size: 12px; letter-spacing: 0.04em; color: var(--ink2); text-align: center; white-space: nowrap;
 }
-.ftab.big td.n i { width: 42px; height: 36px; line-height: 35px; font-size: 18px; }
+.ftab.big td.n i { width: 42px; height: 34px; line-height: 33px; font-size: 18px; }
 .ftab.big td.n { width: 42px; }
+.ftab.big th.wlab { font-size: 22px; }
+/* the counts under the table of screen 3: plain numbers, how many words say yes */
+.ftab tr.count td.cnt { font-family: "SF Mono", Menlo, monospace; font-size: 15px; font-weight: 700; color: var(--ok); text-align: center; padding-top: 6px; border-top: 2px solid var(--rule); }
+.ftab tr.count th.wlab { padding-top: 6px; border-top: 2px solid var(--rule); }
+.cntlab { font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif; font-size: 13px; color: var(--ink2); }
 
-/* the sum of screen 6: an operator column, the multiplier, and the line
-   above the result */
+/* the sums of screen 6: an operator column, the multiplier, the line above
+   the result, and the same-row moment: the new row and the dictionary's row
+   framed alike */
 .ftab td.opc { font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 28px; color: var(--ink2); text-align: center; width: 22px; padding: 0; }
 .ftab .mul { font-family: "SF Mono", Menlo, monospace; font-size: 15px; color: var(--ink2); margin-right: 4px; }
 .ftab.sumtab th.wlab { font-size: 21px; }
+.ftab.small-sum th.wlab, .ftab.all th.wlab { font-size: 18px; }
+.ftab.small-sum td.n i, .ftab.all td.n i { width: 32px; height: 28px; line-height: 27px; font-size: 15px; }
+.ftab.small-sum td.n, .ftab.all td.n { width: 32px; }
 .ftab tr.rule td { padding: 0; height: 0; }
 .ftab tr.rule td.ruled { border-top: 2px solid var(--ink2); }
-.lookkind { white-space: nowrap; }   /* NOT .pair: that is the word card's flex row */
+.ftab tr.same td.n i { border-width: 2px; }
+.ftab tr.same td.n i.one { border-color: var(--ink); }
+.ftab tr.same th.wlab { font-weight: 700; }
+.ftab tr.same td.vnote { color: var(--ink); font-weight: 600; }
+.ftab tr.dict td.thumb .art, .ftab tr.total td.thumb .art { outline: 2px solid var(--ok); outline-offset: 2px; border-radius: 3px; }
 
 /* an all-zero row: on screen for honesty, pushed back so the rows that do the
    work read first.  The tables and the matrices of the matmul screen share it. */
@@ -213,22 +278,26 @@ h2 { font-size: 30px; margin: 0 0 4px; }
 table.mx th.col.faded, table.mx td.faded { opacity: .38; }
 table.mx tr.faded td.faded { opacity: 1; }      /* the row is already back */
 
-/* attention(Q, K, V) = softmax(Q Kt / root d) V */
+/* new rows = E + softmax(Q Kt / root k) V */
 .formula {
   font-family: "Iowan Old Style", Palatino, Georgia, serif; font-size: 27px;
   display: flex; align-items: center; justify-content: center; gap: 4px;
-  flex-wrap: wrap; margin: 6px 0 6px;
+  flex-wrap: wrap; margin: 10px 0 6px;
 }
 .formula .op { color: var(--ink2); padding: 0 4px; }
 .formula .paren { font-size: 46px; color: var(--ink2); font-weight: 300; }
 .formula .frac { display: inline-flex; flex-direction: column; text-align: center; font-size: 22px; padding: 0 6px; }
 .formula .frac .den { border-top: 1px solid var(--ink2); padding-top: 2px; margin-top: 2px; }
 
-/* the picture sums again, smaller and side by side, on screen 6 */
-.sums { display: flex; flex-wrap: wrap; align-items: center; column-gap: 44px; }
-.sums .sum { gap: 12px; margin: 2px 0; }
-.sums .sum .op { font-size: 28px; }
-.sums .sum .layer { font-size: 21px; padding: 5px 11px; }
+/* the closer: the two pictures the game accepted, and what attention draws */
+.closerpic { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin: 14px 0 0; max-width: 100%; }
+.closerpic .pic { margin: 0; min-width: 0; max-width: 100%; text-align: center; box-sizing: border-box; }
+.closerpic .pic .art { max-width: 100%; height: auto; margin: 0 auto; }
+.closerpic .pic figcaption { font-size: 13px; color: var(--ink2); margin-top: 4px; }
+.closerpic .pic.att { border: 2px solid var(--ok); border-radius: 6px; padding: 6px 8px 4px; background: var(--card); }
+.closerpic .pic.att figcaption { color: var(--ink); font-weight: 600; }
+.closerpic > .op { font-size: 30px; color: var(--ink2); }
+.closerpic .ar-d { display: none; }
 
 /* a vector inline in a worked line */
 .vec { display: inline-flex; gap: 2px; vertical-align: -5px; margin: 0 4px; }
@@ -239,20 +308,21 @@ table.mx tr.faded td.faded { opacity: 1; }      /* the row is already back */
 }
 .vec i.one { background: var(--ok-soft); border-color: var(--ok); color: var(--ink); font-weight: 700; }
 
-/* Q x Kt = scores on ONE line at 1120px, the stage's width: 30 px cells,
-   and every column label set on its side so a word fits above one cell.
-   Q and the scores sit on their bottom edge, so row i of Q lines up with the
-   row of scores it makes; K transposed and the signs sit in the middle. */
+/* Q x Kt = S on ONE line: 30 px cells, and every word set on its side above
+   its column.  Q and S sit on their bottom edge, so row i of Q lines up with
+   the row of S it makes; K transposed and the signs sit in the middle.  The
+   diagonal of S is drawn in a dashed line, so a 1 below it shows. */
 .matmul { display: flex; gap: 9px; align-items: flex-end; flex-wrap: wrap; margin: 4px 0 18px; max-width: 100%; overflow-x: auto; padding-bottom: 4px; }
-.matmul .op { font-size: 26px; align-self: center; }
+.matmul .op { font-size: 26px; align-self: center; color: var(--ink2); }
 .matmul .mxbox.mid { align-self: center; }
 .mxbox { border: 1px solid var(--rule); border-radius: 4px; background: var(--card); padding: 10px 10px 12px; }
-.mxname { font: 500 13px/1 "SF Mono", Menlo, monospace; color: var(--ink2); margin-bottom: 8px; text-align: center; }
+.mxname { font: 500 13px/1.2 "SF Mono", Menlo, monospace; color: var(--ink2); margin-bottom: 8px; text-align: center; }
 table.mx { border-collapse: separate; border-spacing: 2px; margin: 0 auto; }
 table.mx th.col { vertical-align: bottom; padding: 0 0 4px; font-weight: 400; }
 table.mx th.col.vert > span { writing-mode: vertical-rl; transform: rotate(180deg); display: inline-block; line-height: 1; }
 table.mx th.col .w { font-size: 15px; }
 table.mx th.col .ft { font-size: 14px; letter-spacing: 0.03em; }
+table.mx th.col .sl, table.mx th.rowlab .sl { font-size: 12px; }
 table.mx th.rowlab { text-align: right; padding-right: 5px; white-space: nowrap; font-weight: 400; }
 table.mx th.rowlab .w { font-size: 16px; }
 table.mx th.rowlab .ft { font-size: 12px; }
@@ -261,6 +331,7 @@ table.mx td {
   width: 30px; height: 26px; border: 1px solid var(--rule); border-radius: 3px;
   background: var(--bg); color: var(--ink2);
 }
+table.mx td.diag { border: 1px dashed var(--ink2); }
 table.mx td.hot { background: var(--ok-soft); border-color: var(--ok); color: var(--ink); font-weight: 700; }
 
 .worked {
@@ -273,22 +344,35 @@ table.mx td.hot { background: var(--ok-soft); border-color: var(--ok); color: va
 .reading { border-collapse: collapse; font-size: 18px; margin-top: 4px; }
 .reading th, .reading td { padding: 7px 26px 7px 0; border-bottom: 1px solid var(--rule); }
 .reading th { font-weight: 400; text-align: left; white-space: nowrap; }
-.reading td { white-space: nowrap; }
-.reading td.hi { color: var(--ok); }
+.reading td.hi { color: var(--ok); font-weight: 600; }
 .reading td.lo { color: var(--ink2); }
-.reading td.mark { font-size: 14px; color: var(--ink2); font-style: italic; }
-.reading tr.shared td.hi { font-weight: 700; }
 
 @media (max-width: 880px) {
   .vecpanels { gap: 18px; }
+  .vpanel { flex-basis: 100%; }
   .vtab th.wlab { font-size: 20px; }
   .ftab th.fh .qn { display: none; }           /* the names alone keep the table narrow */
   .ftab.sumtab th.wlab { white-space: normal; font-size: 17px; }
+  .reveal .lead.punch { font-size: 19px; }
+  .map { padding: 10px 10px; }
+  .map th { font-size: 17px; padding: 4px 5px; }
+  .map th.top .w { font-size: 16px; }
+  .map td { width: 40px; height: 36px; }
+  .map td.side { display: none; }              /* the faded rows already say it */
   .reading, .reading td, .reading th { font-size: 16px; }
   .reading th, .reading td { padding-right: 14px; }
-  .reading td.mark { display: none; }          /* the bold hi cell already marks it */
   .reading td.lo { white-space: normal; }
   .worked .why { display: block; margin: 4px 0 0; }
+  .gloss td.gp { white-space: normal; }
+  .closerpic .pic { flex: 1 1 40%; }             /* the two readings side by side */
+  .closerpic > .op { flex-basis: 100%; text-align: center; line-height: 1; }
+  .closerpic .ar-r { display: none; }
+  .closerpic .ar-d { display: inline; }
+  .closerpic .pic.att { flex-basis: 100%; }
+  .formula { font-size: 19px; flex-wrap: nowrap; gap: 2px; }   /* one line on a phone */
+  .formula .paren { font-size: 32px; }
+  .formula .frac { font-size: 15px; padding: 0 3px; }
+  .formula .op { padding: 0 2px; }
 }
 
 kbd { font-family: "SF Mono", Menlo, monospace; border: 1px solid var(--rule); border-radius: 3px; padding: 0 5px; font-size: 13px; }

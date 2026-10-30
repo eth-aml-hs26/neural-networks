@@ -1,54 +1,58 @@
-/* lexicon.js : the vocabulary of Wuggish, locked 2026-09-02.
+/* lexicon.js : the new Wuggish, approved by Carlos on 2026-10-30 (SPEC.md).
  *
- * Wuggish is a sister language of English: every word is the English word
- * one step away, by four rules (see BMAI's docs/lexicon.md).  The game never
- * shows the English gloss before the reveal; the gloss here is for the reveal
- * and for the item generator.
+ * Eleven words for three things, a cat, a pony and a lizard: three plain
+ * nouns, four nouns that name a thing with a look, and four adjectives.
+ * Every word is a row of the nine yes-or-no `features`, in three groups:
+ *   has     what a thing has (fur, hooves, scales): the queries are made of these
+ *   goes    where a look goes (on a coat, on a body): the keys are made of these
+ *   brings  what a look brings (stripes, spots, wings, horn): the values
+ * WQ and WK give, for each feature that has one, its row of the weights: the
+ * slot (1 or 2) it asks or answers in.  WV lists the features a value keeps.
+ * `object` and `flags` are what js/art.js draws: the thing, and the looks a
+ * noun wears from the start; an adjective's `flag` is the look it puts on.
  *
- * `flag` is the modifier name that js/art.js understands, and `nouns` lists
- * the nouns an adjective may attach to.  `streept` is the one shared word.
- *
- * The features, added in AML on 2026-10-30, are what the reveal computes
- * with (js/vectors.js).  A thing is nine yes-or-no answers, the `features`
- * below in the order of the table's columns: four say what kind of thing it
- * is, five say how it looks.  A noun's row is a 1 in each of its `kinds`; an
- * adjective's row is a 1 in its look, its `feature`.  `fits` is the grammar:
- * the kind of thing that look goes with.  An adjective scores 1 with exactly
- * the nouns whose kinds contain its `fits`, which is its `nouns` list again;
- * scripts/check-vectors.js asserts that.
- *
- * The attention deck (docs/slides/attention/figures.py) reads the noun and
- * adjective lines below with regular expressions, so keep every word on one
- * line, with the field syntax as it is.
+ * This file is the one source of the language for the game (js/vectors.js,
+ * js/game.js, js/reveal.js), the item bank (precompute/items.py), the check
+ * (scripts/check-vectors.js) and the attention deck (docs/slides/attention/
+ * figures.py).  Everything after the head line below is strict JSON, read
+ * with json.loads in Python: double quotes, no comments and no trailing
+ * commas inside it.  It is printed by
+ *     python3 precompute/world.py --emit-lexicon
+ * and checked by
+ *     python3 precompute/world.py --lexicon data/lexicon.js
+ * so change the world in world.py and SPEC.md first, with Carlos's yes, and
+ * then paste the emitted object here below these comments.
  */
 window.LEXICON = {
-  name: 'Wuggish',
-
-  // the nine features, the columns of the table, in this order
-  features: [
-    { name: 'animal',  question: 'an animal?',    group: 'kind' },
-    { name: 'paws',    question: 'paws?',         group: 'kind' },
-    { name: 'reptile', question: 'a reptile?',    group: 'kind' },
-    { name: 'object',  question: 'an object?',    group: 'kind' },
-    { name: 'stripes', question: 'stripes?',      group: 'look' },
-    { name: 'boots',   question: 'boots?',        group: 'look' },
-    { name: 'venom',   question: 'venom?',        group: 'look' },
-    { name: 'wood',    question: 'made of wood?', group: 'look' },
-    { name: 'broken',  question: 'broken?',       group: 'look' },
+  "name": "Wuggish",
+  "features": [
+    {"name": "fur", "question": "fur?", "group": "has"},
+    {"name": "hooves", "question": "hooves?", "group": "has"},
+    {"name": "scales", "question": "scales?", "group": "has"},
+    {"name": "coat", "question": "goes on a coat?", "group": "goes"},
+    {"name": "body", "question": "goes on a body?", "group": "goes"},
+    {"name": "stripes", "question": "stripes?", "group": "brings"},
+    {"name": "spots", "question": "spots?", "group": "brings"},
+    {"name": "wings", "question": "wings?", "group": "brings"},
+    {"name": "horn", "question": "a horn?", "group": "brings"}
   ],
-
-  // noun -> the art object it draws, and the kinds of thing it is
-  nouns: {
-    snaak: { gloss: 'snake', object: 'snake', kinds: ['animal', 'reptile'] },
-    kat:   { gloss: 'cat',   object: 'cat', kinds: ['animal', 'paws'] },
-    chaar: { gloss: 'chair', object: 'chair', kinds: ['object'] },
+  "slots": 2,
+  "WQ": {"fur": [1, 0], "hooves": [0, 1], "scales": [0, 1]},
+  "WK": {"coat": [1, 0], "body": [0, 1]},
+  "WV": ["stripes", "spots", "wings", "horn"],
+  "nouns": {
+    "kat": {"gloss": "cat", "object": "cat", "flags": [], "features": ["fur"]},
+    "poony": {"gloss": "pony", "object": "pony", "flags": [], "features": ["fur", "hooves"]},
+    "lizzard": {"gloss": "lizard", "object": "lizard", "flags": [], "features": ["scales"]},
+    "zeebra": {"gloss": "zebra", "object": "pony", "flags": ["striped"], "features": ["fur", "hooves", "stripes"]},
+    "lepperd": {"gloss": "leopard", "object": "cat", "flags": ["spotted"], "features": ["fur", "spots"]},
+    "draggon": {"gloss": "dragon", "object": "lizard", "flags": ["winged"], "features": ["scales", "wings"]},
+    "unikorn": {"gloss": "unicorn", "object": "pony", "flags": ["horned"], "features": ["fur", "hooves", "horn"]}
   },
-
-  adjectives: {
-    vennomus: { gloss: 'venomous', flag: 'venomous', nouns: ['snaak'], feature: 'venom', fits: 'reptile' },
-    streept:  { gloss: 'striped',  flag: 'striped',  nouns: ['snaak', 'kat'], feature: 'stripes', fits: 'animal' },
-    bootet:   { gloss: 'booted',   flag: 'booted',   nouns: ['kat'], feature: 'boots', fits: 'paws' },
-    wudden:   { gloss: 'wooden',   flag: 'wooden',   nouns: ['chaar'], feature: 'wood', fits: 'object' },
-    brooken:  { gloss: 'broken',   flag: 'broken',   nouns: ['chaar'], feature: 'broken', fits: 'object' },
-  },
+  "adjectives": {
+    "streept": {"gloss": "striped", "flag": "striped", "features": ["coat", "stripes"]},
+    "spottet": {"gloss": "spotted", "flag": "spotted", "features": ["coat", "spots"]},
+    "winget": {"gloss": "winged", "flag": "winged", "features": ["body", "wings"]},
+    "hornit": {"gloss": "horned", "flag": "horned", "features": ["body", "horn"]}
+  }
 };

@@ -4,6 +4,8 @@
  * URL:  #title | #lesson/N | #lesson/N/card/K | #lesson/N/item/K | #reveal/N
  *       ?seed=NNN   fixes every shuffle, for a reproducible run
  *       ?pick=wrong | ?pick=right   auto-answers every item (screenshots)
+ *       ?pick=extra | ?pick=missing one wrong pick of that colour, yellow or
+ *                   vermilion, and then nothing (screenshots of a wrong pick)
  *       ?auto=1     presses every Continue after 200 ms, up to the reveal, so
  *                   the page plays itself under a virtual clock (smoke test)
  *       ?dev=1      shows the fast-forward button (topbar, and the f key),
@@ -63,9 +65,15 @@
   function wordify(text) {
     return esc(text).replace(/\b([a-z]+)\b/g, m => WORDS[m] ? `<span class="w">${m}</span>` : m);
   }
+  // the plain noun of a thing: cat -> kat (lepperd draws a cat too, with spots)
   function nounOf(object) {
-    for (const n in L.nouns) if (L.nouns[n].object === object) return n;
+    for (const n in L.nouns) if (L.nouns[n].object === object && !L.nouns[n].flags.length) return n;
     return object;
+  }
+  function flagsSpec(object, flags) {
+    const sc = {}; sc[object] = {};
+    (flags || []).forEach(f => { sc[object][f] = true; });
+    return sc;
   }
   function setProgress() {
     bar.style.width = (100 * S.answered / TOTAL) + '%';
@@ -170,7 +178,8 @@
 
   /* title.  The counts are read off the data, so the line cannot go stale
    * again: it said "five short lessons" for weeks after the cut to four. */
-  const NUMBER = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+  const NUMBER = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+    'eleven', 'twelve'];
   const num = n => NUMBER[n] || String(n);
   const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
   function title() {
@@ -201,20 +210,29 @@
       () => cards(0));
   }
 
+  /* Three kinds of card (data/items.js):
+   *   {word, object}                  a plain thing: kat, poony, lizzard
+   *   {word, flag, objects}           a look, on every thing it fits, each plain
+   *                                   and then with the look: streept on kat and poony
+   *   {word, object, flags, same}     a thing with a look, beside the phrase that
+   *                                   draws the same picture: lepperd and spottet kat */
   function cards(ci) {
     const l = lesson();
     if (ci >= l.cards.length) return beginItems(0);
     const c = l.cards[ci];
     let html;
     if (c.flag) {
-      const plain = {}; plain[c.object] = {};
-      const mod = {}; mod[c.object] = {}; mod[c.object][c.flag] = true;
-      html = `<div class="wordcard"><p class="word">${esc(c.word)}</p><div class="pair">
-        <div>${A.scene(plain, 260, { fit: true })}<div class="cap muted">${esc(nounOf(c.object))}</div></div>
-        <div>${A.scene(mod, 260, { fit: true })}<div class="cap">${esc(c.word)} ${esc(nounOf(c.object))}</div></div></div></div>`;
+      const pairs = c.objects.map(o => `<div class="pair">
+        <div>${A.scene(flagsSpec(o), 230, { fit: true })}<div class="cap muted">${esc(nounOf(o))}</div></div>
+        <div>${A.scene(flagsSpec(o, [c.flag]), 230, { fit: true })}<div class="cap">${esc(c.word)} ${esc(nounOf(o))}</div></div></div>`);
+      html = `<div class="wordcard"><p class="word">${esc(c.word)}</p><div class="pairs">${pairs.join('')}</div></div>`;
+    } else if (c.same) {
+      html = `<div class="wordcard same"><p class="word">${esc(c.word)}</p>
+        ${A.scene(flagsSpec(c.object, c.flags), 300, { fit: true })}
+        <p class="names"><span class="w">${esc(c.same)}</span><span class="eq">=</span><span class="w">${esc(c.word)}</span></p>
+        <p class="small">one picture, two ways to say it</p></div>`;
     } else {
-      const sc = {}; sc[c.object] = {};
-      html = `<div class="wordcard"><p class="word">${esc(c.word)}</p>${A.scene(sc, 300, { fit: true })}</div>`;
+      html = `<div class="wordcard"><p class="word">${esc(c.word)}</p>${A.scene(flagsSpec(c.object), 300, { fit: true })}</div>`;
     }
     show(html + `<p class="center"><button class="btn" data-continue>Continue</button></p>
       <p class="center small">new word ${ci + 1} of ${l.cards.length}</p>`, () => cards(ci + 1));
@@ -234,7 +252,8 @@
 
   function renderItem(entry) {
     const it = entry.item;
-    const words = it.scramble ? rng.shuffle(it.bag) : it.bag.slice();
+    // a fresh order every time, with every adjective before its noun (it.before)
+    const words = it.scramble ? rng.order(it.bag, it.before) : it.bag.slice();
     const opts = rng.shuffle(it.options);
     const chips = words.map(x => `<span class="chip" data-w="${esc(x)}">${esc(x)}</span>`).join('');
     const cards = opts.map((o, k) =>
@@ -256,11 +275,18 @@
   function arm(entry, opts, buttons) {
     S.pickFn = k => { if (buttons[k] && !buttons[k].disabled) answer(entry, opts, buttons, k); };
     if (!autopick) return;
-    // ?pick=wrong answers wrong once and right after that, so the run ends
-    const wantWrong = autopick === 'wrong' && !entry.tried;
+    // ?pick=wrong answers wrong once and right after that, so the run ends.
+    // ?pick=extra and ?pick=missing make one wrong pick of that colour (yellow,
+    // or vermilion) and then stop, for screenshots of a wrong answer.
+    let want;
+    if (autopick === 'right') want = o => o.correct;
+    else if (autopick === 'wrong') want = entry.tried ? (o => o.correct) : (o => !o.correct);
+    else if (autopick === 'extra' && !entry.tried) want = o => o.diff === 'extra';
+    else if (autopick === 'missing' && !entry.tried) want = o => !o.correct && o.diff !== 'extra';
+    else return;
     setTimeout(() => {
       if (!S.pickFn) return;
-      const k = opts.findIndex((o, i) => !buttons[i].disabled && (wantWrong ? !o.correct : o.correct));
+      const k = opts.findIndex((o, i) => !buttons[i].disabled && want(o));
       if (k >= 0) S.pickFn(k);
     }, 60);
   }
@@ -296,8 +322,10 @@
       if (added) buttons[k].classList.add('added');
       fb.className = 'feedback bad' + (added ? ' added' : '');
       fb.innerHTML = wordify(o.feedback);
+      // underline the words of the sentence that this picture gets wrong: the
+      // option's `blame`, or else every word its comment names
       const named = {};
-      (o.feedback.match(/\b[a-z]+\b/g) || []).forEach(x => { if (WORDS[x]) named[x] = true; });
+      (o.blame || o.feedback.match(/\b[a-z]+\b/g) || []).forEach(x => { if (WORDS[x]) named[x] = true; });
       live.querySelectorAll('.chip').forEach(c => c.classList.toggle('miss', !!named[c.dataset.w]));
       live.querySelector('.prompt').textContent = 'Not that one. Which picture?';
       if (!entry.retry && !entry.missed && !closer) S.queue.push({ item: it, retry: true });

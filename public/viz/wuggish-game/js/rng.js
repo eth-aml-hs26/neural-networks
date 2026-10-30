@@ -1,8 +1,16 @@
 /* rng.js : a small seeded random generator (mulberry32) so that a run can be
  * reproduced from the lectern with ?seed=NNN.  Without a seed the clock
  * seeds it and every play is different.
+ *
+ * order(words, before) is the shuffle of a sentence's words (2026-10-30):
+ * a uniform draw among the orders that keep every pair [a, b] of `before`
+ * with a before b.  An item of data/items.js carries those pairs, one per
+ * adjective and noun it may describe, so that every adjective stands before
+ * its noun, as Carlos asked; beyond that the order is free.  The game draws
+ * with it, and scripts/check-vectors.js runs it over hundreds of seeds and
+ * hands the orders to precompute/world.py to check.
  */
-(function () {
+(function (root) {
   'use strict';
 
   function mulberry32(a) {
@@ -18,6 +26,19 @@
     let h = 2166136261;
     for (const c of String(str)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
     return h >>> 0;
+  }
+
+  // every order of xs, in a fixed sequence
+  function permutations(xs) {
+    if (xs.length < 2) return [xs.slice()];
+    const out = [];
+    xs.forEach((x, i) => {
+      permutations(xs.slice(0, i).concat(xs.slice(i + 1))).forEach(p => out.push([x].concat(p)));
+    });
+    return out;
+  }
+  function keeps(order, before) {
+    return (before || []).every(p => order.indexOf(p[0]) < order.indexOf(p[1]));
   }
 
   function make(seed) {
@@ -36,8 +57,12 @@
         return a;
       },
       pick(arr) { return arr[Math.floor(next() * arr.length)]; },
+      order(words, before) {
+        const ok = permutations(words).filter(p => keeps(p, before));
+        return ok.length ? ok[Math.floor(next() * ok.length)] : words.slice();
+      },
     };
   }
 
-  window.RNG = { make };
-})();
+  root.RNG = { make, permutations, keeps };
+})(window);

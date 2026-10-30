@@ -1,29 +1,35 @@
-/* reveal.js : the eight screens after the closer.  Each is a function that
- * returns HTML; game.js wraps it in the page and the Continue button.
+/* reveal.js : the eight screens after the closer, rebuilt on 2026-10-30 for
+ * the new Wuggish of SPEC.md.  Each is a function that returns HTML; game.js
+ * wraps it in the page and the Continue button.
  *
- *   1  You have been running attention.      the score, and query / keys named
- *   2  The map you were drawing.             the lit grid, and the picture sums
- *   3  A word is a row of features.          the table, 8 words x 9 features
- *   4  Where that map comes from.            a query and a key for every word,
- *                                            on the four kind features
- *   5  Attention is one multiplication.      Q Kt = scores, two inner products,
- *                                            the reading
- *   6  Each thing adds what it attended to.  own row + values = new row, as
- *                                            numbers and as pictures; the formula
- *   7  The one you could not read.           the closer's tie, and position
- *   8  Wuggish in one slide.                 the glosses, the first English
+ *   1  You have been running attention.   the score; query, key and value named
+ *   2  The map you were drawing.          the lit grid of the running sentence,
+ *                                         and the picture sums
+ *   3  A word is a row of features.       the table, 11 words by 9 features in
+ *                                         three groups, and how many words
+ *                                         share each column
+ *   4  Queries and keys.                  W^Q and W^K, and every word's query
+ *                                         and key in slots 1 and 2
+ *   5  Attention is one multiplication.   Q K^T = S for the running sentence,
+ *                                         two inner products, the grammar
+ *   6  Each thing adds what it read.      kat + spottet = the row of lepperd,
+ *                                         lizzard + winget = the row of draggon,
+ *                                         E + S V, the formula, the softmax
+ *   7  The one you could not read.        the closer: a striped cat and a zebra
+ *   8  Wuggish in one slide.              the glosses
  *
  * Nothing here is drawn by hand.  The lit grid of screen 2 comes from the
- * lexicon's `nouns` lists; every row, vector, product and new row comes from
- * js/vectors.js, which computes them from the lexicon's features.  So if the
- * vocabulary or the features change, every screen follows, and
- * scripts/check-vectors.js checks the numbers against the item bank.
+ * answer the player tapped (the item's correct picture); every row, vector,
+ * product and new row comes from js/vectors.js, which computes them from the
+ * lexicon; every picture of a row comes from VECTORS.picture.  So if the
+ * language changes, every screen follows, and scripts/check-vectors.js checks
+ * the numbers against precompute/world.py and the item bank.
  *
- * Two kinds of label, kept apart on purpose (AML, 2026-10-30, after a CSCS
- * participant found tokens and features blurred): a Wuggish WORD is set in
- * the game's serif (class "w"), a FEATURE in small capitals (class "ft").
- * Every column of every table is a feature or a word of a sentence; no
- * column is named after a word that it stands for.
+ * Three kinds of label, kept apart on purpose (a CSCS participant found
+ * tokens and features blurred): a Wuggish WORD is set in the game's serif
+ * (class "w"), a FEATURE in small capitals (class "ft"), and a SLOT of a
+ * query or a key by its number (class "sl").  No column is named after a
+ * word it stands for, and no English gloss of a word appears before screen 8.
  */
 (function () {
   'use strict';
@@ -34,124 +40,111 @@
   }
   function w(word) { return `<span class="w">${esc(word)}</span>`; }
   function ft(name) { return `<span class="ft">${esc(name)}</span>`; }
+  function sl(n) { return `<span class="sl">${esc(n)}</span>`; }
   // ['a', 'b', 'c'] -> 'a, b and c'
   function and(xs) { return xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1]; }
-  const NUM = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+  const NUM = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  const GROUP_NAME = { has: 'what a thing has', goes: 'where a look goes', brings: 'what a look brings' };
+  const fix = x => x.toFixed(2);
 
-  function findItem(id) {
-    for (const les of window.ITEMS.lessons) for (const it of les.items) if (it.id === id) return it;
-    return null;
-  }
-  function findKind(kind) {
-    for (const les of window.ITEMS.lessons) for (const it of les.items) if (it.kind === kind) return it;
-    return null;
-  }
-  // the last unambiguous multi-object item the player solved before the
-  // double and the closer, found by kind so that editing the bags cannot
-  // break the reveal: the sentence of screens 2 and 6
-  function lastFlip() {
-    let last = null;
-    for (const les of window.ITEMS.lessons) for (const it of les.items) if (it.kind === 'flip') last = it;
-    return last;
-  }
+  /* ==== the items the reveal tells about ================================= */
 
-  // adjectives list the NOUN WORDS they may attach to, e.g. ['snaak', 'kat']
-  function fits(noun, adj) {
-    return L.adjectives[adj].nouns.indexOf(noun) >= 0;
+  function allItems() {
+    const out = [];
+    for (const les of window.ITEMS.lessons) for (const it of les.items) out.push(it);
+    return out;
   }
-  function nounsIn(bag) {
-    // in layout order: cat, chair, snake become kat, chaar, snaak
-    const order = A.OBJECTS;
-    return bag.filter(x => L.nouns[x]).sort((a, b) => order.indexOf(L.nouns[a].object) - order.indexOf(L.nouns[b].object));
-  }
-  function adjsIn(bag) { return bag.filter(x => L.adjectives[x]); }
+  function findItem(id) { return allItems().filter(it => it.id === id)[0] || null; }
+  function findKind(kind) { return allItems().filter(it => it.kind === kind)[0] || null; }
+  // the running sentence, the one the reveal and the attention deck compute
+  function findRunning() { return allItems().filter(it => it.running)[0] || null; }
 
-  // a thing drawn small, with the looks that are switched on
-  function thumb(noun, flags, px) {
-    const sc = {}; sc[L.nouns[noun].object] = flags || {};
+  function answerOf(item) { return item.options.filter(o => o.correct)[0].scene; }
+  function nounsIn(bag) { return bag.filter(V.isNoun); }
+  function adjsIn(bag) { return bag.filter(V.isAdj); }
+  // the plain noun of a thing: kat for the cat
+  function baseOf(object) { return V.BASES.filter(b => L.nouns[b].object === object)[0]; }
+
+  /* ==== pictures ========================================================== */
+
+  // the picture of any row: the thing its `has` features make, wearing the
+  // looks its `brings` features say yes to
+  function thumbRow(v, px) {
+    const p = V.picture(v);
+    if (!p) return '';
+    const sc = {}; sc[p.object] = p.flags;
     return A.scene(sc, px, { fit: true });
   }
-  // the art flags of the looks a row says yes to: stripes -> striped
-  function flagsOf(v) {
-    const f = {};
-    for (const a in L.adjectives) if (v[V.FEATURES.indexOf(L.adjectives[a].feature)]) f[L.adjectives[a].flag] = true;
-    return f;
-  }
-
-  /* ==== screen 2, unchanged since BMAI ================================== */
-
-  function map(bag) {
-    const nouns = nounsIn(bag), adjs = adjsIn(bag);
-    let h = '<div class="map"><table><tr><th class="axis"></th>' +
-      adjs.map(a => `<th>${esc(a)}</th>`).join('') + '</tr>';
-    for (const n of nouns) {
-      h += `<tr><th class="q">${esc(n)}</th>` +
-        adjs.map(a => `<td class="${fits(n, a) ? 'lit' : 'dim'}"></td>`).join('') + '</tr>';
-    }
-    h += '</table><div class="axis" style="margin-top:8px">down the side, the words that ask; along the top, the words they ask</div></div>';
-    return h;
-  }
-
-  // one line per thing of the answer: plain thing + its layers = the picture
-  function sums(item, px) {
-    px = px || 130;
-    const answer = item.options.filter(o => o.correct)[0].scene;
-    let h = '';
-    for (const obj of A.OBJECTS) {
-      if (!answer[obj]) continue;
-      const noun = Object.keys(L.nouns).filter(n => L.nouns[n].object === obj)[0];
-      const layers = Object.keys(L.adjectives).filter(a => answer[obj][L.adjectives[a].flag]);
-      const plain = {}; plain[obj] = {};
-      const full = {}; full[obj] = answer[obj];
-      h += `<div class="sum">${A.scene(plain, px, { fit: true })}` +
-        (layers.length ? layers.map(a => `<span class="op">+</span><span class="layer">${esc(a)}</span>`).join('') : '<span class="op">+</span><span class="layer muted">nothing</span>') +
-        `<span class="op">=</span>${A.scene(full, px, { fit: true })}<span class="muted">${esc(noun)}</span></div>`;
-    }
-    return h;
-  }
+  function thumbWord(x, px) { return V.isNoun(x) ? thumbRow(V.row(x), px) : ''; }
 
   /* ==== the tables ======================================================
-   * ftable: one table on a list of features (all nine, or the four kinds),
-   * one row per entry { v, label, op, thumb, note, cls }.  Its columns: an
-   * operator (+, =) when a row has one, a thumbnail when a row has one, the
-   * label, one boxed cell per feature, and a note when a row has one.  With
-   * both groups present, a gap separates the kind features from the look
-   * features and a row above names the two groups.  o.questions prints each
-   * feature's question under its name.  The visual box of a cell is an inner
-   * <i>, because a <td> stretches to its row (see CLAUDE.md).
+   * table(rows, o): one table with a column per entry of o.cols ({label, group,
+   * q}), one row per entry { v, label, op, thumb, note, cls, plain }.  Its
+   * columns: an operator (+, =) when a row has one, a thumbnail when a row has
+   * one, the label, one boxed cell per column, and a note when a row has one.
+   * Where the group of the columns changes, a narrow gap; with o.groups, a row
+   * above names each group.  o.questions prints each column's question under
+   * its name.  The visual box of a cell is an inner <i>, because a <td>
+   * stretches to its row (CLAUDE.md).  A row with `plain` prints its numbers
+   * without boxes (the counts of screen 3); a row with class `total` gets the
+   * line of a written sum above it.
    */
-  function ftable(rows, o) {
-    o = o || {};
-    const feats = o.features || V.FEATURES;
-    const nk = feats.filter(f => V.KINDS.indexOf(f) >= 0).length;
-    const nl = feats.length - nk;
-    const split = nk > 0 && nl > 0;
+  function table(rows, o) {
+    const cols = o.cols;
+    const starts = new Set();
+    const groups = [];
+    cols.forEach((c, j) => {
+      if (!groups.length || groups[groups.length - 1].g !== c.group) {
+        if (groups.length) starts.add(j);
+        groups.push({ g: c.group, n: 0 });
+      }
+      groups[groups.length - 1].n++;
+    });
     const hasOp = rows.some(r => r.op), hasThumb = rows.some(r => r.thumb), hasNote = rows.some(r => r.note);
     const before = (hasOp ? 1 : 0) + (hasThumb ? 1 : 0) + 1;
-    const gap = (j, tag) => (split && j === nk ? `<${tag} class="gap"></${tag}>` : '');
+    const gap = (j, tag) => (starts.has(j) ? `<${tag} class="gap"></${tag}>` : '');
     let h = `<div class="tablewrap"><table class="vtab ftab${o.cls ? ' ' + o.cls : ''}">`;
-    if (split) {
-      h += `<tr class="grp"><th colspan="${before}"></th><th colspan="${nk}"><span>what kind of thing</span></th>` +
-        `<th class="gap"></th><th colspan="${nl}"><span>how it looks</span></th>${hasNote ? '<th></th>' : ''}</tr>`;
+    if (o.groups && groups.length > 1) {
+      h += `<tr class="grp"><th colspan="${before}"></th>` +
+        groups.map((g, i) => (i ? '<th class="gap"></th>' : '') +
+          `<th colspan="${g.n}" class="g-${g.g}"><span>${GROUP_NAME[g.g]}</span></th>`).join('') +
+        (hasNote ? '<th></th>' : '') + '</tr>';
     }
-    h += `<tr class="heads"><th colspan="${before}"></th>` +
-      feats.map((f, j) => gap(j, 'th') + `<th class="fh">${ft(f)}` +
-        (o.questions ? `<span class="qn">${esc(V.QUESTION[f])}</span>` : '') + '</th>').join('') +
+    h += `<tr class="heads"><th colspan="${before}">${o.corner || ''}</th>` +
+      cols.map((c, j) => gap(j, 'th') + `<th class="fh">${c.label}` +
+        (o.questions && c.q ? `<span class="qn">${esc(c.q)}</span>` : '') + '</th>').join('') +
       (hasNote ? '<th></th>' : '') + '</tr>';
     for (const r of rows) {
-      // the line of a written sum, unbroken across the cells, above the total
       if (/\btotal\b/.test(r.cls || '')) {
-        h += `<tr class="rule"><td colspan="${before}"></td><td class="ruled" colspan="${feats.length + (split ? 1 : 0)}"></td>` +
+        h += `<tr class="rule"><td colspan="${before}"></td><td class="ruled" colspan="${cols.length + starts.size}"></td>` +
           (hasNote ? '<td></td>' : '') + '</tr>';
       }
       h += `<tr class="${r.cls || ''}">` +
         (hasOp ? `<td class="opc">${r.op || ''}</td>` : '') +
         (hasThumb ? `<td class="thumb">${r.thumb || ''}</td>` : '') +
         `<th class="wlab">${r.label}</th>` +
-        r.v.map((x, j) => gap(j, 'td') + `<td class="n"><i class="${x ? 'one' : 'zero'}">${x}</i></td>`).join('') +
+        r.v.map((x, j) => gap(j, 'td') + (r.plain ? `<td class="n cnt">${x}</td>`
+          : `<td class="n"><i class="${x ? 'one' : 'zero'}">${x}</i></td>`)).join('') +
         (hasNote ? `<td class="vnote">${r.note || ''}</td>` : '') + '</tr>';
     }
     return h + '</table></div>';
+  }
+  // a table on the nine features (or some of them), grouped
+  function ftable(rows, o) {
+    o = o || {};
+    const feats = o.features || V.FEATURES;
+    return table(rows, Object.assign({}, o, {
+      cols: feats.map(f => ({ label: ft(f), group: V.GROUP[f], q: V.QUESTION[f] })),
+      groups: o.groups !== false,
+    }));
+  }
+  // a table on the slots of a query or a key
+  function stable(rows, o) {
+    return table(rows, Object.assign({}, o || {}, {
+      cols: V.SLOTS.map(s => ({ label: sl(s), group: 'slot' })),
+      corner: '<span class="slothead">slot</span>',
+      cls: 'slots' + (o && o.cls ? ' ' + o.cls : ''),
+    }));
   }
 
   // a vector inline in prose, as a strip of cells
@@ -160,38 +153,81 @@
   }
 
   // One matrix.  o.rowKind and o.colKind say whether the labels are words
-  // ('w', the default) or features ('ft'); every column label is set on its
-  // side, so that a label of either kind sits above one 30 px cell and
-  // Q x Kt = scores fits one line.  o.lit(i, j) marks a cell; o.fadedRow(i)
-  // and o.fadedCol(j) push a whole all-zero row or column back, so the zeros
-  // are on screen for honesty without competing with the numbers that carry
-  // the point.
+  // ('w', the default), features ('ft') or slots ('sl'); a word or a feature
+  // above a column is set on its side, so that it sits above one 30 px cell
+  // and Q x K^T = S fits one line.  o.lit(i, j) marks a cell; o.fadedRow(i)
+  // and o.fadedCol(j) push an all-zero row or column back, so the zeros are on
+  // screen for honesty without competing with the numbers that carry the point.
   function mx(cells, rowLabels, colLabels, o) {
     o = o || {};
-    const lab = (kind, x) => (kind === 'ft' ? ft(x) : w(x));
+    const lab = (kind, x) => (kind === 'ft' ? ft(x) : kind === 'sl' ? sl(x) : w(x));
     const cold = j => (o.fadedCol && o.fadedCol(j) ? ' faded' : '');
+    const vert = o.colKind === 'sl' ? '' : ' vert';
     let h = `<table class="mx${o.cls ? ' ' + o.cls : ''}">`;
     h += '<tr><th class="corner"></th>' + colLabels.map((c, j) =>
-      `<th class="col vert${cold(j)}">${lab(o.colKind, c)}</th>`).join('') + '</tr>';
+      `<th class="col${vert}${cold(j)}">${lab(o.colKind, c)}</th>`).join('') + '</tr>';
     cells.forEach((row, i) => {
       h += `<tr class="${o.fadedRow && o.fadedRow(i) ? 'faded' : ''}">` +
         `<th class="rowlab">${lab(o.rowKind, rowLabels[i])}</th>` +
-        row.map((x, j) => `<td class="${o.lit && o.lit(i, j) ? 'hot' : ''}${cold(j)}">${x}</td>`).join('') + '</tr>';
+        row.map((x, j) => `<td class="${o.lit && o.lit(i, j) ? 'hot' : ''}${o.diag && i === j ? ' diag' : ''}${cold(j)}">${x}</td>`).join('') + '</tr>';
     });
     return h + '</table>';
   }
-  function mxbox(name, table, cls) {
-    return `<div class="mxbox${cls ? ' ' + cls : ''}"><div class="mxname">${name}</div>${table}</div>`;
+  function mxbox(name, tableHtml, cls) {
+    return `<div class="mxbox${cls ? ' ' + cls : ''}"><div class="mxname">${name}</div>${tableHtml}</div>`;
   }
 
-  // "kat . streept = (1 1 0 0) . (1 0 0 0) = 1x1 + 1x0 + 0x0 + 0x0 = 1"
-  function worked(a, b) {
+  // "kat . spottet = (1 0) . (1 0) = 1x1 + 0x0 = 1, they meet in slot 1"
+  function worked(a, b, where) {
     const q = V.query(a), k = V.key(b), terms = q.map((x, i) => `${x}&times;${k[i]}`).join(' + ');
-    const both = V.on(q.map((x, i) => x * k[i]), V.KINDS);
+    const both = V.SLOTS.filter((s, i) => q[i] * k[i]);
+    const why = both.length ? `they meet in slot ${and(both.map(sl))}` : 'they meet in no slot';
     return `<p class="worked">${w(a)} <span class="op">&middot;</span> ${w(b)}
       <span class="op">=</span> ${vec(q)} <span class="op">&middot;</span> ${vec(k)}
       <span class="op">=</span> ${terms} <span class="op">=</span> <b>${V.dot(q, k)}</b>
-      <span class="why">${both.length ? 'they share ' + and(both.map(ft)) : 'they share no feature'}</span></p>`;
+      <span class="why">${why}${where ? ', ' + where : ''}</span></p>`;
+  }
+
+  /* ==== screen 2: the map, from the answer the player tapped ============== */
+
+  // does word a of the bag (a noun) take the look of word b (an adjective)?
+  // Read off the answer picture: b's look is on a's thing, and a's own noun
+  // does not already bring it.
+  function took(item, a, b) {
+    if (!V.isNoun(a) || !V.isAdj(b)) return false;
+    const ans = answerOf(item), obj = L.nouns[a].object, flag = L.adjectives[b].flag;
+    return !!(ans[obj] && ans[obj][flag]) && L.nouns[a].flags.indexOf(flag) < 0;
+  }
+
+  function map(item) {
+    const bag = item.bag;
+    let h = '<div class="map"><table><tr><th class="axis"></th>' + bag.map(x => `<th class="top">${w(x)}</th>`).join('') + '<th></th></tr>';
+    bag.forEach(a => {
+      const asks = V.isNoun(a);
+      h += `<tr class="${asks ? '' : 'faded'}"><th class="q">${w(a)}</th>` +
+        bag.map(b => `<td class="${took(item, a, b) ? 'lit' : 'dim'}"></td>`).join('') +
+        `<td class="side">${asks ? '' : 'asks nothing'}</td></tr>`;
+    });
+    return h + '</table><div class="axis" style="margin-top:8px">down the side, the words that ask; along the top, the words they ask</div></div>';
+  }
+
+  // one line per thing of the answer: plain thing + the words it took = the picture
+  function sums(item, px) {
+    px = px || 120;
+    const ans = answerOf(item);
+    let h = '';
+    for (const noun of nounsIn(item.bag)) {            // in the order of the sentence
+      const obj = L.nouns[noun].object;
+      const took_ = adjsIn(item.bag).filter(b => took(item, noun, b));
+      const plain = {}; plain[obj] = {};
+      L.nouns[noun].flags.forEach(f => { plain[obj][f] = true; });
+      const full = {}; full[obj] = ans[obj];
+      h += `<div class="sum">${A.scene(plain, px, { fit: true })}` +
+        (took_.length ? took_.map(b => `<span class="op">+</span><span class="layer">${w(b)}</span>`).join('')
+          : '<span class="op">+</span><span class="layer muted">nothing</span>') +
+        `<span class="op">=</span>${A.scene(full, px, { fit: true })}</div>`;
+    }
+    return h;
   }
 
   /* ==== the screens ===================================================== */
@@ -199,143 +235,172 @@
   function screen1(stats) {
     const played = stats && stats.total ? `You read ${stats.correct} of ${stats.total} sentences right at first sight` +
       (stats.minutes != null ? `, in about ${stats.minutes} minute${stats.minutes === 1 ? '' : 's'}.` : '.') : '';
+    const item = findRunning();
+    const noun = nounsIn(item.bag)[0];
+    const adj = adjsIn(item.bag).filter(b => took(item, noun, b))[0];
     return `<div class="reveal"><h2>You have been running attention.</h2>
       <p class="lead">${played}</p>
-      <p class="lead">Every time you took a word like ${w('wudden')} and asked which thing it belonged to, you did what a transformer does with every word of every sentence it reads. The word that asks is called the <b>query</b>. The words it asks are the <b>keys</b>.</p></div>`;
+      <p class="lead">Every time you took a thing like ${w(noun)} and asked which of the other words belonged to it, you did what a transformer does with every word of every sentence it reads. The word that asks is the <b>query</b>. The words it asks are the <b>keys</b>. And what a word hands over once it is found, like the look of ${w(adj)}, is its <b>value</b>.</p></div>`;
   }
 
   function screen2() {
-    const item = lastFlip();
+    const item = findRunning();
     return `<div class="reveal"><h2>The map you were drawing.</h2>
-      <p class="lead">A sentence you solved a minute ago: ${item.bag.map(w).join(' ')}. Each thing asks every other word "are you mine?". A dot where the answer is yes.</p>
-      ${map(item.bag)}
-      <p class="lead" style="margin-top:22px">Then each thing becomes its plain self plus whatever it attended to. That sum is the picture you tapped. The layers are the <b>values</b>.</p>
+      <p class="lead">A sentence you solved a minute ago: ${item.bag.map(w).join(' ')}. Each word asks every word of the sentence, &ldquo;do you belong to me?&rdquo; A dot where the answer is yes.</p>
+      ${map(item)}
+      <p class="lead" style="margin-top:22px">Then each thing becomes its plain self plus the look of the word it found. That sum is the picture you tapped. The looks it takes are the <b>values</b>.</p>
       ${sums(item)}</div>`;
   }
 
   // 3: the embedding table, the words as rows and the features as columns
   function screenTable() {
-    const rows = V.WORDS.map(x => ({ v: V.row(x), label: w(x), thumb: V.isNoun(x) ? thumb(x, {}, 60) : '' }));
-    const n0 = V.NOUNS[0];
+    const rows = V.WORDS.map(x => ({ v: V.row(x), label: w(x), thumb: thumbWord(x, 50) }));
+    const counts = V.FEATURES.map((f, j) => V.WORDS.filter(x => V.row(x)[j]).length);
+    rows.push({ v: counts, label: '<span class="cntlab">words with a 1</span>', plain: true, cls: 'count' });
+    const most = V.FEATURES[counts.indexOf(Math.max.apply(null, counts))];
+    const owners = f => V.WORDS.filter(x => V.row(x)[V.FEATURES.indexOf(f)]);
+    const fewest = Math.min.apply(null, counts);
     return `<div class="reveal"><h2>A word is a row of features.</h2>
-      <p class="lead">A transformer never sees the pictures. To it, every word is a row of numbers, its <b>embedding</b>. Here each row answers nine yes-or-no questions about a thing, the <b>features</b>: 1 for yes, 0 for no.</p>
+      <p class="lead">A transformer never sees the pictures. To it, every word is a row of numbers, its <b>embedding</b>. Here each row answers ${NUM[V.FEATURES.length]} yes-or-no questions, the <b>features</b>: 1 for yes, 0 for no.</p>
       ${ftable(rows, { questions: true, cls: 'big' })}
-      <p class="lead" style="margin-top:20px">The columns are the features, questions you can ask about any thing. The rows are the words: ${w(n0)} is the row that says yes to ${and(V.on(V.row(n0)).map(ft))}. Four features say what kind of thing it is, five say how it looks, and each changing word says yes to one look.</p>
+      <p class="lead" style="margin-top:20px">${NUM[V.WORDS.length].replace(/^./, c => c.toUpperCase())} words, ${NUM[V.FEATURES.length]} features. A word, a <b>token</b>, is a row. A feature is a column, and every column holds ${NUM[fewest]} 1s or more: ${ft(most)} is in ${and(owners(most).map(w))}. A feature is a question that several words answer with yes.</p>
+      <p class="lead">The features come in three groups: ${and(V.GROUPS.map(g => GROUP_NAME[g] + ' (' + and(V.IN[g].map(ft)) + ')'))}.</p>
       <p class="small">A real model learns its rows from text, with hundreds of columns, and its features have no names. These rows are written by hand so that we can read them.</p></div>`;
   }
 
-  // 4: a query and a key for every word, on the four kind features.  Every
+  // 4: W^Q and W^K, and every word's query and key in slots 1 and 2.  Every
   // word carries both; the all-zero rows are FADED, never dropped (BMAI,
   // 2026-09-16: queries are no noun thing and keys no adjective thing).
   function screenVectors() {
+    const nz = v => v.some(x => x);
+    const wq = V.FEATURES.map((f, i) => ({ v: V.W_Q[i], label: ft(f), cls: nz(V.W_Q[i]) ? '' : 'faded' }));
+    const wk = V.FEATURES.map((f, i) => ({ v: V.W_K[i], label: ft(f), cls: nz(V.W_K[i]) ? '' : 'faded' }));
+    // why a word asks or answers where it does: the features of its row that
+    // have a row of the weights, each with the slot it sends a 1 to, e.g.
+    // "fur -> 1, hooves -> 2"
+    const via = (x, W) => V.FEATURES.filter((f, i) => V.row(x)[i] && nz(W[i]))
+      .map(f => `${ft(f)}&nbsp;&rarr;&nbsp;${V.SLOTS.filter((s, j) => W[V.FEATURES.indexOf(f)][j]).map(sl).join(' ')}`);
     const qrows = V.WORDS.map(x => ({
-      v: V.query(x), label: w(x), thumb: V.isNoun(x) ? thumb(x, {}, 46) : '',
-      note: V.isAdj(x) ? 'asks nothing' : '', cls: V.isAdj(x) ? 'faded' : '',
+      v: V.query(x), label: w(x),
+      note: nz(V.query(x)) ? via(x, V.W_Q).join(', ') : 'asks nothing', cls: nz(V.query(x)) ? '' : 'faded',
     }));
-    const owners = kind => V.NOUNS.filter(n => L.nouns[n].kinds.indexOf(kind) >= 0);
-    const krows = V.WORDS.map(x => {
-      let note = 'offers nothing';
-      if (V.isAdj(x)) {
-        const kind = L.adjectives[x].fits;
-        note = owners(kind).length > 1 ? `fits any ${ft(kind)}` : '';
-      }
-      return { v: V.key(x), label: w(x), note, cls: V.isNoun(x) ? 'faded' : '' };
-    });
-    const grammar = and(V.ADJS.map(a => `<span class="lookkind">${ft(L.adjectives[a].feature)} &rarr; ${ft(L.adjectives[a].fits)}</span>`));
-    const shared = V.ADJS.filter(a => owners(L.adjectives[a].fits).length > 1)[0];
-    const sk = shared && L.adjectives[shared].fits;
-    const n0 = V.NOUNS[0];
-    return `<div class="reveal"><h2>Where that map comes from.</h2>
-      <p class="lead">You drew that grid by knowing what the words mean. A transformer gets it from the rows. Every word turns its row into two short vectors on the four kind features: a <b>query</b>, what it asks for, and a <b>key</b>, what it offers.</p>
+    const krows = V.WORDS.map(x => ({
+      v: V.key(x), label: w(x),
+      note: nz(V.key(x)) ? via(x, V.W_K).join(', ') : 'answers nothing', cls: nz(V.key(x)) ? '' : 'faded',
+    }));
+    // the slot each kind of thing asks in, and which looks answer there
+    const asks = s => V.FEATURES.filter((f, i) => V.W_Q[i][s - 1]);
+    const answers = s => V.FEATURES.filter((f, i) => V.W_K[i][s - 1]);
+    const or = xs => (xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' or ' + xs[xs.length - 1]);
+    const lines = V.SLOTS.map(s => `in slot ${sl(s)} a thing with ${or(asks(s).map(ft))} asks, and a look that goes on a ${or(answers(s).map(ft))} answers`);
+    return `<div class="reveal"><h2>Queries and keys.</h2>
+      <p class="lead">You drew that map by knowing what the words mean. A transformer gets it from the rows. Every word turns its row into two short vectors of k = ${V.K} numbers, in <b>slot 1</b> and <b>slot 2</b>: a <b>query</b>, what it asks for, and a <b>key</b>, what it answers with. Two blocks of weights do it: the query is the row times W<sup>Q</sup>, the key the row times W<sup>K</sup>.</p>
       <div class="vecpanels">
         <div class="vpanel"><h3>Queries, what a word asks for</h3>
-          ${ftable(qrows, { features: V.KINDS })}
-          <p class="axis">A thing asks with what kind of thing it is: ${w(n0)} asks for ${and(L.nouns[n0].kinds.map(ft))}. A changing word is no thing, so its query is all zeros.</p>
+          <div class="wpair">
+            <div class="wblock"><div class="mxname">W<sup>Q</sup>, ${V.FEATURES.length} by ${V.K}</div>${stable(wq, { cls: 'wtab' })}</div>
+            <div class="wblock"><div class="mxname">the query of every word</div>${stable(qrows)}</div>
+          </div>
+          <p class="axis">The things ask: ${ft(asks(1)[0])} asks in slot ${sl(1)}, ${and(asks(2).map(ft))} ask in slot ${sl(2)}. A thing's look adds nothing to its query, and an adjective has none of these features, so its query is all zeros.</p>
         </div>
-        <div class="vpanel"><h3>Keys, what a word offers</h3>
-          ${ftable(krows, { features: V.KINDS })}
-          <p class="axis">A changing word offers the kind of thing its look goes with: ${grammar}. A thing offers nothing, so its key is all zeros.</p>
+        <div class="vpanel"><h3>Keys, what a word answers with</h3>
+          <div class="wpair">
+            <div class="wblock"><div class="mxname">W<sup>K</sup>, ${V.FEATURES.length} by ${V.K}</div>${stable(wk, { cls: 'wtab' })}</div>
+            <div class="wblock"><div class="mxname">the key of every word</div>${stable(krows)}</div>
+          </div>
+          <p class="axis">The adjectives answer: ${ft(answers(1)[0])} answers in slot ${sl(1)}, ${ft(answers(2)[0])} in slot ${sl(2)}. A noun has neither feature, so its key is all zeros, also for a noun that brings a look.</p>
         </div>
       </div>
-      ${shared ? `<p class="lead" style="margin-top:22px">${w(shared)} offers ${ft(sk)}, and ${and(owners(sk).map(w))} both ask for ${ft(sk)}. Hold on to that: it is the whole reason one sentence in this game could not be read.</p>` : ''}
-      <p class="small">In a real model the query and the key are the row times two matrices of learned weights, they have many more entries, and no word's query or key is all zeros. The zeros here are this game's world stripped to its bones. The idea is this one.</p></div>`;
+      <p class="lead" style="margin-top:22px">So ${lines.join('; ')}. The slots are numbered, because they belong to the queries and keys, apart from the ${NUM[V.FEATURES.length]} features.</p>
+      <p class="small">In a real model the weights are learned, queries and keys have many more slots, and every word asks and answers a little. Here the weights are written by hand, so that every query and every key can be read.</p></div>`;
   }
 
-  // 5: Q times K transposed, every word a row of Q and a column of K
+  // 5: Q times K transposed for the running sentence
   function screenMatmul() {
-    const WORDS = V.WORDS;
-    const Q = WORDS.map(V.query);                  // 8 x 4
-    const Kt = V.transpose(WORDS.map(V.key));      // 4 x 8, K transposed
-    const S = V.matmul(Q, Kt);                     // 8 x 8
-    const isNoun = i => V.isNoun(WORDS[i]);
-
+    const item = findRunning();
+    const bag = item.bag, lay = V.layer(bag), n = bag.length;
+    const Kt = V.transpose(lay.K);
+    const isNoun = i => V.isNoun(bag[i]);
+    const noun = nounsIn(bag)[0], i0 = bag.indexOf(noun);
+    const yes = bag.filter((x, j) => lay.S[i0][j] > 0)[0];                  // the word kat reads
+    const no = adjsIn(bag).filter(x => V.score(noun, x) === 0)[0];        // an adjective it skips
+    const rel = x => (bag.indexOf(x) < i0 ? 'the word above it' : bag.indexOf(x) === i0 + 1 ? 'the word after it' : 'a word after it');
+    const below = lay.S.every((row, i) => row.every((s, j) => !s || j < i));
+    const pairs = [];
+    lay.S.forEach((row, i) => row.forEach((s, j) => { if (s) pairs.push(`${w(bag[i])} reads ${w(bag[j])}`); }));
     const reading = V.ADJS.map(a => {
-      const hi = V.NOUNS.filter(n => V.score(n, a) > 0);
-      const lo = V.NOUNS.filter(n => V.score(n, a) === 0);
-      return `<tr class="${hi.length > 1 ? 'shared' : ''}"><th>${w(a)}</th>
-        <td class="hi">1 with ${and(hi.map(w))}</td>
-        <td class="lo">0 with ${lo.length ? and(lo.map(w)) : 'nothing'}</td>
-        <td class="mark">${hi.length > 1 ? 'two things at once' : ''}</td></tr>`;
+      const hi = V.NOUNS.filter(x => V.score(x, a) > 0);
+      const lo = V.NOUNS.filter(x => V.score(x, a) === 0);
+      return `<tr><th>${w(a)}</th><td class="hi">1 with ${and(hi.map(w))}</td><td class="lo">0 with ${and(lo.map(w))}</td></tr>`;
     }).join('');
-    const n0 = V.NOUNS[0];
-    const yes = V.ADJS.filter(a => V.score(n0, a) > 0 && V.NOUNS.filter(n => V.score(n, a) > 0).length > 1)[0] ||
-      V.ADJS.filter(a => V.score(n0, a) > 0)[0];
-    const no = V.ADJS.filter(a => V.score(n0, a) === 0)[0];
-
     return `<div class="reveal"><h2>Attention is one multiplication.</h2>
-      <p class="lead">Stack every word's query into a matrix <b>Q</b> and every word's key into <b>K</b>. Multiply Q by K transposed and you get a score for every pair of words at once. Each score is one query and one key multiplied feature by feature and added up: their inner product.</p>
+      <p class="lead">Stack the queries of the sentence into a block <b>Q</b> and its keys into <b>K</b>, one row per word. Q times K transposed gives a <b>score</b> for every pair of words at once: one query and one key, multiplied slot by slot and added up, their inner product.</p>
       <div class="matmul">
-        ${mxbox('Q &nbsp;<span class="dim">queries</span>',
-          mx(Q, WORDS, V.KINDS, { cls: 'compact', colKind: 'ft', lit: (i, j) => Q[i][j] > 0, fadedRow: i => !isNoun(i) }))}
+        ${mxbox(`Q, ${n} by ${V.K}`, mx(lay.Q, bag, V.SLOTS, { cls: 'compact', colKind: 'sl', lit: (i, j) => lay.Q[i][j] > 0, fadedRow: i => !isNoun(i) }))}
         <span class="op">&times;</span>
-        ${mxbox('K<sup>T</sup> &nbsp;<span class="dim">keys</span>',
-          mx(Kt, V.KINDS, WORDS, { cls: 'compact', rowKind: 'ft', lit: (i, j) => Kt[i][j] > 0, fadedCol: isNoun }), 'mid')}
+        ${mxbox(`K<sup>T</sup>, ${V.K} by ${n}`, mx(Kt, V.SLOTS, bag, { cls: 'compact', rowKind: 'sl', lit: (i, j) => Kt[i][j] > 0, fadedCol: isNoun }), 'mid')}
         <span class="op">=</span>
-        ${mxbox('scores',
-          mx(S, WORDS, WORDS, { cls: 'compact', lit: (i, j) => S[i][j] > 0, fadedRow: i => !isNoun(i), fadedCol: isNoun }))}
+        ${mxbox(`S, ${n} by ${n}`, mx(lay.S, bag, bag, { cls: 'compact', diag: true, lit: (i, j) => lay.S[i][j] > 0, fadedRow: i => !isNoun(i), fadedCol: isNoun }))}
       </div>
-      <p class="small" style="margin-top:-10px">Faded is all zeros: the changing words ask nothing, so their rows of Q are empty, and the things offer nothing, so their columns of K<sup>T</sup> are empty. Every word is still in the matrix.</p>
-      ${worked(n0, yes)}
-      ${worked(n0, no)}
-      <p class="lead" style="margin-top:22px">A score is 1 when a query and a key share a feature, and 0 when they share none. Read the scores column by column and the whole grammar of Wuggish falls out of the arithmetic:</p>
+      <p class="small" style="margin-top:-10px">Faded is all zeros: the adjectives ask nothing, so their rows of Q are empty, and the nouns answer nothing, so their columns of K<sup>T</sup> are empty. Every word is still in the blocks.</p>
+      ${worked(noun, yes, rel(yes))}
+      ${worked(noun, no, rel(no))}
+      <p class="lead" style="margin-top:18px">S is the map you drew: ${and(pairs)}. ${below ? `Every 1 of S lies below the diagonal, the dashed cells, because every adjective stands before its noun: each noun reads words above it. A language model lets a row read only the rows above it, and here that mask would change nothing.` : ''}</p>
+      <p class="lead">Run the same arithmetic over all ${NUM[V.WORDS.length]} words and the whole grammar of Wuggish falls out of it:</p>
       <table class="reading">${reading}</table></div>`;
   }
 
-  // 6: the new row of a thing is its own row plus the values of the words it
-  // scored 1 with, E + S V, on the sentence of screen 2.  The arithmetic keeps
-  // the RAW scores, so every number stays 0 or 1; the paragraph under the
-  // formula says what the softmax does instead (AML, 2026-10-30, replacing
-  // BMAI's normalize(), which divided each row by its total).
-  function screenValues() {
-    const item = lastFlip();
-    const bag = item.bag;                          // as the player saw it
-    const lay = V.layer(bag);
-    const nouns = nounsIn(bag);
-    // the thing that actually attended to something
-    const focal = nouns[Math.max(0, nouns.findIndex(n => bag.some(x => V.score(n, x) > 0)))];
-    const i = bag.indexOf(focal);
-    const picked = V.WORDS.filter(x => bag.indexOf(x) >= 0 && V.score(focal, x) > 0);   // in table order
-    const rest = bag.filter(x => V.score(focal, x) === 0);                              // itself included
-
-    const rows = [{ v: V.row(focal), label: w(focal), note: 'its own row' }]
-      .concat(picked.map(x => ({ op: '+', v: V.value(x), label: `<span class="mul">1 &times;</span> ${w(x)}`, note: `the value of ${w(x)}` })))
+  // the sum of one noun of the running sentence: its own row, plus 1 x the
+  // value of each word it scored 1 with, plus a faded 0 x for the rest, equals
+  // its new row; and under it, the row of the dictionary it lands on, with
+  // the same picture
+  function sameRow(bag, noun, px) {
+    const lay = V.layer(bag), i = bag.indexOf(noun);
+    const read = bag.filter((x, j) => lay.S[i][j] > 0);
+    const rest = bag.filter((x, j) => lay.S[i][j] === 0);           // itself included
+    const H = lay.H[i], target = V.wordWithRow(H);
+    const rows = [{ v: V.row(noun), label: w(noun), thumb: thumbRow(V.row(noun), px), note: 'its own row' }]
+      .concat(read.map(x => ({ op: '+', v: V.value(x), label: `<span class="mul">1 &times;</span> ${w(x)}`, note: `the value of ${w(x)}` })))
       .concat(rest.length ? [{ op: '+', v: V.zeros(V.FEATURES.length), label: `<span class="mul">0 &times;</span> ${and(rest.map(w))}`, note: 'scored 0, adds nothing', cls: 'faded' }] : [])
-      .concat([{ op: '=', v: lay.H[i], label: `new ${w(focal)}`, note: and(V.on(lay.H[i]).map(ft)), cls: 'total' }]);
+      .concat([{ op: '=', v: H, label: `new ${w(noun)}`, thumb: thumbRow(H, px), note: and(V.on(H).map(ft)), cls: 'total same' }]);
+    if (target && target !== noun) {
+      rows.push({ op: '=', v: V.row(target), label: w(target), thumb: thumbRow(V.row(target), px), note: 'its row in the dictionary', cls: 'same dict' });
+    }
+    return { rows, read, target };
+  }
 
-    const share = { 2: 'half', 3: 'a third', 4: 'a quarter' }[picked.length];
-    const shareText = share
-      ? `With scores that stand out clearly, ${w(focal)} then takes ${share} of each of its words: ${and(picked.map(x => share + ' the ' + ft(L.adjectives[x].feature)))}, the same features at ${share} strength.`
-      : 'With scores that stand out clearly, a thing with two words then takes half of each: the same features at half strength.';
-
-    return `<div class="reveal"><h2>Each thing adds what it attended to.</h2>
-      <p class="lead">Besides a query and a key, every word carries a third vector, its <b>value</b>: what it adds to a thing. A changing word's value is its look; a thing's value is all zeros. The new row of a thing is its own row plus the value of every word it scored 1 with.</p>
-      ${ftable(rows, { cls: 'sumtab' })}
-      <p class="small">${w(focal)} scored 1 with ${and(picked.map(w))} and 0 with every other word, itself included. Its own row comes back in at the top: a transformer adds a word's own row to whatever it attended to.</p>
-      <p class="lead" style="margin-top:18px">Every thing of the sentence does the same at once. In pictures, these are the sums you saw before:</p>
-      <div class="sums">${sums(item, 96)}</div>
-      <p class="lead" style="margin-top:18px">Scores times values, for every word at once: that is the whole of attention.</p>
-      <p class="formula">attention(Q, K, V) <span class="op">=</span> softmax<span class="paren">(</span><span class="frac"><span>Q K<sup>T</sup></span><span class="den">&radic;k</span></span><span class="paren">)</span> V</p>
-      <p class="small">Q K<sup>T</sup> is the multiplication of the screen before, and V holds the values of this one. A real transformer also turns each row of scores into weights that add up to 1, with the <b>softmax</b>. ${shareText} The game keeps the raw scores, so that every number stays 0 or 1. The &radic;k, with k = ${V.KINDS.length} the length of a query and a key, keeps the scores from growing with the number of features.</p></div>`;
+  // 6: the new row of a thing is its own row plus the values of the words it
+  // scored 1 with, E + S V, on the running sentence.  The arithmetic keeps the
+  // RAW scores, so every number stays 0 or 1; the small print says what the
+  // softmax does instead.
+  function screenValues() {
+    const item = findRunning();
+    const bag = item.bag, lay = V.layer(bag);
+    const nouns = nounsIn(bag);
+    const first = sameRow(bag, nouns[0], 58), second = sameRow(bag, nouns[1], 44);
+    const all = bag.map((x, i) => {
+      const lands = V.wordWithRow(lay.H[i]);
+      return {
+        v: lay.H[i], label: V.isNoun(x) ? `new ${w(x)}` : w(x), thumb: V.isNoun(x) ? thumbRow(lay.H[i], 40) : '',
+        note: lands === x ? 'unchanged' : lands ? `the row of ${w(lands)}` : 'a row of no word',
+        cls: lands === x ? 'faded' : 'same',
+      };
+    });
+    const i0 = bag.indexOf(nouns[0]);
+    const s1 = V.softmax(lay.S[i0], 1), s9 = V.softmax(lay.S[i0], 9);
+    const j0 = bag.indexOf(first.read[0]);
+    const others = s1.filter((x, j) => j !== j0);
+    const flat = others.every(x => fix(x) === fix(others[0]));
+    return `<div class="reveal"><h2>Each thing adds what it read.</h2>
+      <p class="lead">Besides a query and a key, every word carries a third vector, its <b>value</b>: the row times W<sup>V</sup>, which keeps ${and(V.FEATURES.filter((f, i) => V.W_V[i][i]).map(ft))}. So the value of ${w(first.read[0])} is ${and(V.on(V.value(first.read[0])).map(ft))}. The new row of a word is its own row plus the value of every word it scored 1 with.</p>
+      ${ftable(first.rows, { cls: 'sumtab' })}
+      <p class="lead punch">The new row of ${w(nouns[0])} is the row of ${w(first.target)}, the same ${NUM[V.FEATURES.length]} numbers and the same picture. A phrase and a word land on one row.</p>
+      <p class="lead" style="margin-top:18px">${w(nouns[1])} does the same with ${and(second.read.map(w))}, and lands on the row of ${w(second.target)}:</p>
+      ${ftable(second.rows, { cls: 'sumtab small-sum', groups: false })}
+      <p class="lead" style="margin-top:18px">Every word of the sentence does it at once. In blocks: the new rows are E + S V, where E holds the rows the words came in with, and S V adds to each row the values that its row of S picks.</p>
+      ${ftable(all, { cls: 'sumtab all', groups: false })}
+      <p class="formula">new rows <span class="op">=</span> E <span class="op">+</span> softmax<span class="paren">(</span><span class="frac"><span>Q K<sup>T</sup></span><span class="den">&radic;k</span></span><span class="paren">)</span> V</p>
+      <p class="small">Adding E back, the own row at the top of each sum, is the <b>residual connection</b> of a transformer. A real transformer also turns each row of scores into weights that add up to 1, with the <b>softmax</b>, after dividing each score by &radic;k, with k = ${V.K} the length of a query and a key. For ${w(nouns[0])} the weights come out ${fix(s1[j0])} for ${w(first.read[0])} and ${flat ? fix(others[0]) + ' for each other word' : and(others.map(fix))}; with W<sup>Q</sup> and W<sup>K</sup> three times larger a match scores 9, and ${w(first.read[0])} takes ${fix(s9[j0])} of the weight. The game keeps the raw scores, so that every number stays 0 or 1.</p></div>`;
   }
 
   // 7: the closer, retold with the vectors: the tie is a number, the same
@@ -343,31 +408,51 @@
   function screenCloser() {
     const item = findKind('closer');
     const bag = item.bag;
-    const here = V.NOUNS.filter(n => bag.indexOf(n) >= 0);
+    const here = nounsIn(bag);
     const tie = adjsIn(bag).filter(a => here.filter(n => V.score(n, a) > 0).length > 1)[0];
     const both = here.filter(n => V.score(n, tie) > 0);
     const lay = V.layer(bag);
     const rows = both.map(n => {
-      const h = lay.H[bag.indexOf(n)];
-      return { v: h, label: `new ${w(n)}`, thumb: thumb(n, flagsOf(h), 64), note: and(V.on(h).map(ft)) };
+      const h = lay.H[bag.indexOf(n)], lands = V.wordWithRow(h);
+      return { v: h, label: `new ${w(n)}`, thumb: thumbRow(h, 60), note: lands ? `the row of ${w(lands)}` : 'a row of no word', cls: lands ? 'same' : '' };
     });
+    const look = V.look(tie);
+    const zebra = both.map(n => V.wordWithRow(lay.H[bag.indexOf(n)])).filter(Boolean)[0];
+    const ans = {};
+    both.forEach(n => { const p = V.picture(lay.H[bag.indexOf(n)]); ans[p.object] = p.flags; });
+    // the two pictures the game accepted, and the one attention draws, which
+    // the game marked wrong
+    const readings = item.options.filter(o => o.correct).map(o => o.scene);
+    const trio = readings.map((sc, k) => `<figure class="pic">${A.scene(sc, 200, { fit: true })}<figcaption>${k ? 'or this one' : 'you could tap this one'}</figcaption></figure>`).join('') +
+      `<span class="op"><span class="ar-r">&rarr;</span><span class="ar-d">&darr;</span></span><figure class="pic att">${A.scene(ans, 260, { fit: true })}<figcaption>attention draws this one</figcaption></figure>`;
     return `<div class="reveal"><h2>The one you could not read.</h2>
       <p class="lead">${bag.map(w).join(' ')}. Run the same arithmetic on it.</p>
       ${both.map(n => worked(n, tie)).join('')}
-      <p class="lead" style="margin-top:18px">${w(tie)} scores <b>1</b> against ${and(both.map(w))}: the same number, twice. So both take its value, and both come out with ${ft(L.adjectives[tie].feature)}:</p>
-      ${ftable(rows)}
-      <p class="lead" style="margin-top:18px">One ${w(tie)}, ${NUM[both.length]} ${esc(L.adjectives[tie].gloss)} things. Nothing in these rows can break the tie, because a bag of words has thrown the order away.</p>
-      <p class="lead">A transformer breaks it by adding each word's <b>position</b> to its row, before the queries and keys are made. The same word in two places then gets two different rows, and the scores come out different. Word order comes back, as a feature the model can choose to use. This is called positional encoding.</p></div>`;
+      <p class="lead" style="margin-top:18px">${w(tie)} scores <b>1</b> with ${and(both.map(w))}: the same number, twice. So both take its value, and both come out with ${ft(look)}:</p>
+      ${ftable(rows, { cls: 'sumtab', groups: false })}
+      <div class="closerpic">${trio}</div>
+      <p class="lead" style="margin-top:14px">One ${w(tie)}, and ${NUM[both.length]} things with ${ft(look)}${zebra ? `, the second one a ${w(zebra)}` : ''}: a picture that neither reading means, the very picture the game marked wrong. Nothing in these rows can break the tie. ${w(tie)} stands before both nouns, and attention reads the words as a bag.</p>
+      <p class="lead">A transformer adds each word's <b>position</b> to its row, before the queries and keys are made. Then the same word in two places gets two different rows, and a model can learn to use the order, for instance that an adjective goes with the noun right after it. This is called <b>positional encoding</b>.</p></div>`;
   }
 
+  // 8: the glosses, and for each word with a look the phrase that lands on its row
   function screenGloss() {
+    const phraseOf = n => {
+      const flags = L.nouns[n].flags;
+      if (!flags.length) return '';
+      const adj = V.ADJS.filter(a => flags.indexOf(L.adjectives[a].flag) >= 0)[0];
+      return `${w(adj)} ${w(baseOf(L.nouns[n].object))}`;
+    };
     let rows = '';
-    for (const n in L.nouns) rows += `<tr><td>${esc(n)}</td><td>${esc(L.nouns[n].gloss)}</td></tr>`;
-    for (const a in L.adjectives) rows += `<tr><td>${esc(a)}</td><td>${esc(L.adjectives[a].gloss)}</td></tr>`;
+    for (const n of V.NOUNS) {
+      const ph = phraseOf(n);
+      rows += `<tr><td class="gthumb">${thumbWord(n, 46)}</td><td class="gw">${w(n)}</td><td class="gl">${esc(L.nouns[n].gloss)}</td><td class="gp">${ph ? '= ' + ph : ''}</td></tr>`;
+    }
+    for (const a of V.ADJS) rows += `<tr><td class="gthumb"></td><td class="gw">${w(a)}</td><td class="gl">${esc(L.adjectives[a].gloss)}</td><td class="gp"></td></tr>`;
     return `<div class="reveal"><h2>Wuggish in one slide.</h2>
       <p class="lead">Every word with its English gloss, at last.</p>
       <table class="gloss">${rows}</table>
-      <p class="lead" style="margin-top:22px">Attention is what let you read scrambled Wuggish. It is what lets a language model read scrambled anything.</p>
+      <p class="lead" style="margin-top:22px">Attention is what let you find which word goes with which thing. It is how a language model reads every sentence it is given.</p>
       <p class="lead">The lecture continues.</p></div>`;
   }
 
@@ -378,6 +463,6 @@
     render(n, stats) {
       return SCREENS[n - 1](stats);
     },
-    findItem, findKind,
+    findItem, findKind, findRunning,
   };
 })();
