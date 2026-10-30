@@ -75,7 +75,7 @@ folders by hand: the script rebuilds them from scratch on every run.
   is rebuilt for them, refresh the copies here. The game and the attention deck run on the new
   Wuggish (`docs/visualizations/wuggish-game/SPEC.md` of `aml-hs26`) since their refreshes of
   30 October 2026.
-- The copies match `aml-hs26` at commit `f6032e8` (30 October 2026).
+- The copies match `aml-hs26` at commit `04caa6f` (30 October 2026).
 
 ## The decks link this site
 
