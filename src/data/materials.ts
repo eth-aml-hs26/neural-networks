@@ -12,6 +12,16 @@ import { colab, file } from './links';
  */
 export const materials = {
   // Slides: every deck as projected (a page per click) and its handout (a page per slide).
+  'slides/experimental-studies': {
+    kind: 'slides',
+    title: 'The experimental studies',
+    summary:
+      'What happens, what counts, and what you decide: why the course runs randomized studies and what the trials of 2024 and 2025 found, the weeks of the two studies of this semester and their quizzes, how the quizzes count, and consent and data.',
+    links: [
+      { label: 'Slides', url: file('slides/experimental-studies-slides.pdf') },
+      { label: 'Handout', url: file('slides/experimental-studies-handout.pdf') },
+    ],
+  },
   'slides/neural-networks-cold-intro': {
     kind: 'slides',
     title: 'William James, The Principles of Psychology',

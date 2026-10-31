@@ -9,8 +9,8 @@ import { step } from './steps';
  * It follows the running order of the private course repository,
  * docs/lecture-plans/neural-networks-llms-transformers.md at commit 7a143cc (30 October
  * 2026, after the cold intro and the hinge-fan deck were aligned with it). The numbers in
- * the comments are the items of that order. Item 1, the deck on the
- * experimental studies, is course administration and stays on Moodle.
+ * the comments are the items of that order, from item 1, the deck on the experimental
+ * studies (added on 31 October 2026 at Carlos's request).
  */
 
 /** While true, the page says above the sequence that the order may still change. */
@@ -23,6 +23,9 @@ export const sequence: Block[] = [
     summary:
       'Gradient descent on one number, then on two, on many days at once and on a hidden layer of ReLUs; then what such networks can draw, with one hidden layer and with many.',
     steps: [
+      step('slides/experimental-studies', {
+        note: 'In the lecture, frames 2, 6, 8, 10, 11, 13, 15 and 19.',
+      }), // 1
       step('slides/neural-networks-cold-intro'), // 2
       step('viz/will-it-last'), // 3
       step('viz/grasshopper-finds-w'), // 4: step 0 of the grasshopper series

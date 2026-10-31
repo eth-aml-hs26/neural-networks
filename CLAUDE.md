@@ -63,9 +63,10 @@ folders by hand: the script rebuilds them from scratch on every run.
 
 - **DRAFT.** The sequence follows the running order that a session wrote on 30 October 2026,
   `docs/lecture-plans/neural-networks-llms-transformers.md` of `aml-hs26` at commit `7a143cc`:
-  Monday 2 November (items 2 to 9 of that order, frame 9 of the hinge-fan deck after the chain, then
+  Monday 2 November (items 1 to 9 of that order, frame 9 of the hinge-fan deck after the chain, then
   the two notes to read), Thursday 5 November (item 10) and the slot after (items 11 to 15). Its
-  item 1, the deck on the experimental studies, is course administration and stays on Moodle.
+  item 1, the deck on the experimental studies, was added on 31 October 2026 at Carlos's request;
+  its frames quote the contact addresses of the study's information sheet.
   Carlos agreed to the order that evening and had the cold intro and the hinge-fan deck aligned with
   it; `SEQUENCE_IS_DRAFT` stays `true` while the date of the slot after is open.
 - The transformer step shows sections 4 to 10 of the workshop version (`slides/attention-cscs`, the
