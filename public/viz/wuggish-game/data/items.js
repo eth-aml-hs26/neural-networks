@@ -38,7 +38,7 @@ window.ITEMS = {
      "options": [
       {
        "scene": {
-        "fish": {}
+        "duck": {}
        },
        "correct": false,
        "error": "presence",
@@ -61,7 +61,17 @@ window.ITEMS = {
       },
       {
        "scene": {
-        "duck": {}
+        "cat": {}
+       },
+       "correct": true,
+       "error": null,
+       "diff": null,
+       "feedback": "",
+       "blame": []
+      },
+      {
+       "scene": {
+        "fish": {}
        },
        "correct": false,
        "error": "presence",
@@ -70,16 +80,6 @@ window.ITEMS = {
        "blame": [
         "kat"
        ]
-      },
-      {
-       "scene": {
-        "cat": {}
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
       }
      ]
     },
@@ -94,13 +94,12 @@ window.ITEMS = {
      "options": [
       {
        "scene": {
-        "duck": {},
-        "fish": {}
+        "duck": {}
        },
-       "correct": false,
-       "error": "presence",
-       "diff": "extra",
-       "feedback": "The sentence has no feesh.",
+       "correct": true,
+       "error": null,
+       "diff": null,
+       "feedback": "",
        "blame": []
       },
       {
@@ -117,12 +116,13 @@ window.ITEMS = {
       },
       {
        "scene": {
-        "duck": {}
+        "duck": {},
+        "fish": {}
        },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
+       "correct": false,
+       "error": "presence",
+       "diff": "extra",
+       "feedback": "The sentence has no feesh.",
        "blame": []
       },
       {
@@ -150,6 +150,29 @@ window.ITEMS = {
      "options": [
       {
        "scene": {
+        "duck": {}
+       },
+       "correct": false,
+       "error": "presence",
+       "diff": "both",
+       "feedback": "The sentence says feesh.",
+       "blame": [
+        "feesh"
+       ]
+      },
+      {
+       "scene": {
+        "cat": {},
+        "fish": {}
+       },
+       "correct": false,
+       "error": "presence",
+       "diff": "extra",
+       "feedback": "The sentence has no kat.",
+       "blame": []
+      },
+      {
+       "scene": {
         "cat": {}
        },
        "correct": false,
@@ -168,29 +191,6 @@ window.ITEMS = {
        "error": null,
        "diff": null,
        "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "duck": {}
-       },
-       "correct": false,
-       "error": "presence",
-       "diff": "both",
-       "feedback": "The sentence says feesh.",
-       "blame": [
-        "feesh"
-       ]
-      },
-      {
-       "scene": {
-        "duck": {},
-        "fish": {}
-       },
-       "correct": false,
-       "error": "presence",
-       "diff": "extra",
-       "feedback": "The sentence has no dukk.",
        "blame": []
       }
      ]
@@ -255,6 +255,18 @@ window.ITEMS = {
      "options": [
       {
        "scene": {
+        "cat": {
+         "running": true
+        }
+       },
+       "correct": true,
+       "error": null,
+       "diff": null,
+       "feedback": "",
+       "blame": []
+      },
+      {
+       "scene": {
         "cat": {}
        },
        "correct": false,
@@ -264,6 +276,19 @@ window.ITEMS = {
        "blame": [
         "runnin"
        ]
+      },
+      {
+       "scene": {
+        "cat": {
+         "running": true,
+         "booted": true
+        }
+       },
+       "correct": false,
+       "error": "add",
+       "diff": "extra",
+       "feedback": "There is no bootet in this sentence.",
+       "blame": []
       },
       {
        "scene": {
@@ -278,31 +303,6 @@ window.ITEMS = {
        "blame": [
         "runnin"
        ]
-      },
-      {
-       "scene": {
-        "cat": {
-         "running": true,
-         "booted": true
-        }
-       },
-       "correct": false,
-       "error": "add",
-       "diff": "extra",
-       "feedback": "There is no bootet in this sentence.",
-       "blame": []
-      },
-      {
-       "scene": {
-        "cat": {
-         "running": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
       }
      ]
     },
@@ -310,166 +310,11 @@ window.ITEMS = {
      "id": "L2-02",
      "kind": "flip",
      "bag": [
-      "bootet",
-      "dukk"
-     ],
-     "scramble": true,
-     "before": [
-      [
-       "bootet",
-       "dukk"
-      ]
-     ],
-     "options": [
-      {
-       "scene": {
-        "duck": {
-         "booted": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "duck": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "You missed bootet.",
-       "blame": [
-        "bootet"
-       ]
-      },
-      {
-       "scene": {
-        "duck": {
-         "booted": true,
-         "running": true
-        }
-       },
-       "correct": false,
-       "error": "add",
-       "diff": "extra",
-       "feedback": "There is no runnin in this sentence.",
-       "blame": []
-      },
-      {
-       "scene": {
-        "duck": {
-         "running": true
-        }
-       },
-       "correct": false,
-       "error": "swap",
-       "diff": "both",
-       "feedback": "That is runnin, the sentence says bootet.",
-       "blame": [
-        "bootet"
-       ]
-      }
-     ]
-    },
-    {
-     "id": "L2-03",
-     "kind": "flip",
-     "bag": [
-      "pussinbootz"
-     ],
-     "scramble": true,
-     "before": [],
-     "options": [
-      {
-       "scene": {
-        "cat": {
-         "running": true
-        }
-       },
-       "correct": false,
-       "error": "swap",
-       "diff": "both",
-       "feedback": "That is runnin kat, the sentence says pussinbootz.",
-       "blame": [
-        "pussinbootz"
-       ]
-      },
-      {
-       "scene": {
-        "cat": {
-         "booted": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "cat": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "That is kat, the sentence says pussinbootz.",
-       "blame": [
-        "pussinbootz"
-       ]
-      },
-      {
-       "scene": {
-        "cat": {
-         "booted": true,
-         "running": true
-        }
-       },
-       "correct": false,
-       "error": "add",
-       "diff": "extra",
-       "feedback": "There is no runnin in this sentence.",
-       "blame": []
-      }
-     ]
-    },
-    {
-     "id": "L2-04",
-     "kind": "flip",
-     "bag": [
       "runnerdukk"
      ],
      "scramble": true,
      "before": [],
      "options": [
-      {
-       "scene": {
-        "duck": {
-         "running": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "duck": {
-         "running": true,
-         "booted": true
-        }
-       },
-       "correct": false,
-       "error": "add",
-       "diff": "extra",
-       "feedback": "There is no bootet in this sentence.",
-       "blame": []
-      },
       {
        "scene": {
         "duck": {}
@@ -485,6 +330,18 @@ window.ITEMS = {
       {
        "scene": {
         "duck": {
+         "running": true
+        }
+       },
+       "correct": true,
+       "error": null,
+       "diff": null,
+       "feedback": "",
+       "blame": []
+      },
+      {
+       "scene": {
+        "duck": {
          "booted": true
         }
        },
@@ -495,11 +352,24 @@ window.ITEMS = {
        "blame": [
         "runnerdukk"
        ]
+      },
+      {
+       "scene": {
+        "duck": {
+         "running": true,
+         "booted": true
+        }
+       },
+       "correct": false,
+       "error": "add",
+       "diff": "extra",
+       "feedback": "There is no bootet in this sentence.",
+       "blame": []
       }
      ]
     },
     {
-     "id": "L2-05",
+     "id": "L2-03",
      "kind": "flip",
      "bag": [
       "bootet",
@@ -516,16 +386,16 @@ window.ITEMS = {
      "options": [
       {
        "scene": {
-        "cat": {
-         "booted": true
-        },
+        "cat": {},
         "fish": {}
        },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
+       "correct": false,
+       "error": "drop",
+       "diff": "missing",
+       "feedback": "You missed bootet.",
+       "blame": [
+        "bootet"
+       ]
       },
       {
        "scene": {
@@ -544,19 +414,6 @@ window.ITEMS = {
       },
       {
        "scene": {
-        "cat": {},
-        "fish": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "You missed bootet.",
-       "blame": [
-        "bootet"
-       ]
-      },
-      {
-       "scene": {
         "cat": {
          "booted": true,
          "running": true
@@ -568,71 +425,11 @@ window.ITEMS = {
        "diff": "extra",
        "feedback": "There is no runnin in this sentence.",
        "blame": []
-      }
-     ]
-    },
-    {
-     "id": "L2-06",
-     "kind": "flip",
-     "bag": [
-      "runnin",
-      "dukk",
-      "feesh"
-     ],
-     "scramble": true,
-     "before": [
-      [
-       "runnin",
-       "dukk"
-      ]
-     ],
-     "options": [
+      },
       {
        "scene": {
-        "duck": {
+        "cat": {
          "booted": true
-        },
-        "fish": {}
-       },
-       "correct": false,
-       "error": "swap",
-       "diff": "both",
-       "feedback": "That is bootet, the sentence says runnin.",
-       "blame": [
-        "runnin"
-       ]
-      },
-      {
-       "scene": {
-        "duck": {},
-        "fish": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "You missed runnin.",
-       "blame": [
-        "runnin"
-       ]
-      },
-      {
-       "scene": {
-        "duck": {
-         "running": true,
-         "booted": true
-        },
-        "fish": {}
-       },
-       "correct": false,
-       "error": "add",
-       "diff": "extra",
-       "feedback": "There is no bootet in this sentence.",
-       "blame": []
-      },
-      {
-       "scene": {
-        "duck": {
-         "running": true
         },
         "fish": {}
        },
@@ -691,74 +488,6 @@ window.ITEMS = {
      "id": "L3-01",
      "kind": "flip",
      "bag": [
-      "flyin",
-      "dukk"
-     ],
-     "scramble": true,
-     "before": [
-      [
-       "flyin",
-       "dukk"
-      ]
-     ],
-     "options": [
-      {
-       "scene": {
-        "duck": {
-         "flying": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "duck": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "You missed flyin.",
-       "blame": [
-        "flyin"
-       ]
-      },
-      {
-       "scene": {
-        "duck": {
-         "swimming": true
-        }
-       },
-       "correct": false,
-       "error": "swap",
-       "diff": "both",
-       "feedback": "That is swimmin, the sentence says flyin.",
-       "blame": [
-        "flyin"
-       ]
-      },
-      {
-       "scene": {
-        "duck": {
-         "flying": true,
-         "booted": true
-        }
-       },
-       "correct": false,
-       "error": "add",
-       "diff": "extra",
-       "feedback": "There is no bootet in this sentence.",
-       "blame": []
-      }
-     ]
-    },
-    {
-     "id": "L3-02",
-     "kind": "flip",
-     "bag": [
       "swimmin",
       "feesh"
      ],
@@ -770,18 +499,6 @@ window.ITEMS = {
       ]
      ],
      "options": [
-      {
-       "scene": {
-        "fish": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "You missed swimmin.",
-       "blame": [
-        "swimmin"
-       ]
-      },
       {
        "scene": {
         "fish": {
@@ -810,6 +527,18 @@ window.ITEMS = {
       },
       {
        "scene": {
+        "fish": {}
+       },
+       "correct": false,
+       "error": "drop",
+       "diff": "missing",
+       "feedback": "You missed swimmin.",
+       "blame": [
+        "swimmin"
+       ]
+      },
+      {
+       "scene": {
         "fish": {
          "flying": true
         }
@@ -825,7 +554,7 @@ window.ITEMS = {
      ]
     },
     {
-     "id": "L3-03",
+     "id": "L3-02",
      "kind": "flip",
      "bag": [
       "flyfeesh"
@@ -833,6 +562,20 @@ window.ITEMS = {
      "scramble": true,
      "before": [],
      "options": [
+      {
+       "scene": {
+        "fish": {
+         "swimming": true
+        }
+       },
+       "correct": false,
+       "error": "swap",
+       "diff": "both",
+       "feedback": "That is swimmin feesh, the sentence says flyfeesh.",
+       "blame": [
+        "flyfeesh"
+       ]
+      },
       {
        "scene": {
         "fish": {}
@@ -870,160 +613,11 @@ window.ITEMS = {
        "blame": [
         "flyfeesh"
        ]
-      },
-      {
-       "scene": {
-        "fish": {
-         "swimming": true
-        }
-       },
-       "correct": false,
-       "error": "swap",
-       "diff": "both",
-       "feedback": "That is swimmin feesh, the sentence says flyfeesh.",
-       "blame": [
-        "flyfeesh"
-       ]
       }
      ]
     },
     {
-     "id": "L3-04",
-     "kind": "flip",
-     "bag": [
-      "pondukk"
-     ],
-     "scramble": true,
-     "before": [],
-     "options": [
-      {
-       "scene": {
-        "duck": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "That is dukk, the sentence says pondukk.",
-       "blame": [
-        "pondukk"
-       ]
-      },
-      {
-       "scene": {
-        "duck": {
-         "flying": true
-        }
-       },
-       "correct": false,
-       "error": "swap",
-       "diff": "both",
-       "feedback": "That is flyin dukk, the sentence says pondukk.",
-       "blame": [
-        "pondukk"
-       ]
-      },
-      {
-       "scene": {
-        "duck": {
-         "swimming": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "duck": {
-         "swimming": true,
-         "booted": true
-        }
-       },
-       "correct": false,
-       "error": "add",
-       "diff": "extra",
-       "feedback": "There is no bootet in this sentence.",
-       "blame": []
-      }
-     ]
-    },
-    {
-     "id": "L3-05",
-     "kind": "flip",
-     "bag": [
-      "swimmin",
-      "kat",
-      "dukk"
-     ],
-     "scramble": true,
-     "before": [
-      [
-       "swimmin",
-       "dukk"
-      ]
-     ],
-     "options": [
-      {
-       "scene": {
-        "cat": {},
-        "duck": {
-         "flying": true
-        }
-       },
-       "correct": false,
-       "error": "swap",
-       "diff": "both",
-       "feedback": "That is flyin, the sentence says swimmin.",
-       "blame": [
-        "swimmin"
-       ]
-      },
-      {
-       "scene": {
-        "cat": {},
-        "duck": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "You missed swimmin.",
-       "blame": [
-        "swimmin"
-       ]
-      },
-      {
-       "scene": {
-        "cat": {},
-        "duck": {
-         "swimming": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "cat": {},
-        "duck": {
-         "swimming": true,
-         "booted": true
-        }
-       },
-       "correct": false,
-       "error": "add",
-       "diff": "extra",
-       "feedback": "There is no bootet in this sentence.",
-       "blame": []
-      }
-     ]
-    },
-    {
-     "id": "L3-06",
+     "id": "L3-03",
      "kind": "flip",
      "bag": [
       "bootet",
@@ -1040,19 +634,6 @@ window.ITEMS = {
       {
        "scene": {
         "duck": {
-         "swimming": true,
-         "booted": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "duck": {
          "swimming": true
         }
        },
@@ -1063,6 +644,19 @@ window.ITEMS = {
        "blame": [
         "bootet"
        ]
+      },
+      {
+       "scene": {
+        "duck": {
+         "swimming": true,
+         "booted": true
+        }
+       },
+       "correct": true,
+       "error": null,
+       "diff": null,
+       "feedback": "",
+       "blame": []
       },
       {
        "scene": {
@@ -1128,14 +722,29 @@ window.ITEMS = {
          "running": true
         },
         "fish": {
-         "swimming": true
+         "flying": true
         }
        },
        "correct": false,
        "error": "add",
        "diff": "extra",
-       "feedback": "There is no swimmin in this sentence.",
+       "feedback": "There is no flyin in this sentence.",
        "blame": []
+      },
+      {
+       "scene": {
+        "cat": {
+         "running": true
+        },
+        "fish": {}
+       },
+       "correct": false,
+       "error": "drop",
+       "diff": "missing",
+       "feedback": "That is runnin kat, the sentence says pussinbootz.",
+       "blame": [
+        "pussinbootz"
+       ]
       },
       {
        "scene": {
@@ -1165,21 +774,6 @@ window.ITEMS = {
        "diff": null,
        "feedback": "",
        "blame": []
-      },
-      {
-       "scene": {
-        "cat": {
-         "running": true
-        },
-        "fish": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "That is runnin kat, the sentence says pussinbootz.",
-       "blame": [
-        "pussinbootz"
-       ]
       }
      ]
     },
@@ -1209,17 +803,30 @@ window.ITEMS = {
         "cat": {
          "booted": true
         },
-        "fish": {
-         "swimming": true
-        }
+        "fish": {}
        },
        "correct": false,
-       "error": "swap",
-       "diff": "both",
-       "feedback": "That is swimmin, the sentence says flyin.",
+       "error": "drop",
+       "diff": "missing",
+       "feedback": "You missed flyin.",
        "blame": [
         "flyin"
        ]
+      },
+      {
+       "scene": {
+        "cat": {
+         "booted": true
+        },
+        "fish": {
+         "flying": true
+        }
+       },
+       "correct": true,
+       "error": null,
+       "diff": null,
+       "feedback": "",
+       "blame": []
       },
       {
        "scene": {
@@ -1243,28 +850,15 @@ window.ITEMS = {
          "booted": true
         },
         "fish": {
-         "flying": true
-        }
-       },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
-      },
-      {
-       "scene": {
-        "cat": {},
-        "fish": {
-         "flying": true
+         "swimming": true
         }
        },
        "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "You missed bootet.",
+       "error": "swap",
+       "diff": "both",
+       "feedback": "That is swimmin, the sentence says flyin.",
        "blame": [
-        "bootet"
+        "flyin"
        ]
       }
      ],
@@ -1293,22 +887,9 @@ window.ITEMS = {
       {
        "scene": {
         "cat": {},
-        "duck": {}
-       },
-       "correct": false,
-       "error": "drop",
-       "diff": "missing",
-       "feedback": "You missed bootet.",
-       "blame": [
-        "bootet"
-       ]
-      },
-      {
-       "scene": {
-        "cat": {
+        "duck": {
          "booted": true
-        },
-        "duck": {}
+        }
        },
        "correct": true,
        "error": null,
@@ -1319,15 +900,15 @@ window.ITEMS = {
       {
        "scene": {
         "cat": {},
-        "duck": {
-         "booted": true
-        }
+        "duck": {}
        },
-       "correct": true,
-       "error": null,
-       "diff": null,
-       "feedback": "",
-       "blame": []
+       "correct": false,
+       "error": "drop",
+       "diff": "missing",
+       "feedback": "You missed bootet.",
+       "blame": [
+        "bootet"
+       ]
       },
       {
        "scene": {
@@ -1345,6 +926,19 @@ window.ITEMS = {
        "blame": [
         "bootet"
        ]
+      },
+      {
+       "scene": {
+        "cat": {
+         "booted": true
+        },
+        "duck": {}
+       },
+       "correct": true,
+       "error": null,
+       "diff": null,
+       "feedback": "",
+       "blame": []
       }
      ],
      "note": "Both are right. Wuggish cannot tell you which of the two is bootet, and neither could you. Hold that thought."

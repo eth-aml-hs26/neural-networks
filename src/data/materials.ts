@@ -137,7 +137,7 @@ export const materials = {
     kind: 'viz',
     title: 'Wuggish in ten minutes',
     summary:
-      'A game: learn eleven words of a made-up language from pictures, read 18 sentences whose words come in any order with every adjective before its noun, then see that what you did was attention.',
+      'A game: learn eleven words of a made-up language from pictures, read 12 sentences whose words come in any order with every adjective before its noun, then see that what you did was attention.',
     links: [{ label: 'Open', url: file('viz/wuggish-game/index.html') }],
   },
 

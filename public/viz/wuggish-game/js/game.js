@@ -162,7 +162,7 @@
 
   /* fast forward: straight to the reveal, with the game counted as solved.
    * The button is in the topbar and f does the same, for rehearsing the
-   * reveal without playing 18 items first.  Both exist only with ?dev=1:
+   * reveal without playing 12 items first.  Both exist only with ?dev=1:
    * BMAI and CSCS had them on by default and sent ?dev=0 to participants,
    * but the AML copy goes out as a zip whose index.html opens with no query,
    * and a student finding the button skips the whole point of the game. */
