@@ -1,16 +1,20 @@
 # Neural networks, language models and transformers
 
-The material of the lectures on neural networks of **Advanced Machine Learning** (252-0535-00L,
-ETH Zürich, autumn semester 2026), in the order we go through it, live at
+The lecture material on neural networks of **Advanced Machine Learning** (252-0535-00L, ETH Zürich,
+autumn semester 2026), in logical order, live at
 
 https://eth-aml-hs26.github.io/neural-networks/
 
+The page has an introduction and seven numbered sections: gradient descent, shallow ReLU networks,
+deep ReLU networks, language models, attention, a language model with attention, and transformers.
+Within each section the visualizations come first, then the slides, the notebook and the notes.
+
 | Kind | What |
 |---|---|
-| Slides | Seven decks, each as projected (a page for every click) and as a handout (a page per slide): the experimental studies of the course, the cold intro on William James, hinge-fan networks, hinge-chain networks, language models, attention, and the workshop version of attention and transformers, whose second half covers the transformer. The decks link the pages of this site wherever they refer to one. |
-| Visualizations | Eight pages that run in the browser: the quiz show *Will it last?*, the four grasshopper pages on gradient descent, the hinge-fan and hinge-chain networks, and the Wuggish game. |
-| Notes | The lecture notes on hinge-chain networks and two explainer notes on ReLU networks. |
+| Visualizations | Eight pages that run in the browser: *Will it last?*, the four grasshopper pages on gradient descent, the hinge-fan and hinge-chain networks, and the Wuggish game. |
+| Slides | Seven decks, each as projected (a page for every click) and as a handout (a page per slide). The decks link the pages of this site wherever they refer to one. |
 | Notebook | A tiny language model, to run in Google Colab. |
+| Notes | The lecture notes on hinge-chain networks and two notes on ReLU networks. |
 
 Every file is in [`public/`](public/): the decks in `slides/`, the notes in `notes/`, each page in
 `viz/<name>/` (open its `index.html`; the pages work offline, from a downloaded copy too), and the
@@ -26,6 +30,7 @@ npm install      # install dependencies
 npm run dev      # dev server at http://localhost:5173
 npm run build    # list public/, type-check with tsc -b, build into dist/
 npm run preview  # serve the production build locally
+npm run anchors  # check the pages at which rows open a deck (needs Python and pypdf)
 ```
 
 `npm run build` is the correctness gate. It first writes `src/data/public-files.ts`, the list of
@@ -34,15 +39,15 @@ missing.
 
 ## Editing content
 
-- [`src/data/sequence.ts`](src/data/sequence.ts) holds the order: lectures, each a list of steps.
-  A step names a material by its id, `step('viz/will-it-last')`, with an optional note on what to
-  do with it at that point; `soon(title, summary)` names material still to be made.
-- [`src/data/materials.ts`](src/data/materials.ts) holds the catalogue: one entry per material,
-  with its title, a summary for students, and its links.
-
-Links use the helpers of [`src/data/links.ts`](src/data/links.ts): `file('slides/attention-slides.pdf')`
-for a file of `public/`, `colab('notebooks/tiny_language_model.ipynb')` for a notebook opened in
-Colab, and `SOON` for a link whose file is still to come.
+- [`src/data/sequence.ts`](src/data/sequence.ts) holds the sections, in order. A row names a
+  material by its id with a few words on what it covers, `step('viz/will-it-last', 'A linear model
+  and one observation')`; `part()` opens a deck at one of its parts and `soon()` names material
+  still to be made. The page groups the rows of a section by kind: visualizations, slides,
+  notebook, notes.
+- [`src/data/materials.ts`](src/data/materials.ts) holds the catalogue: one entry per material, with
+  its kind, its title and its links.
+- [`src/data/anchors.ts`](src/data/anchors.ts) holds the pages at which `part()` opens a deck, in
+  the projected PDF and in the handout. `npm run anchors` checks them against the PDFs.
 
 The files in `public/slides/`, `public/notes/`, `public/viz/` and `public/notebooks/` are copies
 from the private course repository, made by its script `scripts/publish_nn_site.py`; they are

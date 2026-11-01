@@ -11,11 +11,8 @@ export function Header() {
           <span className="brand__course">Advanced Machine Learning</span>
         </a>
         <nav className="site-nav">
-          <a href="#sequence" className="site-nav__link">
-            Sequence
-          </a>
-          <a href="#materials" className="site-nav__link">
-            Materials
+          <a href="#contents" className="site-nav__link">
+            Contents
           </a>
           <a
             href={`https://github.com/${REPO}`}

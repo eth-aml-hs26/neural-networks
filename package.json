@@ -8,7 +8,8 @@
     "files": "node scripts/list-public-files.mjs",
     "dev": "npm run files && vite",
     "build": "npm run files && tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "anchors": "python3 scripts/check_anchors.py"
   },
   "dependencies": {
     "react": "^18.3.1",

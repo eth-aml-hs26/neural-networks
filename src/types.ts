@@ -1,10 +1,10 @@
-/** What a material is. It sets the tag on its row and its group under "All materials". */
-export type Kind = 'slides' | 'viz' | 'notes' | 'notebook';
+/** What a material is. Within a section, the page lists the kinds in the order of KIND_ORDER. */
+export type Kind = 'viz' | 'slides' | 'notebook' | 'notes';
 
 /** One button on a row: a PDF or a page to open, a notebook to download, Colab. */
 export interface Link {
   label: string;
-  /** From file() or colab() in data/links.ts, or SOON while the file is not here yet. */
+  /** From file(), deckLinks() or colab() in data/links.ts, or SOON while the file is not here yet. */
   url: string;
   /** True for a file the browser should save rather than show (a notebook). */
   download?: boolean;
@@ -13,29 +13,32 @@ export interface Link {
 /** One entry of the catalogue in data/materials.ts. */
 export interface Material {
   kind: Kind;
+  /** The material's own title, as its first page shows it. */
   title: string;
-  /** One or two sentences for students: what it shows and what to do with it. */
-  summary: string;
   /** The first link is the one the title opens. */
   links: Link[];
 }
 
-/** One numbered row of the sequence, made by step() or soon() in data/steps.ts. */
+/** One numbered row of a section, made by step(), part() or soon() in data/steps.ts. */
 export interface Step {
-  /** 'soon' for a placeholder: material still to be made, shown greyed out. */
-  kind: Kind | 'soon';
+  kind: Kind;
+  /** True for a placeholder: material still to be made, shown greyed out with no link. */
+  soon?: boolean;
+  /** What the row covers, in a few dry words: the bold line of the row. */
+  topic: string;
+  /** The material, or the part of it, that covers it: the linked line of the row. */
   title: string;
-  summary: string;
   links: Link[];
-  /** What to do with the material at this point, e.g. "Frames 1 to 8.". */
-  note?: string;
 }
 
-/** A group of steps under one heading: a lecture, or a part of one. */
-export interface Block {
+/** A numbered section of the page: one topic, its steps grouped by kind. */
+export interface Section {
+  /** The anchor of the section, e.g. 'attention' for #attention. */
+  id: string;
   title: string;
-  /** Date and time, e.g. "Monday 2 November 2026, 10:15 to 12:00". */
-  when?: string;
-  summary?: string;
+  /** One dry sentence: what the section contains. */
+  summary: string;
+  /** False for the introduction: no number, in the contents or on its rows. */
+  numbered?: boolean;
   steps: Step[];
 }

@@ -11,21 +11,36 @@ folder as `../aml-hs26/`; its `CLAUDE.md` is the wider context. This file covers
 no grades, no exam questions, no internal notes such as the PLAN.md and README files of the decks and
 pages, no e-mails, no credentials.
 
-## Depositing or changing the sequence
+## The page and its order
 
-The order of the material is one file, `src/data/sequence.ts`. To deposit a new order:
+Since 1 November 2026 the page is part of the lecture, and Carlos asked for it so: "restructure it
+so it contains minimal dry text and that it shows the logical order. First visualizations, then
+slides. [...] I need the presentation to be a bit more academic [...] Dry text [that] just
+explain[s] the minimum necessary for me to guide what each section contains." So the page is a
+title block with a table of contents, then an unnumbered introduction and seven numbered sections
+in logical order (gradient descent, shallow ReLU networks, deep ReLU networks, language models,
+attention, a language model with attention, transformers). Each section has one dry sentence, and
+its rows are grouped by kind in the order of `KIND_ORDER` in `HomePage.tsx`: visualizations first,
+then slides, notebook, notes. A row is numbered n.i and shows a few dry words on what it covers
+(the topic, in bold) above the material that covers it (in italics, linked). Keep the text that
+dry: no stories, no summaries of the materials, no notes on how to use them.
 
-1. Edit `sequence`: a list of blocks (a lecture: `title`, optional `when` and `summary`), each a
-   list of steps. `step('<id>')` shows a material of the catalogue, with an optional `note` (what
-   to do with it at that point, e.g. `'Frames 1 to 8.'`) and an optional `title` for a step that
-   shows only part of a material. A material may appear in several steps. `soon(title, summary)`
-   is a greyed placeholder for material still to be made, such as the transformer part.
-2. Set `SEQUENCE_IS_DRAFT` to `false` once Carlos has confirmed the order; while it is `true`,
-   the page says above the sequence that the order may still change.
-3. `npm run build` (an unknown id fails the type check), then commit and push; the push deploys.
+The order and all of that text are one file, `src/data/sequence.ts`, a list of sections:
+
+1. A row is `step('<id>', topic, title?)` for a whole material of the catalogue,
+   `part('<deck>#<part>', topic, title)` for a deck opened at one of its parts, or
+   `soon(kind, topic, title)`, a greyed placeholder for material still to be made. `title`
+   replaces the material's own title, e.g. `'Language models, parts 1 to 5'`. In a topic,
+   `$...$` sets a formula as LaTeX sets math (variables in serif italic, `ReLU` upright).
+2. A part's pages live in `src/data/anchors.ts`, one per line: the page of the projected PDF, the
+   page of the handout, and a text that the part's first page shows. Read the pages off the PDF's
+   bookmarks or text (pypdf), then run `npm run anchors`.
+3. `npm run build` (an unknown id or anchor fails the type check), then commit and push; the
+   push deploys.
 
 The ids are the keys of `src/data/materials.ts`: `slides/<deck>`, `viz/<page>`, `notes/<note>`,
-`notebooks/<notebook>`, the path of the material in `public/` without its extension.
+`notebooks/<notebook>`, the path of the material in `public/` without its extension. An entry holds
+only the kind, the material's own title and its links; what a row says lives in the sequence.
 
 ## Adding or refreshing material
 
@@ -34,49 +49,54 @@ made by `scripts/publish_nn_site.py` of `aml-hs26`. Never edit, add or delete a 
 folders by hand: the script rebuilds them from scratch on every run.
 
 - **A deck, page, note or notebook was rebuilt in `aml-hs26`:** commit and push it there, run
-  `python3 scripts/publish_nn_site.py` from `aml-hs26`, then `npm run build` here, commit and push.
-  The script refuses to run when `aml-hs26` is behind its remote or a file it would copy has
-  uncommitted changes.
+  `python3 scripts/publish_nn_site.py` from `aml-hs26`, then `npm run build` and `npm run anchors`
+  here, commit and push. The script refuses to run when `aml-hs26` is behind its remote or a file
+  it would copy has uncommitted changes. A deck that gained or lost frames moves the pages of its
+  anchors: `npm run anchors` names each one that moved.
 - **A new material:** add it to the lists at the top of that script (`DECKS`, `NOTES`, `PAGES`,
-  `NOTEBOOKS`), run it, add an entry to `src/data/materials.ts` (kind, title, a summary for
-  students, links), then place it in the sequence. A page is copied with `index.html`, `css/`,
-  `js/`, `vendor/` and `data/` only; its README, checks and dev scripts stay private.
+  `NOTEBOOKS`), run it, add an entry to `src/data/materials.ts` (kind, title, links), then give it
+  a row in its section of the sequence. A page is copied with `index.html`, `css/`, `js/`,
+  `vendor/` and `data/` only; its README, checks and dev scripts stay private.
 
 ## Files
 
 | File | Role |
 |---|---|
-| `src/data/sequence.ts` | **The sequence.** Blocks of steps, rendered in order and numbered across blocks. |
-| `src/data/materials.ts` | **The catalogue.** One entry per material; the section "All materials" lists them grouped by kind. |
-| `src/data/steps.ts` | `step()` and `soon()`, which turn a catalogue entry or a placeholder into a step. |
-| `src/data/links.ts` | `file()` for a file of `public/` (typed: the path must exist), `colab()` for a notebook opened in Colab from this repository, `SOON`, `REPO`. |
+| `src/data/sequence.ts` | **The order and the text.** The sections, each with its sentence and its rows. |
+| `src/data/materials.ts` | **The catalogue.** One entry per material: kind, title, links. |
+| `src/data/anchors.ts` | The pages at which `part()` opens a deck, checked by `scripts/check_anchors.py`. |
+| `src/data/steps.ts` | `step()`, `part()` and `soon()`, which turn a catalogue entry, an anchor or a placeholder into a row. |
+| `src/data/links.ts` | `file()` for a file of `public/` (typed: the path must exist), `deckLinks()` for the two PDFs of a deck, optionally at a page, `colab()` for a notebook opened in Colab from this repository, `SOON`, `REPO`. |
 | `src/data/public-files.ts` | Written by `scripts/list-public-files.mjs` before every `dev` and `build` run, never committed: the type `PublicFile`, every PDF, notebook, zip and page `index.html` in `public/`. |
-| `src/types.ts` | `Kind`, `Link`, `Material`, `Step`, `Block`. |
-| `src/pages/HomePage.tsx` | The one page: the hero, the sequence, all materials. |
-| `src/components/` | `Header` (the ETH logo and the anchors), `Footer`, `MaterialRow` (one row of the sequence or of the catalogue), `EthLogo`. |
-| `src/index.css` | All styling: the ETH flat style of the BMAI and CSCS sites, one accent per kind of material. |
+| `src/types.ts` | `Kind`, `Link`, `Material`, `Step`, `Section`. |
+| `src/pages/HomePage.tsx` | The one page: the title block with the contents, then the sections, each grouped by kind in the order of `KIND_ORDER`. |
+| `src/components/` | `Header` (the ETH logo, Contents, Source), `Footer`, `MaterialRow` (one row, and `Formula`, which sets the `$...$` of a topic), `EthLogo`. |
+| `src/index.css` | All styling: the ETH flat style of the BMAI and CSCS sites made sober, ETH blue as the one accent. |
+| `scripts/check_anchors.py` | `npm run anchors`: opens both PDFs of every anchored deck and fails unless each anchored page is the first that shows its text. Needs pypdf; run it locally, CI does not. |
 | `public/favicon.svg` | A ReLU hinge in white on ETH blue. |
 | `public/slides/`, `notes/`, `viz/`, `notebooks/` | The copies, see above. |
 | `.github/workflows/deploy.yml` | Builds on every push to `main` and publishes `dist/` to GitHub Pages. |
 
 ## Content state
 
-- **DRAFT.** The sequence follows the running order that a session wrote on 30 October 2026,
-  `docs/lecture-plans/neural-networks-llms-transformers.md` of `aml-hs26` at commit `7a143cc`:
-  Monday 2 November (items 1 to 9 of that order, frame 9 of the hinge-fan deck after the chain, then
-  the two notes to read), Thursday 5 November (item 10) and the slot after (items 11 to 15). Its
-  item 1, the deck on the experimental studies, was added on 31 October 2026 at Carlos's request;
-  its frames quote the contact addresses of the study's information sheet.
-  Carlos agreed to the order that evening and had the cold intro and the hinge-fan deck aligned with
-  it; `SEQUENCE_IS_DRAFT` stays `true` while the date of the slot after is open.
-- The transformer step shows sections 4 to 10 of the workshop version (`slides/attention-cscs`, the
-  CSCS deck in the course's format), in the order of the section "The transformer part, in order"
-  of the running order, until a port in the new encoding of Wuggish exists.
+- The sections follow the running order of `aml-hs26`,
+  `docs/lecture-plans/neural-networks-llms-transformers.md`, regrouped by topic on 1 November 2026
+  with visualizations first: within a section a page comes before its deck (the hinge-fan and
+  hinge-chain pages before their decks, the Wuggish game before the whole attention deck). The
+  introduction holds the deck on the experimental studies (its frames quote the contact addresses
+  of the study's information sheet) and the cold intro on William James. Frame 9 of the hinge-fan
+  deck, the chain and the fan side by side, is a row of the deep networks section. The language
+  model deck appears twice: parts 1 to 5 in section 4, part 6 (the notebook's network) in section
+  6, before the notebook.
+- The page names no dates and no frames to skip: the running order keeps those.
+- The transformer section opens the workshop version (`slides/attention-cscs`, the CSCS deck in
+  the course's format) at seven of its parts, in the order of the section "The transformer part,
+  in order" of the running order (T2 to T8), until a port in the new encoding of Wuggish exists.
 - **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
-  is rebuilt for them, refresh the copies here. The game and the attention deck run on the new
-  Wuggish (`docs/visualizations/wuggish-game/SPEC.md` of `aml-hs26`) since their refreshes of
-  30 October 2026.
-- The copies match `aml-hs26` at commit `0f371f0` (31 October 2026).
+  is rebuilt for them, refresh the copies here. The game and the attention deck run on the
+  Wuggish of a cat, a duck and a fish (`docs/visualizations/wuggish-game/SPEC.md` of `aml-hs26`);
+  the game has 12 sentences, three a lesson, since 1 November 2026. The page *One layer of
+  attention* (`docs/visualizations/attention-walkthrough/` of `aml-hs26`) is not published here.
 
 ## The decks link this site
 

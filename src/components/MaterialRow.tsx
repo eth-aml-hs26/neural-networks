@@ -1,13 +1,5 @@
-import type { Kind, Link, Step } from '../types';
+import type { Link, Step } from '../types';
 import { SOON } from '../data/links';
-
-export const KIND_LABEL: Record<Kind | 'soon', string> = {
-  slides: 'Slides',
-  viz: 'Visualization',
-  notes: 'Notes',
-  notebook: 'Notebook',
-  soon: 'Soon',
-};
 
 /** Every link opens in a new tab; a notebook is saved instead (download). */
 function linkProps(link: Link) {
@@ -20,46 +12,63 @@ function linkProps(link: Link) {
 }
 
 /**
- * One row of the sequence (with its number) or of "All materials" (without): the title,
- * linked to the first link, the kind, the summary, the note of the step, and a button per link.
+ * A topic with its formulas. The parts between $ signs are set as math, as LaTeX would: in a
+ * serif face, single letters in italic (variables), a capitalised word upright (an operator
+ * such as ReLU), digits, signs and brackets upright.
  */
-export function MaterialRow({ item, number }: { item: Step; number?: number }) {
+const MATH_TOKEN = /([A-Z][A-Za-z]+)|([A-Za-zŷα-ω])|([^A-Za-zŷα-ω]+)/g;
+
+export function Formula({ text }: { text: string }) {
+  return (
+    <>
+      {text.split('$').map((piece, i) =>
+        i % 2 === 1 ? (
+          <span key={i} className="math">
+            {Array.from(piece.matchAll(MATH_TOKEN), (m, j) => (m[2] ? <i key={j}>{m[2]}</i> : m[0]))}
+          </span>
+        ) : (
+          piece
+        ),
+      )}
+    </>
+  );
+}
+
+/**
+ * One row of a section: its number (e.g. 2.3, none in the introduction), the topic in bold,
+ * the material below it, linked to its first link, and a button per link.
+ */
+export function MaterialRow({ item, number }: { item: Step; number?: string }) {
   const live = item.links.filter((l) => l.url !== SOON);
   const first = live[0];
-  const soon = item.kind === 'soon' || live.length === 0;
+  const soon = item.soon || live.length === 0;
   return (
-    <li className={`mrow${soon ? ' mrow--soon' : ''}`}>
-      {number !== undefined && <span className="mrow__num">{number}</span>}
-      <div className="mrow__body">
-        <div className="mrow__head">
-          {first ? (
-            <a className="mrow__title mrow__title--link" {...linkProps(first)}>
-              {item.title}
+    <li className={`row${soon ? ' row--soon' : ''}${number ? '' : ' row--plain'}`}>
+      {number && <span className="row__num">{number}</span>}
+      <div className="row__text">
+        <span className="row__topic">
+          <Formula text={item.topic} />
+        </span>
+        {first ? (
+          <a className="row__title" {...linkProps(first)}>
+            {item.title}
+          </a>
+        ) : (
+          <span className="row__title">{item.title}</span>
+        )}
+      </div>
+      <div className="row__links">
+        {soon ? (
+          <span className="row__link row__link--soon">soon</span>
+        ) : (
+          live.map((l, i) => (
+            <a key={i} className="row__link" {...linkProps(l)}>
+              {l.label}
+              <span className="row__ext" aria-hidden="true">
+                {l.download ? '↓' : '↗'}
+              </span>
             </a>
-          ) : (
-            <span className="mrow__title">{item.title}</span>
-          )}
-          <span className={`chip chip--${item.kind}`}>{KIND_LABEL[item.kind]}</span>
-        </div>
-        <p className="mrow__summary">{item.summary}</p>
-        {item.note && <p className="mrow__note">{item.note}</p>}
-        {item.links.length > 0 && (
-          <div className="mrow__links">
-            {item.links.map((l, i) =>
-              l.url === SOON ? (
-                <span key={i} className="mrow__link mrow__link--soon">
-                  {l.label} · soon
-                </span>
-              ) : (
-                <a key={i} className="mrow__link" {...linkProps(l)}>
-                  {l.label}
-                  <span className="mrow__ext" aria-hidden="true">
-                    {l.download ? '↓' : '↗'}
-                  </span>
-                </a>
-              ),
-            )}
-          </div>
+          ))
         )}
       </div>
     </li>
