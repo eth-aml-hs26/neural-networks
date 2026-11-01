@@ -5,12 +5,13 @@
  * and every colour is a token here, never inline in the SVG, so the theme
  * swap recolours the drawings too.
  *
- * Rule for the art: no look may be signalled by colour alone.  Stripes are
- * bands, spots are dots, a wing is feathers, a horn is a cone; colour only
- * makes them prettier.  scripts/check-palette.js gates the colours that
- * carry a look (the marks on a coat, a wing or a horn on a body) and the
- * feedback colours of css/game.css, in both themes, for colour-blind
- * viewers; rerun it after changing a token here.
+ * Rule for the art: no look may be signalled by colour alone.  Running is a
+ * pose with speed lines, boots are boots, swimming is a band of water,
+ * flying is a lift with wings or fins spread; colour only makes them
+ * prettier.  scripts/check-palette.js gates the colours that carry a look
+ * (boots on a cat or a duck, water around a duck or a fish) and the feedback
+ * colours of css/game.css, in both themes, for colour-blind viewers; rerun
+ * it after changing a token here, then node dev/snapshot.js.
  */
 
 :root {
@@ -22,17 +23,26 @@
 
   /* art palette, light */
   --cat: #eab26c;
+  --cat-far: #cf9550;
   --cat-inner: #f7dcb9;
-  --pony: #a9a39b;
-  --pony-far: #8d877f;
-  --mane: #544b45;
-  --hoof: #3b3431;
-  --lizard: #3f9c74;
-  --lizard-far: #2f7d5b;
-  --mark: #2a211c;
-  --wing: #ffffff;
-  --wing-line: #9cb7cc;
-  --horn: #f0c419;
+  --duck: #fdfcf8;
+  --duck-wing: #e6e1d6;
+  --duck-far: #d9d3c6;
+  --bill: #f39a2b;
+  --bill-far: #d6801a;
+  --fish: #ee6c4d;
+  --fish-fin: #f6a58c;
+  --fish-far: #d4553a;
+  --boot: #9b3a24;
+  --boot-far: #7b2c19;
+  --cuff: #c9643f;
+  --water: #8cbfe6;
+  --water-line: #2d78b4;
+  --wave: #d4e9f7;
+  --bubble: #eef6fc;
+  --speed: #77736b;
+  --dust: #ddd8cd;
+  --shadow: #e4dfd4;
   --floor: #d8d4ca;
 }
 
@@ -45,17 +55,26 @@
 
   /* the same things under a dimmer light */
   --cat: #d9a35f;
+  --cat-far: #b98544;
   --cat-inner: #e8cba4;
-  --pony: #a19b93;
-  --pony-far: #827d76;
-  --mane: #443d38;
-  --hoof: #2b2522;
-  --lizard: #3f9c74;
-  --lizard-far: #2d7656;
-  --mark: #1f1814;
-  --wing: #f8f6f0;
-  --wing-line: #8aa3b6;
-  --horn: #e8bd1a;
+  --duck: #f1ede4;
+  --duck-wing: #d6d0c4;
+  --duck-far: #c4bdb0;
+  --bill: #e8902a;
+  --bill-far: #c97518;
+  --fish: #e8664a;
+  --fish-fin: #f09a80;
+  --fish-far: #c4503a;
+  --boot: #b4492f;
+  --boot-far: #8f3a24;
+  --cuff: #d9785a;
+  --water: #3f7fae;
+  --water-line: #8cc4ec;
+  --wave: #6fa6cf;
+  --bubble: #cfe6f6;
+  --speed: #8f8a80;
+  --dust: #4a463f;
+  --shadow: #2a2722;
   --floor: #3a3630;
 }
 
@@ -82,21 +101,30 @@ h1, h2, h3 {
 .s-floor { stroke: var(--floor); }
 
 .f-cat { fill: var(--cat); }
-.f-cat-inner { fill: var(--cat-inner); }
 .s-cat { stroke: var(--cat); }
+.s-cat-far { stroke: var(--cat-far); }
+.f-cat-inner { fill: var(--cat-inner); }
 
-.f-pony { fill: var(--pony); }
-.f-pony-far { fill: var(--pony-far); }
-.f-mane { fill: var(--mane); }
-.f-hoof { fill: var(--hoof); }
+.f-duck { fill: var(--duck); }
+.f-duck-wing { fill: var(--duck-wing); }
+.f-duck-far { fill: var(--duck-far); }
+.f-bill { fill: var(--bill); }
+.f-bill-far { fill: var(--bill-far); }
+.s-bill { stroke: var(--bill); }
+.s-bill-far { stroke: var(--bill-far); }
 
-.f-lizard { fill: var(--lizard); }
-.f-lizard-far { fill: var(--lizard-far); }
+.f-fish { fill: var(--fish); }
+.f-fish-fin { fill: var(--fish-fin); }
+.f-fish-far { fill: var(--fish-far); }
 
 /* the looks */
-.f-mark { fill: var(--mark); }
-.s-mark { stroke: var(--mark); }
-.f-wing { fill: var(--wing); }
-.s-wing { stroke: var(--wing); }
-.s-wing-line { stroke: var(--wing-line); }
-.f-horn { fill: var(--horn); }
+.f-boot { fill: var(--boot); }
+.f-boot-far { fill: var(--boot-far); }
+.f-cuff { fill: var(--cuff); }
+.f-water { fill: var(--water); }
+.s-water-line { stroke: var(--water-line); }
+.s-wave { stroke: var(--wave); }
+.f-bubble { fill: var(--bubble); }
+.s-speed { stroke: var(--speed); }
+.f-dust { fill: var(--dust); }
+.f-shadow { fill: var(--shadow); }

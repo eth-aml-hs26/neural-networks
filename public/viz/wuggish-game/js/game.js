@@ -65,7 +65,7 @@
   function wordify(text) {
     return esc(text).replace(/\b([a-z]+)\b/g, m => WORDS[m] ? `<span class="w">${m}</span>` : m);
   }
-  // the plain noun of a thing: cat -> kat (lepperd draws a cat too, with spots)
+  // the plain noun of a thing: cat -> kat (pussinbootz draws a cat too, in boots)
   function nounOf(object) {
     for (const n in L.nouns) if (L.nouns[n].object === object && !L.nouns[n].flags.length) return n;
     return object;
@@ -211,11 +211,11 @@
   }
 
   /* Three kinds of card (data/items.js):
-   *   {word, object}                  a plain thing: kat, poony, lizzard
+   *   {word, object}                  a plain thing: kat, dukk, feesh
    *   {word, flag, objects}           a look, on every thing it fits, each plain
-   *                                   and then with the look: streept on kat and poony
+   *                                   and then with the look: bootet on kat and dukk
    *   {word, object, flags, same}     a thing with a look, beside the phrase that
-   *                                   draws the same picture: lepperd and spottet kat */
+   *                                   draws the same picture: pussinbootz and bootet kat */
   function cards(ci) {
     const l = lesson();
     if (ci >= l.cards.length) return beginItems(0);

@@ -1,8 +1,9 @@
 /* reveal.js : the eight screens after the closer, rebuilt on 2026-10-30 for
- * the new Wuggish of SPEC.md.  Each is a function that returns HTML; game.js
- * wraps it in the page and the Continue button.
+ * the new Wuggish of SPEC.md, and on 2026-10-31 for its cat, duck and fish.
+ * Each is a function that returns HTML; game.js wraps it in the page and the
+ * Continue button.
  *
- *   1  You have been running attention.   the score; query, key and value named
+ *   1  You have been computing attention. the score; query, key and value named
  *   2  The map you were drawing.          the lit grid of the running sentence,
  *                                         and the picture sums
  *   3  A word is a row of features.       the table, 11 words by 9 features in
@@ -12,10 +13,11 @@
  *                                         and key in slots 1 and 2
  *   5  Attention is one multiplication.   Q K^T = S for the running sentence,
  *                                         two inner products, the grammar
- *   6  Each thing adds what it read.      kat + spottet = the row of lepperd,
- *                                         lizzard + winget = the row of draggon,
+ *   6  Each thing adds what it read.      kat + bootet = the row of pussinbootz,
+ *                                         feesh + flyin = the row of flyfeesh,
  *                                         E + S V, the formula, the softmax
- *   7  The one you could not read.        the closer: a striped cat and a zebra
+ *   7  The one you could not read.        the closer: Puss in Boots and a duck
+ *                                         in boots
  *   8  Wuggish in one slide.              the glosses
  *
  * Nothing here is drawn by hand.  The lit grid of screen 2 comes from the
@@ -177,7 +179,7 @@
     return `<div class="mxbox${cls ? ' ' + cls : ''}"><div class="mxname">${name}</div>${tableHtml}</div>`;
   }
 
-  // "kat . spottet = (1 0) . (1 0) = 1x1 + 0x0 = 1, they meet in slot 1"
+  // "kat . bootet = (1 0) . (1 0) = 1x1 + 0x0 = 1, they meet in slot 1"
   function worked(a, b, where) {
     const q = V.query(a), k = V.key(b), terms = q.map((x, i) => `${x}&times;${k[i]}`).join(' + ');
     const both = V.SLOTS.filter((s, i) => q[i] * k[i]);
@@ -238,7 +240,7 @@
     const item = findRunning();
     const noun = nounsIn(item.bag)[0];
     const adj = adjsIn(item.bag).filter(b => took(item, noun, b))[0];
-    return `<div class="reveal"><h2>You have been running attention.</h2>
+    return `<div class="reveal"><h2>You have been computing attention.</h2>
       <p class="lead">${played}</p>
       <p class="lead">Every time you took a thing like ${w(noun)} and asked which of the other words belonged to it, you did what a transformer does with every word of every sentence it reads. The word that asks is the <b>query</b>. The words it asks are the <b>keys</b>. And what a word hands over once it is found, like the look of ${w(adj)}, is its <b>value</b>.</p></div>`;
   }
@@ -277,7 +279,7 @@
     const wk = V.FEATURES.map((f, i) => ({ v: V.W_K[i], label: ft(f), cls: nz(V.W_K[i]) ? '' : 'faded' }));
     // why a word asks or answers where it does: the features of its row that
     // have a row of the weights, each with the slot it sends a 1 to, e.g.
-    // "fur -> 1, hooves -> 2"
+    // "legs -> 1, wings -> 2"
     const via = (x, W) => V.FEATURES.filter((f, i) => V.row(x)[i] && nz(W[i]))
       .map(f => `${ft(f)}&nbsp;&rarr;&nbsp;${V.SLOTS.filter((s, j) => W[V.FEATURES.indexOf(f)][j]).map(sl).join(' ')}`);
     const qrows = V.WORDS.map(x => ({
@@ -292,7 +294,9 @@
     const asks = s => V.FEATURES.filter((f, i) => V.W_Q[i][s - 1]);
     const answers = s => V.FEATURES.filter((f, i) => V.W_K[i][s - 1]);
     const or = xs => (xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' or ' + xs[xs.length - 1]);
-    const lines = V.SLOTS.map(s => `in slot ${sl(s)} a thing with ${or(asks(s).map(ft))} asks, and a look that goes on a ${or(answers(s).map(ft))} answers`);
+    // a feature of where a look goes, said with its question: "feet, one that goes on the feet"
+    const goes = f => `${ft(f)}, one that ${esc(V.QUESTION[f].replace(/\?$/, ''))}`;
+    const lines = V.SLOTS.map(s => `in slot ${sl(s)} a thing with ${or(asks(s).map(ft))} asks, and a look with ${or(answers(s).map(goes))}, answers`);
     return `<div class="reveal"><h2>Queries and keys.</h2>
       <p class="lead">You drew that map by knowing what the words mean. A transformer gets it from the rows. Every word turns its row into two short vectors of k = ${V.K} numbers, in <b>slot 1</b> and <b>slot 2</b>: a <b>query</b>, what it asks for, and a <b>key</b>, what it answers with. Two blocks of weights do it: the query is the row times W<sup>Q</sup>, the key the row times W<sup>K</sup>.</p>
       <div class="vecpanels">
@@ -322,7 +326,7 @@
     const Kt = V.transpose(lay.K);
     const isNoun = i => V.isNoun(bag[i]);
     const noun = nounsIn(bag)[0], i0 = bag.indexOf(noun);
-    const yes = bag.filter((x, j) => lay.S[i0][j] > 0)[0];                  // the word kat reads
+    const yes = bag.filter((x, j) => lay.S[i0][j] > 0)[0];                  // the word kat reads, bootet
     const no = adjsIn(bag).filter(x => V.score(noun, x) === 0)[0];        // an adjective it skips
     const rel = x => (bag.indexOf(x) < i0 ? 'the word above it' : bag.indexOf(x) === i0 + 1 ? 'the word after it' : 'a word after it');
     const below = lay.S.every((row, i) => row.every((s, j) => !s || j < i));
@@ -417,7 +421,8 @@
       return { v: h, label: `new ${w(n)}`, thumb: thumbRow(h, 60), note: lands ? `the row of ${w(lands)}` : 'a row of no word', cls: lands ? 'same' : '' };
     });
     const look = V.look(tie);
-    const zebra = both.map(n => V.wordWithRow(lay.H[bag.indexOf(n)])).filter(Boolean)[0];
+    // the noun whose new row is a word of the dictionary: kat lands on pussinbootz
+    const landed = both.map(n => ({ noun: n, word: V.wordWithRow(lay.H[bag.indexOf(n)]) })).filter(x => x.word)[0];
     const ans = {};
     both.forEach(n => { const p = V.picture(lay.H[bag.indexOf(n)]); ans[p.object] = p.flags; });
     // the two pictures the game accepted, and the one attention draws, which
@@ -431,7 +436,7 @@
       <p class="lead" style="margin-top:18px">${w(tie)} scores <b>1</b> with ${and(both.map(w))}: the same number, twice. So both take its value, and both come out with ${ft(look)}:</p>
       ${ftable(rows, { cls: 'sumtab', groups: false })}
       <div class="closerpic">${trio}</div>
-      <p class="lead" style="margin-top:14px">One ${w(tie)}, and ${NUM[both.length]} things with ${ft(look)}${zebra ? `, the second one a ${w(zebra)}` : ''}: a picture that neither reading means, the very picture the game marked wrong. Nothing in these rows can break the tie. ${w(tie)} stands before both nouns, and attention reads the words as a bag.</p>
+      <p class="lead" style="margin-top:14px">One ${w(tie)}, and ${NUM[both.length]} things with ${ft(look)}${landed ? ` (the new ${w(landed.noun)} is a ${w(landed.word)})` : ''}: a picture that neither reading means, the very picture the game marked wrong. Nothing in these rows can break the tie. ${w(tie)} stands before both nouns, and attention reads the words as a bag.</p>
       <p class="lead">A transformer adds each word's <b>position</b> to its row, before the queries and keys are made. Then the same word in two places gets two different rows, and a model can learn to use the order, for instance that an adjective goes with the noun right after it. This is called <b>positional encoding</b>.</p></div>`;
   }
 

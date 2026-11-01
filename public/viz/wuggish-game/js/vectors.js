@@ -3,20 +3,21 @@
  * Pure functions of the lexicon (data/lexicon.js), with no DOM, so that the
  * page (js/reveal.js) and the check (scripts/check-vectors.js) compute the
  * same numbers from the same code.  Rebuilt on 2026-10-30 for the new
- * Wuggish of SPEC.md; precompute/world.py computes the same numbers in
- * Python, and the check compares the two.
+ * Wuggish of SPEC.md, whose world became a cat, a duck and a fish on
+ * 2026-10-31; precompute/world.py computes the same numbers in Python, and
+ * the check compares the two.
  *
  * A word's ROW, its embedding, answers the nine questions of
  * LEXICON.features with 1 (yes) or 0 (no), in three groups: what a thing
- * HAS (fur, hooves, scales), where a look GOES (coat, body) and what a look
- * BRINGS (stripes, spots, wings, horn).  The query, the key and the value
- * are the row times three blocks of weights, as in a transformer:
+ * HAS (legs, fins, wings), where a look GOES (feet, fluid) and what a look
+ * BRINGS (run, boots, water, air).  The query, the key and the value are
+ * the row times three blocks of weights, as in a transformer:
  *
- *   W_Q (d by k) sends fur to slot 1 and hooves and scales to slot 2: a
- *       thing with fur asks for a coat look, a thing with hooves or scales
- *       for a body look, and an adjective, which has none of the three,
- *       asks nothing;
- *   W_K (d by k) sends coat to slot 1 and body to slot 2: an adjective
+ *   W_Q (d by k) sends legs to slot 1 and fins and wings to slot 2: a
+ *       thing with legs asks for a look that goes on the feet, a thing with
+ *       fins or wings for one that goes into water or air, and an
+ *       adjective, which has none of the three, asks nothing;
+ *   W_K (d by k) sends feet to slot 1 and fluid to slot 2: an adjective
  *       answers in the slot of where its look goes, and a noun answers
  *       nothing;
  *   W_V (d by d) keeps the four brings features: what a word adds.
@@ -57,7 +58,7 @@
     function matmul(A, B) { return A.map(r => times(r, B)); }
     function transpose(A) { return A[0].map((_, j) => A.map(r => r[j])); }
     function same(a, b) { return a.length === b.length && a.every((x, i) => x === b[i]); }
-    // the names of the features a vector says yes to, e.g. ['fur', 'spots']
+    // the names of the features a vector says yes to, e.g. ['legs', 'boots']
     function on(v, universe) { return (universe || FEATURES).filter((f, i) => v[i]); }
     // the part of a row that falls in one group, e.g. part(row, 'brings')
     function part(v, group) { return FEATURES.map((f, i) => [f, v[i]]).filter(p => GROUP[p[0]] === group).map(p => p[1]); }
@@ -103,13 +104,13 @@
     const WORDS = Object.keys(L.nouns).concat(Object.keys(L.adjectives));
     const NOUNS = WORDS.filter(isNoun);
     const ADJS = WORDS.filter(isAdj);
-    const BASES = NOUNS.filter(n => L.nouns[n].flags.length === 0);    // kat, poony, lizzard
+    const BASES = NOUNS.filter(n => L.nouns[n].flags.length === 0);    // kat, dukk, feesh
 
     // the word of the dictionary whose row is v, or null
     function wordWithRow(v) { return WORDS.filter(w => same(row(w), v))[0] || null; }
 
     // what a row looks like: the thing its has features make, and the art
-    // flags of its brings features (spots -> spotted), so that any row, a
+    // flags of its brings features (boots -> booted), so that any row, a
     // new one included, can be drawn
     const FLAG_OF = {};                                              // brings feature -> art flag
     ADJS.forEach(a => { L.adjectives[a].features.forEach(f => { if (GROUP[f] === 'brings') FLAG_OF[f] = L.adjectives[a].flag; }); });
@@ -121,7 +122,7 @@
       looksOf(v).forEach(f => { flags[FLAG_OF[f]] = true; });
       return { object: L.nouns[base].object, flags };
     }
-    // the look an adjective brings, e.g. 'spots' for spottet
+    // the look an adjective brings, e.g. 'boots' for bootet
     function look(a) { return L.adjectives[a].features.filter(f => GROUP[f] === 'brings')[0]; }
 
     return {

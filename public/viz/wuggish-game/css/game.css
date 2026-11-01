@@ -364,6 +364,11 @@ table.mx td.hot { background: var(--ok-soft); border-color: var(--ok); color: va
   .reading td.lo { white-space: normal; }
   .worked .why { display: block; margin: 4px 0 0; }
   .gloss td.gp { white-space: normal; }
+  /* pussinbootz and Puss in Boots are the longest word and gloss (2026-10-31) */
+  .gloss { font-size: 17px; }
+  .gloss td { padding-right: 12px; }
+  .gloss td.gw .w { font-size: 22px; }
+  .gloss td.gthumb { width: 44px; padding-right: 6px; }
   .closerpic .pic { flex: 1 1 40%; }             /* the two readings side by side */
   .closerpic > .op { flex-basis: 100%; text-align: center; line-height: 1; }
   .closerpic .ar-r { display: none; }
