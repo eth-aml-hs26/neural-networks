@@ -1,15 +1,15 @@
 /* red.js: the red part, the forward pass and the grounds, as GF.parts.red.
  *
  * Iteration 1, one click each:
- *   loop    the red loop round w, b, a, the ReLU, yhat and the loss: one pair gives one loss
- *   gw      the ground of grasshopper w: the loss against w, b held where it stands; w and the
- *           loss fly from their boxes to its axes, the point, then the whole curve
+ *   loop    the red loop round w, b, a, the ReLU, yhat, l and lbar: one pair gives one number lbar
+ *   gw      the ground of grasshopper w: lbar against w, b held where it stands; w and lbar fly
+ *           from their boxes to its axes, the point, then the whole curve
  *   gb      the same for grasshopper b, w held where it stands
  * Iteration 2 on, one click:
  *   plot    the loop glows, the two grounds come back with the new pair; b's ground has moved,
  *           since w has moved
- * The grounds themselves are drawn by js/ground.js. They leave when the purple part starts. The
- * loop stays.
+ * The grounds themselves are drawn by js/ground.js; while they show, the plot of y against x gives
+ * way, and it comes back when the purple part starts. The loop stays.
  */
 (function () {
   'use strict';

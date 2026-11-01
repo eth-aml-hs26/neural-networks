@@ -1,5 +1,6 @@
 /* kit.js: small helpers shared by the parts, as window.GFKit. Copied from the page before this one
- * (../grasshopper-finds-w/js/kit.js), with K.active added for the tests.
+ * (../grasshopper-finds-w/js/kit.js), with K.active added for the tests, and an arrow without a
+ * head and a flying dot taken from the next page (../grasshoppers-many-days/js/kit.js).
  *
  *   svg(tag, attrs, parent, cls), div(cls, parent, tag)   make elements
  *   pos(el, x, y, anchor)        place an HTML element on the stage ('tl', 'cc', 'br', ...)
@@ -121,18 +122,25 @@
       ' L ' + (bx + uy * w).toFixed(1) + ' ' + (by - ux * w).toFixed(1) + ' Z';
   };
 
-  // An arrow along pts: a group with the line (stopped short of the tip) and the head.
+  // An arrow along pts: a group with the line (stopped short of the tip) and the head. With
+  // opts.noHead the line runs to the last point and has no head (a line that joins another arrow).
   K.arrow = function (parent, pts, cls, opts) {
     opts = opts || {};
     var g = K.svg('g', null, parent, 'arrow vis ' + (cls || ''));
     var line = K.svg('path', null, g, 'line');
     var head = K.svg('path', null, g, 'head');
-    var a = { g: g, line: line, head: head, size: opts.size || 15, r: opts.r };
+    var a = { g: g, line: line, head: head, size: opts.size || 15, r: opts.r, noHead: !!opts.noHead };
     K.setArrow(a, pts);
     return a;
   };
 
   K.setArrow = function (a, pts) {
+    a.pts = pts;
+    if (a.noHead) {
+      a.line.setAttribute('d', K.route(pts, a.r));
+      a.head.setAttribute('d', '');
+      return a;
+    }
     var n = pts.length, p = pts[n - 2], q = pts[n - 1];
     var l = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
     var back = Math.min(a.size * 0.8, l * 0.5);
@@ -261,6 +269,20 @@
     K.tween(ms, function (e) {
       f.style.left = (a.cx + (b.cx - a.cx) * e) + 'px';
       f.style.top = (a.cy + (b.cy - a.cy) * e - Math.sin(Math.PI * e) * 40) + 'px';
+    }, K.ease.inOut, function () {
+      if (f.parentNode) f.parentNode.removeChild(f);
+      if (done) done();
+    });
+    return f;
+  };
+
+  // A dot flies from point a to point b (stage coordinates {cx, cy}), then disappears.
+  K.flyDot = function (a, b, ms, cls, done) {
+    var f = K.div('fly fly-dot ' + (cls || ''), K.top);
+    K.pos(f, a.cx, a.cy, 'cc');
+    K.tween(ms, function (e) {
+      f.style.left = (a.cx + (b.cx - a.cx) * e) + 'px';
+      f.style.top = (a.cy + (b.cy - a.cy) * e - Math.sin(Math.PI * e) * 30) + 'px';
     }, K.ease.inOut, function () {
       if (f.parentNode) f.parentNode.removeChild(f);
       if (done) done();

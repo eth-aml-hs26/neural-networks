@@ -1,11 +1,12 @@
 /* ground.js: the ground under each grasshopper's feet, as GF.parts.ground. It has no clicks of its
  * own; the red and the blue clicks decide what it shows.
  *
- * Two plots on the right, one per grasshopper: the loss against w with b held (top) and against b
- * with w held (bottom). Each is the ground its grasshopper stands on: a parabola where the heating
- * runs, flat at y^2 where it is off. Red draws them (red:gw, red:gb; red:plot later): the axes,
- * the curve, the point where the pair stands, its two numbers on the axes, the formula of the
- * ground over the plot and a question mark under its lowest point.
+ * Two plots on the right, one per grasshopper: the average loss lbar against w with b held (top)
+ * and against b with w held (bottom). Each is the ground its grasshopper stands on: pieces of
+ * parabolas, one piece for each set of days on which the heating runs. Red draws them (red:gw,
+ * red:gb; red:plot later): the axes, the curve, the point where the pair stands, its two numbers on
+ * the axes, the formula of the ground over the plot and a question mark under its lowest point.
+ * While they show, the plot of y against x gives way (showing(st) says when).
  *
  * Blue zooms in on the feet of a grasshopper (blue:onw, blue:hopb; blue:measure later) until the
  * ground is a straight ramp, and draws the test hop on it: the hop eps along the axis, then the rise
@@ -26,7 +27,7 @@
   // plot, big in the magnified view)
   var HS_FULL = 0.45, HS_ZOOM = 0.75;
 
-  function lossAt(who, v, st) { return who === 'w' ? M.loss(v, st.b) : M.loss(st.w, v); }
+  function lossAt(who, v, st) { return who === 'w' ? M.lbar(v, st.b) : M.lbar(st.w, v); }
   function derivAt(who, v, st) {
     var g = who === 'w' ? M.grad(v, st.b) : M.grad(st.w, v);
     return who === 'w' ? g.w : g.b;
@@ -36,7 +37,7 @@
 
   function fullView(who, st) {
     var Q = G.ground[who], Fr = who === 'w' ? st.F.W : st.F.B;
-    var v = st[who], l = M.loss(st.w, st.b);
+    var v = st[who], l = M.lbar(st.w, st.b);
     var kx = (Q.x1 - Q.x0) / (Fr.hi - Fr.lo), ky = (Q.oy - Q.ytop) / Fr.lmax;
     return { v0: v, l0: l, kx: kx, ky: ky, sx: Q.x0 + (v - Fr.lo) * kx, sy: Q.oy - l * ky, t: 0 };
   }
@@ -126,7 +127,7 @@
     K.tex(o.labV, who);
     K.pos(o.labV, Q.xend + 10, Q.oy, 'cl');
     o.labL = lab(layer.mid, 'axis-lab');
-    K.tex(o.labL, '\\ell');
+    K.tex(o.labL, '\\bar\\ell');
     K.pos(o.labL, Q.ox, Q.yend - 6, 'bc');
     o.tickV = lab(layer.mid, 'tick');
     o.tickL = lab(layer.mid, 'tick');
@@ -151,24 +152,28 @@
 
   // ===== draw one ground for the view V
 
+  // The formula of a ground, with the number held written in: for w = -1,
+  // lbar(b) = 1/6 sum_i (y_i - ReLU(-x_i + b))^2.
   function groundFormula(who, st) {
+    var head = '\\bar\\ell(' + who + ') = \\tfrac{1}{6}\\textstyle\\sum_i \\big(y_i - \\mathrm{ReLU}(';
     if (who === 'w') {
       var b = M.fmt(st.b);
-      return '\\ell(w) = \\big(' + M.Y + ' - \\mathrm{ReLU}(' + M.X + '\\,w ' +
-        (b.charAt(0) === '-' ? '- ' + b.slice(1) : '+ ' + b) + ')\\big)^2';
+      return head + 'x_i\\,w ' + (b.charAt(0) === '-' ? '- ' + b.slice(1) : '+ ' + b) + ')\\big)^2';
     }
-    return '\\ell(b) = \\big(' + M.Y + ' - \\mathrm{ReLU}(' + M.fmt(M.X * st.w) + ' + b)\\big)^2';
+    var w = M.fmt(st.w), c = w === '1' ? '' : w === '-1' ? '-' : w + '\\,';
+    return head + c + 'x_i + b)\\big)^2';
   }
 
   function slopePieces(h) {
+    var S = M.hopShown(h);
     return [{ key: 'lhs', tex: '\\dfrac{\\Delta_\\varepsilon}{\\varepsilon} =' },
-            { key: 'd', tex: '\\dfrac{' + M.fmt(h.delta) + '}{' + M.fmt(h.eps) + '}' },
-            { key: 'eq', tex: '=' }, { key: 'v', tex: M.fmt(h.slope) }];
+            { key: 'd', tex: '\\dfrac{' + S.delta + '}{' + S.eps + '}' },
+            { key: 'eq', tex: '=' }, { key: 'v', tex: S.slope }];
   }
 
   function limitPieces(h, val) {
-    return [{ key: 'lhs', tex: '\\dfrac{\\partial \\ell}{\\partial ' + h.who + '} = \\lim\\limits_{\\varepsilon \\to 0} \\dfrac{\\Delta_\\varepsilon}{\\varepsilon} =' },
-            { key: 'v', tex: val === undefined ? M.fmt(h.deriv) : val }];
+    return [{ key: 'lhs', tex: '\\dfrac{\\partial \\bar\\ell}{\\partial ' + h.who + '} = \\lim\\limits_{\\varepsilon \\to 0} \\dfrac{\\Delta_\\varepsilon}{\\varepsilon} =' },
+            { key: 'v', tex: val === undefined ? M.fmtGrad(h.deriv) : val }];
   }
 
   function path(pts) {
@@ -204,13 +209,14 @@
     o.end.setAttribute('cx', E[0].toFixed(1));
     o.end.setAttribute('cy', E[1].toFixed(1));
 
+    var HS = M.hopShown(h);
     K.tex(o.tickV, M.fmt(h.v));
     K.pos(o.tickV, S[0], Q.oy + 12, 'tc');
-    K.tex(o.tickL, M.fmt(h.l));
+    K.tex(o.tickL, V.t > 0.5 ? HS.l0 : M.fmt(h.l));
     K.pos(o.tickL, Q.ox - 12, S[1], 'cr');
     K.tex(o.tickVp, M.fmt(h.vp));
     K.pos(o.tickVp, E[0], Q.oy + 12, 'tc');
-    K.tex(o.tickLp, M.fmt(h.lp));
+    K.tex(o.tickLp, HS.l1);
     K.pos(o.tickLp, Q.ox - 12, E[1], 'cr');
 
     // the labels of the two legs. eps goes under the run: outside the triangle when the ground
@@ -224,13 +230,13 @@
     if (up) K.pos(o.epsLab, (S[0] + C[0]) / 2, S[1] + 10, 'tc');
     else if (tall) K.pos(o.epsLab, C[0] - 8, S[1] + 10, 'tr');
     else K.pos(o.epsLab, (S[0] + C[0]) / 2, Math.max((S[1] + E[1]) / 2 + 14, E[1] + 6), 'tc');
-    K.tex(o.delLab, '\\Delta_\\varepsilon = ' + M.fmt(h.delta));
+    K.tex(o.delLab, '\\Delta_\\varepsilon = ' + HS.delta);
     if (tall) K.pos(o.delLab, C[0] + 12, (C[1] + E[1]) / 2, 'cl');
     else if (up) K.pos(o.delLab, C[0] + 12, C[1] + 6, 'tl');
     else K.pos(o.delLab, E[0] + 12, E[1] - 12, 'bl');
 
     // the question mark under the lowest point of this ground
-    var vmin = who === 'w' ? (M.Y - st.b) / M.X : M.Y - M.X * st.w;
+    var vmin = M.lowest(who, who === 'w' ? st.b : st.w);
     var qx = sx(V, vmin);
     K.pos(o.q, qx, Q.oy + 10, 'tc');
     o.qFits = qx > Q.x0 && qx < Q.x1 && Math.abs(qx - S[0]) > 70;
@@ -275,6 +281,7 @@
     var V = s.zoom ? zoomView(who, st) : fullView(who, st);
     draw(who, st, V, s);
     K.tex(o.formula, groundFormula(who, st));
+    K.fit(o.formula, G.W - 12 - G.ground[who].row[0]);
     var h = M.hop(who, st.w, st.b, st.eps);
     if (s.row === 'slope') K.row(o.row, slopePieces(h));
     else if (s.row === 'limit') K.row(o.row, limitPieces(h));
@@ -328,7 +335,7 @@
   function jumpOn(who, st, delay, then) {
     var h = GF.hopper[who], o = P[who];
     var V = fullView(who, st);
-    var to = { x: sx(V, st[who]), y: sy(V, M.loss(st.w, st.b)), a: tilt(who, st, V, st[who]), s: HS_FULL, f: 1 };
+    var to = { x: sx(V, st[who]), y: sy(V, M.lbar(st.w, st.b)), a: tilt(who, st, V, st[who]), s: HS_FULL, f: 1 };
     h.setPose(st.hopFrom && st.hopFrom[who] ? st.hopFrom[who] : GF.hopper.perchPose(who));
     K.wait(delay, function () { GF.hopper.jump(h, to, 950, 170, then); });
     return o;
@@ -344,11 +351,13 @@
     return { x: at[0], y: at[1], a: ang, s: HS_ZOOM, f: 1 };
   }
 
-  // Ticks the value of the limit row through the slopes of smaller and smaller hops.
+  // Ticks the value of the limit row through the slopes of smaller and smaller hops: the slope as
+  // the slope row wrote it, then those of eps = 0.001, 0.0001, 0.00001, then the derivative.
   function tickLimit(who, st, delay) {
     var o = P[who], h = M.hop(who, st.w, st.b, st.eps);
-    var seq = M.limitRow(who, st.w, st.b).map(function (r) { return M.fmtSig(r.slope, 9); });
-    seq.push(M.fmt(h.deriv));
+    var seq = M.limitRow(who, st.w, st.b).slice(1).map(function (r) { return M.fmtSig(r.slope, 9); });
+    seq.unshift(M.hopShown(h).slope);
+    seq.push(M.fmtGrad(h.deriv));
     K.row(o.row, limitPieces(h, seq[0]));
     K.temp(o.row, 'opacity', '0');
     K.wait(delay, function () {
@@ -370,8 +379,9 @@
     K.wait(delay, function () {
       o.row.style.opacity = '';
       ['d', 'eq', 'v'].forEach(function (k) { K.temp(sp[k], 'opacity', '0'); });
-      K.flyTex(M.fmt(h.delta), K.rect(o.delLab), K.rect(sp.d), 700, 'k-blue', null, 21);
-      K.flyTex(M.fmt(h.eps), K.rect(o.epsLab), K.rect(sp.d), 700, 'k-blue', function () {
+      var HS = M.hopShown(h);
+      K.flyTex(HS.delta, K.rect(o.delLab), K.rect(sp.d), 700, 'k-blue', null, 21);
+      K.flyTex(HS.eps, K.rect(o.epsLab), K.rect(sp.d), 700, 'k-blue', function () {
         sp.d.style.opacity = '';
         K.wait(300, function () { sp.eq.style.opacity = ''; sp.v.style.opacity = ''; K.flash(sp.v); });
       }, 21);
@@ -419,7 +429,7 @@
       [o.point, o.guideV, o.guideH, o.tickV, o.tickL, o.curve, o.formula, o.q].forEach(function (e) { K.temp(e, 'opacity', '0'); });
       K.wait(500, function () {
         K.flyTex(M.fmt(st[who]), K.rect(bl[who].val), K.rect(o.tickV), 800, 'k-red', null, 23);
-        K.flyTex(M.fmt(M.loss(st.w, st.b)), K.rect(bl.loss.val), K.rect(o.tickL), 800, 'k-red', null, 23);
+        K.flyTex(M.fmt(M.lbar(st.w, st.b)), K.rect(bl.lbar.val), K.rect(o.tickL), 800, 'k-red', null, 23);
       });
       K.wait(1300, function () {
         [o.tickV, o.tickL, o.guideV, o.guideH].forEach(function (e) { e.style.opacity = ''; });
@@ -490,9 +500,12 @@
     }
   }
 
+  // Does either ground show in state st? (Then the plot of y against x gives way.)
+  function showing(st) { return stateOf('w', st).shown || stateOf('b', st).shown; }
+
   GF.parts.ground = {
     steps: function () { return []; },
-    build: build, render: render, animate: animate,
+    build: build, render: render, animate: animate, showing: showing,
     panel: function (who) { return P[who]; },
     el: P
   };

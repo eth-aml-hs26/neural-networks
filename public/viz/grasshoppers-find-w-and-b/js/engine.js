@@ -1,6 +1,7 @@
-/* engine.js: the click plan, the state, the render loop, the keys, the address and the theme.
- * Grown from the engine of the page before this one (../grasshopper-finds-w/js/engine.js): the
- * same contract, with a second number b, the story in front and a closing part at the end.
+/* engine.js: the click plan, the state, the render loop, the keys, the address, the theme and the
+ * run. Grown from the engine of the page before this one (../grasshopper-finds-w/js/engine.js): the
+ * same contract, with a second number b, the story in front, a closing part at the end, and the
+ * buttons +1, +10, +100 and Play of the next page (../grasshoppers-many-days/js/engine.js).
  *
  * THE PARTS. Each part registers itself in window.GF.parts:
  *
@@ -9,7 +10,7 @@
  *                     iter >= 2 repeats it in fewer clicks); ctx.settle is the iteration where the
  *                     run settles (the closing part has its clicks there only)
  *     build(layer) -> once at load: make its elements, hidden, in layer.back (SVG under the boxes),
- *                     layer.mid (HTML: boxes, formulas), layer.front (SVG over the boxes) and
+ *                     layer.mid (HTML: boxes, cells, formulas), layer.front (SVG over the boxes) and
  *                     layer.top (HTML over everything)
  *     render(st)   -> on every move: show exactly what state st shows, from scratch
  *     animate(st, prev) -> after render, on a single forward click only: decorate the change
@@ -17,8 +18,9 @@
  *
  * The plan of an iteration is the steps of story, black, red, blue, purple and coda, in that order.
  * The part `ground` (the two grounds on the right) has no clicks of its own: it draws what the red
- * and blue clicks ask for. The state is (iter, idx): idx clicks of iteration iter have been shown;
- * (1, 0) is the empty start.
+ * and blue clicks ask for; the black part draws the plot of y against x whenever the grounds do
+ * not show. The state is (iter, idx): idx clicks of iteration iter have been shown; (1, 0) is the
+ * empty start.
  *
  * THE STATE GIVEN TO A PART (st):
  *   iter, idx, plan, cur {part, name}, part, name    where we are
@@ -27,9 +29,11 @@
  *   partReached(part)     some click of that part has been shown in this iteration
  *   w0, b0                the room's start (-1 and 60 until one is typed); typed: one was
  *   w, b                  the pair of this iteration; wNext, bNext what the update gives
+ *   ps                    the pairs of iterations 1 to iter + 1 ({w, b}), for the plot's trail
  *   wShown, bShown        what the boxes show: the next pair once purple's update has been shown
  *   hop                   null, or {who: 'w' or 'b', fwd}: the boxes show a grasshopper's test hop
- *                         (who's box shows its number plus eps; with fwd, a, yhat and l follow)
+ *                         (who's box shows its number plus eps; with fwd, the columns a, yhat and l
+ *                         and lbar follow)
  *   eps, alpha            the hop and the step
  *   F, settle             the views of this start (GFMath.frames) and the iteration where it settles
  *   fresh                 true on a single forward click (animate runs), false otherwise
@@ -40,7 +44,8 @@
  * opens directly; at=blue:hopw names the click instead of s. The page rewrites it at every move.
  *
  * KEYS: right arrow, space, Enter, page down: next. Left arrow, Backspace, page up: back.
- * Home: the start. End: the update of the iteration where the run settles. t: theme.
+ * Home: the start. End: the update of the iteration where the run settles. p: play or pause.
+ * t: theme. The buttons +1, +10 and +100 jump that many iterations on; Play runs to the end.
  */
 (function () {
   'use strict';
@@ -50,7 +55,7 @@
   var THEME_KEY = 'aml-grasshoppers-find-w-and-b-theme';
 
   var S = { w0: null, b0: null, iter: 1, idx: 0, alpha: M.ALPHA, eps: M.EPS };
-  var still = false, prevSt = null, stage = null;
+  var still = false, prevSt = null, stage = null, playing = null;
   var frameCache = { key: null, F: null };
 
   function part(p) { return GF.parts[p] || null; }
@@ -65,7 +70,7 @@
     return frameCache.F;
   }
 
-  function settleIter() { return frames().n - 1; }
+  function settleIter() { return frames().K; }
 
   function plan(iter) {
     var out = [], ctx = { settle: settleIter() };
@@ -109,7 +114,7 @@
       is: function (p, name) { return !!cur && cur.part === p && (name === undefined || cur.name === name); },
       reached: reached, partReached: partReached,
       w0: s.w, b0: s.b, typed: S.w0 !== null || S.b0 !== null,
-      w: ps[S.iter - 1].w, b: ps[S.iter - 1].b, wNext: ps[S.iter].w, bNext: ps[S.iter].b,
+      w: ps[S.iter - 1].w, b: ps[S.iter - 1].b, wNext: ps[S.iter].w, bNext: ps[S.iter].b, ps: ps,
       eps: S.eps, alpha: S.alpha, F: frames(), settle: settleIter(),
       fresh: false, hopFrom: null
     };
@@ -131,7 +136,7 @@
     st.hopFrom = { w: GF.hopper.pose(GF.hopper.w), b: GF.hopper.pose(GF.hopper.b) };
     G.setRun(st.F);
 
-    // a jump (Back, a deep link) shows its state at once; a forward click lets the CSS fades run
+    // a jump (Back, a deep link, Play) shows its state at once; a forward click lets the fades run
     if (st.fresh) stage.classList.remove('still');
     else stage.classList.add('still');
     // the grasshoppers by default: perched on the boxes of their numbers, from those boxes on
@@ -158,6 +163,7 @@
   // ===== moves
 
   function next() {
+    stop();
     var st = makeSt();
     if (st.is('black', 'guess')) {
       var g = part('black').readGuess();
@@ -171,19 +177,56 @@
   }
 
   function prev() {
+    stop();
     if (S.idx > 1 || (S.iter === 1 && S.idx === 1)) S.idx--;
     else if (S.iter > 1) { S.iter--; S.idx = plan(S.iter).length; }
     render(false);
   }
 
-  function home() { S.iter = 1; S.idx = 0; render(false); }
+  function home() { stop(); S.iter = 1; S.idx = 0; render(false); }
 
   // The update of the iteration where the run settles; the closing clicks follow it.
   function toEnd() {
+    stop();
     S.iter = settleIter();
     var names = plan(S.iter).map(function (p) { return p.part + ':' + p.name; });
     S.idx = names.indexOf('purple:update') + 1;
     render(false);
+  }
+
+  // n iterations on: the forward pass of iteration iter + n (the first click of that iteration),
+  // never past the iteration where the run settles.
+  function jump(n) {
+    var k = Math.min(settleIter(), S.iter + n);
+    if (k <= S.iter) return false;
+    S.iter = k;
+    S.idx = 1;
+    render(false);
+    return true;
+  }
+
+  // Play: iterations one by one to the tenth, slowly enough to follow the hinge as it swings onto
+  // the six days, then two at a time, then faster and faster (each jump 15 percent of the
+  // iteration reached), until the run settles: about five seconds in all. Any other move stops it.
+  function play() {
+    if (playing) { stop(); return; }
+    if (S.iter >= settleIter()) return;
+    playing = { gen: 0 };
+    var me = playing;
+    function tick() {
+      if (playing !== me) return;
+      var k = S.iter, n = k < 10 ? 1 : k < 20 ? 2 : Math.ceil(k * 0.15);
+      if (!jump(n) || S.iter >= settleIter()) { stop(); return; }
+      setTimeout(tick, k < 10 ? 420 : k < 20 ? 120 : 30);
+    }
+    controls(makeSt());
+    tick();
+  }
+
+  function stop() {
+    if (!playing) return;
+    playing = null;
+    controls(makeSt());
   }
 
   // ===== the address
@@ -206,14 +249,14 @@
       var i = kv.indexOf('=');
       q[i < 0 ? kv : kv.slice(0, i)] = i < 0 ? '' : decodeURIComponent(kv.slice(i + 1));
     });
-    var w = q.w !== undefined ? M.parse(q.w) : null, b = q.b !== undefined ? M.parse(q.b) : null;
-    // a dead start (the heating off: the grasshoppers would never move) is not taken
-    if (!M.dead(w === null ? M.W_DEFAULT : w, b === null ? M.B_DEFAULT : b)) { S.w0 = w; S.b0 = b; }
-    // alpha up to 1 / (2 (x^2 + 1)) = 1/52: every update then keeps a share 1 - 52 alpha >= 0 of the
-    // gap, so no run overshoots and the heating runs all along it
-    if (q.a !== undefined) { var al = parseFloat(q.a); if (al > 0 && al <= 0.019) S.alpha = al; }
+    // alpha up to 0.02: the runs of the starts the page takes stay on the six days and settle
+    if (q.a !== undefined) { var al = parseFloat(q.a); if (al > 0 && al <= 0.02) S.alpha = al; }
     if (q.e !== undefined) { var ep = parseFloat(q.e); if (ep > 0 && ep <= 1) S.eps = ep; }
-    if (q.k !== undefined) S.iter = Math.max(1, Math.min(parseInt(q.k, 10) || 1, 2000));
+    var w = q.w !== undefined ? M.parse(q.w) : null, b = q.b !== undefined ? M.parse(q.b) : null;
+    // a start whose run cannot reach the best fit (the heating off on every day, or a run that
+    // stops on another hinge) is not taken
+    if (M.takes(w === null ? M.W_DEFAULT : w, b === null ? M.B_DEFAULT : b, S.alpha)) { S.w0 = w; S.b0 = b; }
+    if (q.k !== undefined) S.iter = Math.max(1, Math.min(parseInt(q.k, 10) || 1, M.KMAX - 1));
     if (q.s !== undefined) S.idx = Math.max(0, parseInt(q.s, 10) || 0);
     if (q.at !== undefined) {
       // a click by name, for checks that should not depend on how many clicks a part has
@@ -234,6 +277,13 @@
   function controls(st) {
     var where = document.getElementById('where');
     if (where) where.textContent = st.idx === 0 && st.iter === 1 || st.part === 'story' ? '' : 'iteration ' + st.iter;
+    var runs = document.querySelector('#controls .runs');
+    if (runs) runs.classList.toggle('on', st.iter > 1 || st.reached('purple', 'update'));
+    var pb = document.getElementById('play');
+    if (pb) {
+      pb.innerHTML = playing ? '&#10074;&#10074;' : '&#9654;';
+      pb.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    }
   }
 
   function setTheme(t, remember) {
@@ -267,6 +317,7 @@
     else if (k === 'ArrowLeft' || k === 'Backspace') { e.preventDefault(); prev(); }
     else if (k === 'Home') { e.preventDefault(); home(); }
     else if (k === 'End') { e.preventDefault(); toEnd(); }
+    else if (k === 'p' || k === 'P') play();
     else if (k === 't' || k === 'T') toggleTheme();
   }
 
@@ -300,12 +351,19 @@
     fit();
     window.addEventListener('resize', fit);
     window.addEventListener('keydown', onKey);
-    var nb = document.getElementById('next');
-    nb.addEventListener('click', function () { next(); nb.blur(); });
-    var tb = document.getElementById('theme');
-    if (tb) tb.addEventListener('click', function () { toggleTheme(); tb.blur(); });
+    function button(id, fn) {
+      var b = document.getElementById(id);
+      if (b) b.addEventListener('click', function () { fn(); b.blur(); });
+    }
+    button('next', next);
+    button('plus1', function () { stop(); jump(1); });
+    button('plus10', function () { stop(); jump(10); });
+    button('plus100', function () { stop(); jump(100); });
+    button('play', play);
+    button('theme', toggleTheme);
 
     function enter() {
+      stop();
       var q = readHash();
       if (q.replay !== undefined && !(S.iter === 1 && S.idx === 0)) {
         prev();
@@ -322,8 +380,8 @@
   }
 
   GF.engine = {
-    next: next, prev: prev, home: home, toEnd: toEnd, render: render, plan: plan,
-    state: makeSt, PLAN: PLAN, DRAW: DRAW
+    next: next, prev: prev, home: home, toEnd: toEnd, jump: jump, play: play, stop: stop,
+    render: render, plan: plan, state: makeSt, PLAN: PLAN, DRAW: DRAW
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

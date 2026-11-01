@@ -28,10 +28,11 @@
 .story-pic.board {
   background: linear-gradient(180deg, #2f5d4a 0%, #264d3d 100%);
   border-color: #6b4a2b; border-width: 14px;
-  display: flex; flex-direction: column; justify-content: center; padding: 0 0 0 92px; gap: 42px;
+  display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 90px; padding: 0 30px;
 }
-.chalk { color: #f4f1e6; font-size: 64px; text-shadow: 0 0 2px rgba(244, 241, 230, 0.35); }
-.chalk-2 { font-size: 66px; color: #ffe9a8; }
+.chalk { color: #f4f1e6; font-size: 44px; text-shadow: 0 0 2px rgba(244, 241, 230, 0.35); }
+.chalk .katex .hline { border-bottom-color: #f4f1e6 !important; }
+.chalk-1 { font-size: 48px; color: #ffe9a8; white-space: nowrap; }
 
 /* ===== the scenes */
 
@@ -69,6 +70,8 @@
 .ph-card { fill: #ffffff; stroke: #ddd6c6; stroke-width: 1; }
 .ph-big { font: 600 25px var(--sans); fill: #1d1a16; text-anchor: middle; }
 .ph-small { font: 600 9px var(--sans); fill: #5b5446; text-anchor: middle; letter-spacing: 0.06em; }
+.ph-row { font: 600 12.5px var(--sans); fill: #1d1a16; text-anchor: end; }
+.ph-rule { fill: none; stroke: #eee8da; stroke-width: 0.8; }
 .ic-flame { fill: #e8833a; }
 .ic-flame-in { fill: #ffd06b; }
 .ic-cloud { fill: #9fb3c8; }

@@ -1,6 +1,8 @@
 /* style.css: tokens, the stage, and the shared look of the four parts. Copied from the page before
  * this one (../grasshopper-finds-w/css/style.css), with the field of the start renamed .num-input
- * (there are two now); what is new on this page is in css/parts.css and css/story.css.
+ * (there are two now), and the columns, their cells, the plot of y against x and the run buttons
+ * taken from the next page (../grasshoppers-many-days/css/style.css); what is new on this page is
+ * in css/parts.css and css/story.css.
  *
  * Every colour is a token here. A part's elements take its colour from the class on its layer
  * (k-black, k-red, k-blue, k-purple) through currentColor, so the theme switch (key t) recolours
@@ -13,6 +15,7 @@
   --paper: #fffdf8;
   --ink: #1d1a16;
   --muted: #756e62;
+  --rule: #d9d1c1;
   --shadow: rgba(70, 50, 20, 0.18);
   --red: #c2352b;
   --red-soft: rgba(194, 53, 43, 0.04);
@@ -21,6 +24,7 @@
   --purple: #7d2fa3;
   --purple-soft: rgba(125, 47, 163, 0.07);
   --fresh: #ffd84d;
+  --fresh-soft: rgba(255, 216, 77, 0.32);
   --focus: rgba(255, 216, 77, 0.55);
   --hop-body: #2f74c8;
   --hop-deep: #174f93;
@@ -35,6 +39,7 @@
   --paper: #25221d;
   --ink: #ede7da;
   --muted: #a39b8c;
+  --rule: #4a443a;
   --shadow: rgba(0, 0, 0, 0.55);
   --red: #f07466;
   --red-soft: rgba(240, 116, 102, 0.08);
@@ -43,6 +48,7 @@
   --purple: #c792e8;
   --purple-soft: rgba(199, 146, 232, 0.09);
   --fresh: #7a6416;
+  --fresh-soft: rgba(122, 100, 22, 0.45);
   --focus: rgba(122, 100, 22, 0.7);
   --hop-body: #5d9be6;
   --hop-deep: #2e6bb8;
@@ -84,29 +90,23 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 }
 #title .m { font-style: italic; }
 
-/* ===== boxes */
+/* ===== boxes: the single numbers w, b and lbar */
 
 .box {
   position: absolute; box-sizing: border-box;
   background: var(--paper); border: 3px solid currentColor; border-radius: 9px;
   box-shadow: 4px 5px 0 var(--shadow);
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-  padding-top: 4px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
-.box .calc {
-  height: 26px; line-height: 26px; font-size: 17px; white-space: nowrap;
-  color: color-mix(in srgb, currentColor 72%, var(--paper));
-}
-.box .calc .piece { display: inline-block; margin: 0 0.1em; }
-.box .val { height: 44px; line-height: 44px; font-size: 33px; white-space: nowrap; }
+.box .val { height: 40px; line-height: 40px; font-size: 31px; white-space: nowrap; border-radius: 6px; padding: 0 4px; }
 .box .unit {
-  height: 16px; line-height: 16px; font-size: 13px; letter-spacing: 0.06em;
+  height: 14px; line-height: 14px; font-size: 12px; letter-spacing: 0.05em; white-space: nowrap;
   color: color-mix(in srgb, currentColor 60%, var(--paper));
 }
 .box.guessing { box-shadow: 4px 5px 0 var(--shadow), 0 0 0 6px var(--focus); }
 .num-input {
-  display: none; position: absolute; left: 6px; right: 6px; top: 30px; height: 44px;
-  font: 32px KaTeX_Main, "Latin Modern Roman", "Times New Roman", serif;
+  display: none; position: absolute; left: 6px; right: 6px; top: 9px; height: 42px;
+  font: 31px KaTeX_Main, "Latin Modern Roman", "Times New Roman", serif;
   text-align: center; border: none; outline: none; padding: 0;
   background: transparent; color: var(--ink); caret-color: var(--ink);
   pointer-events: auto;
@@ -114,14 +114,46 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .num-input.on { display: block; }
 .num-input::placeholder { color: var(--muted); }
 
+/* ===== columns: one frame, six cells, the unit at the foot */
+
+.col {
+  position: absolute; box-sizing: border-box;
+  background: var(--paper); border: 3px solid currentColor; border-radius: 9px;
+  box-shadow: 4px 5px 0 var(--shadow);
+}
+.cell {
+  position: absolute; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; white-space: nowrap;
+}
+.cell.sep { border-top: 1px solid var(--rule); }
+.cell .v { border-radius: 5px; padding: 0 3px; }
+.cell.flat .v { color: var(--muted); }
+.cell.hop .v { color: var(--blue); }
+.cell.worked { box-shadow: inset 0 0 0 2.5px var(--fresh); }
+.col-unit {
+  position: absolute; text-align: center; height: 14px; line-height: 14px;
+  font-size: 12px; letter-spacing: 0.05em;
+  color: color-mix(in srgb, currentColor 60%, var(--paper));
+}
+.day-index { position: absolute; font: 13px var(--sans); color: var(--muted); text-align: right; width: 20px; }
+
 /* ===== labels and words */
 
 .lab { position: absolute; white-space: nowrap; font-size: 27px; }
+.name { font-size: 25px; }
+.col-name { font-size: 23px; }
+.op { font-size: 19px; }
 .word { position: absolute; white-space: nowrap; font: italic 21px var(--serif); letter-spacing: 0.02em; }
 .tick { font-size: 18px; }
 .axis-lab { font-size: 27px; }
 .question { font-size: 30px; }
 .plot-formula { font-size: 23px; }
+.strip { font-size: 26px; }
+.strip .piece { display: inline-block; margin: 0 0.03em; border-radius: 5px; }
+.update-row .piece { display: inline-block; margin: 0 0.1em; border-radius: 5px; }
+.plot-tick { font-size: 16px; color: var(--muted); }
+.plot-unit { font: 13px var(--sans); color: var(--muted); letter-spacing: 0.04em; }
 
 /* ===== SVG: arrows, the loop, the plot */
 
@@ -133,14 +165,22 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .curve { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; }
 .guide { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-dasharray: 5 6; stroke-opacity: 0.7; }
 .point { fill: currentColor; stroke: var(--bg); stroke-width: 3; transform-box: fill-box; transform-origin: center; }
-.trail-dot { fill: var(--bg); stroke: currentColor; stroke-width: 2.2; stroke-opacity: 0.65; }
+
+/* ===== the plot of y against x */
+
+.tick-mark { stroke: currentColor; stroke-width: 2; fill: none; }
+.grid-line { stroke: var(--rule); stroke-width: 1; fill: none; stroke-dasharray: 3 6; }
+.hinge { fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.trail-line { fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.pt { fill: currentColor; stroke: var(--bg); stroke-width: 2.5; }
+.mark { fill: var(--bg); stroke: currentColor; stroke-width: 2.5; }
+.gap { fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; }
 
 /* ===== the purple part: the box dl/dw, the backward arrow, the update */
 
 .arrow.back .line { stroke-width: 3.5; }
 .arrow .line.pulse { animation: glow 1.1s ease-in-out; }
 .update-row { font-size: 27px; }
-.update-row .piece { display: inline-block; margin: 0 0.1em; }
 .alpha-lab { font-size: 23px; }
 
 /* ===== the grasshopper */
@@ -154,6 +194,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 /* ===== animation helpers (js/kit.js) */
 
 .fly { position: absolute; white-space: nowrap; pointer-events: none; font-size: 20px; z-index: 10; }
+.fly-dot { width: 13px; height: 13px; border-radius: 50%; background: currentColor; }
 
 .flash { animation: flash 1.6s ease-out; border-radius: 6px; }
 @keyframes flash {
@@ -161,13 +202,14 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
   100% { background: transparent; }
 }
 
-.loop.pulse, .curve.pulse { animation: glow 1.1s ease-in-out; }
+.loop.pulse, .curve.pulse, .hinge.pulse { animation: glow 1.1s ease-in-out; }
 @keyframes glow {
   0% { stroke-width: 3.5; }
   35% { stroke-width: 10; }
   100% { stroke-width: 3.5; }
 }
 .point.pulse { animation: pop 0.7s ease-out; }
+.pt.pulse, .mark.pulse { animation: pop 0.7s ease-out; transform-box: fill-box; transform-origin: center; }
 @keyframes pop {
   0% { transform: scale(1); }
   40% { transform: scale(1.9); }
@@ -187,16 +229,19 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 
 #controls {
   position: absolute; left: 40px; top: 822px; z-index: 20;
-  display: flex; align-items: center; gap: 18px;
+  display: flex; align-items: center; gap: 14px;
 }
-#next {
+#controls button.btn {
   font: 600 20px var(--sans); letter-spacing: 0.02em;
-  padding: 9px 24px 10px; border: 2.5px solid var(--ink); border-radius: 10px;
+  padding: 9px 22px 10px; border: 2.5px solid var(--ink); border-radius: 10px;
   background: var(--paper); color: var(--ink); box-shadow: 3px 4px 0 var(--shadow); cursor: pointer;
 }
-#next:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+#controls button.btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+#controls button.run { font-size: 17px; padding: 9px 14px 10px; }
+#controls .runs { display: none; gap: 10px; }
+#controls .runs.on { display: flex; }
 #next .chev { font-size: 24px; line-height: 0; }
-#where { font: 14px var(--sans); color: var(--muted); letter-spacing: 0.04em; }
+#where { font: 14px var(--sans); color: var(--muted); letter-spacing: 0.04em; min-width: 110px; }
 #theme { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
 
 @media (prefers-reduced-motion: reduce) {

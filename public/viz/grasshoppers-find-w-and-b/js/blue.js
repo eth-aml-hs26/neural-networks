@@ -7,19 +7,20 @@
  *   onw     grasshopper w jumps from its box onto its ground, and the ground is magnified around
  *           its feet until it is a straight ramp
  *   hopw    it hops eps along the w axis: its box shows w + eps = -0.99, in blue
- *   fwdw    the forward pass of the hop: a, yhat and the loss of (w + eps, b) fly through the boxes,
- *           in blue (the loss 226.5025); the grasshopper rises to the ground, Delta_eps = 1.5025
- *   slopew  the slope Delta_eps / eps = 1.5025 / 0.01 = 150.25
- *   limw    eps goes to 0: the slope tends to the derivative, dl/dw = 150; the hop was a test, so
- *           the grasshopper goes back to its point and the boxes show the pair again
+ *   fwdw    the forward pass of the hop: the columns a, yhat and l turn to the numbers of
+ *           (w + eps, b), in blue where they change, and lbar to 805.7825; the grasshopper rises to
+ *           the ground, Delta_eps = 6.2825
+ *   slopew  the slope Delta_eps / eps = 6.2825 / 0.01 = 628.25
+ *   limw    eps goes to 0: the slope tends to the derivative, dlbar/dw = 627; the hop was a test,
+ *           so the grasshopper goes back to its point and the columns show the pair again
  *   hopb    grasshopper b does all of that at once: onto its ground, the zoom, the hop to
- *           b + eps = 60.01, the forward pass (225.3001), the rise Delta_eps = 0.3001
- *   slopeb  its slope 30.01, then the limit, dl/db = 30
+ *           b + eps = 60.01, the forward pass (lbar = 799.9501), the rise Delta_eps = 0.4501
+ *   slopeb  its slope 45.01, then the limit, dlbar/db = 45
  * Iteration 2 on, one click:
  *   measure both grasshoppers measure at once
  *
  * What these clicks show is drawn by js/ground.js (the grounds, the hops, the slopes) and by
- * js/black.js (the boxes during a hop, from st.hop); this part only names the clicks.
+ * js/black.js (the columns during a hop, from st.hop); this part only names the clicks.
  */
 (function () {
   'use strict';

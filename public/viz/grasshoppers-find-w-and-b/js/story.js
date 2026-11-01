@@ -3,10 +3,11 @@
  * with the same Lina, copied from there.
  *
  *   home     her first winter in her own flat; the heating's app counts the energy of every day
- *   days     on warm days the heating stays off; the colder the day, the more it uses (the eight
- *            days of the next page, as bars against the temperature)
- *   today    one day: the weather app says 5 degrees C, the heating's app 40 kWh
- *   symbols  the day in symbols, on a board: x = 5, y = 40, yhat = ReLU(w x + b)
+ *   days     on warm days the heating stays off; the colder the day, the more it uses (the six
+ *            days, as bars against the temperature)
+ *   six      six days on her phone: the temperature of each from the weather app, the energy from
+ *            the heating's app
+ *   symbols  the six days in symbols, on a board: the columns x and y, and yhat = ReLU(w x + b)
  *
  * The pictures are drawn here as SVG markup; their colours are classes in css/story.css. The words
  * are in WORDS below.
@@ -17,14 +18,14 @@
   var DEG = '&#176;';
   var el = { cards: {}, dots: [] };
 
-  var CARDS = ['home', 'days', 'today', 'symbols'];
+  var CARDS = ['home', 'days', 'six', 'symbols'];
   var WORDS = {
     home: { title: 'Her own home',
       text: 'Lina&rsquo;s first winter in her own flat. Its heating has an app that counts the energy of each day, in kWh.' },
     days: { title: 'Cold days, warm days',
       text: 'On warm days the heating stays off. The colder the day, the more energy it uses.' },
-    today: { title: 'One day',
-      text: 'Today the weather app says 5&nbsp;' + DEG + 'C. The heating&rsquo;s app says 40&nbsp;kWh.' },
+    six: { title: 'Six days',
+      text: 'Lina writes down six days: the temperature from the weather app, the energy from the heating&rsquo;s app.' },
     symbols: { title: 'In symbols',
       text: 'Guess the energy from the temperature: find <i>w</i> and <i>b</i>.' }
   };
@@ -158,10 +159,10 @@
       t('path', { 'class': 'ic-cloud', d: 'M-9 6 C-13 6 -14 1 -10.6 -0.6 C-11 -5.6 -5 -8 -2 -4.6 C-0.4 -9.6 7.6 -9.2 8.4 -3.4 C12.6 -3.2 13.4 2.6 10 5 C9.4 5.6 8.6 6 7.6 6 Z' }));
   }
 
-  // The heating's app on the phone: a flame, kWh, and a bar a day.
-  var WEEK = M.DAYS.seq.map(function (i) { return M.DAYS.y[i]; });
+  // The heating's app on the phone: a flame, kWh, and a bar a day, in the order the days came.
+  var WEEK = M.SEQ.map(function (i) { return M.Y[i]; });
   function heatApp() {
-    var p = PH, s = '', x0 = p.x + 14, base = p.y + p.h - 34, top = p.y + 64, bw = 7.6, gap = 2.6;
+    var p = PH, s = '', x0 = p.x + 14, base = p.y + p.h - 34, top = p.y + 64, bw = 10, gap = 3.6;
     s += flame(p.x + 24, p.y + 34, 1.15);
     s += t('text', { 'class': 'ph-unit', x: p.x + 38, y: p.y + 38 }, 'kWh');
     s += t('path', { 'class': 'ph-axis', d: 'M' + (x0 - 3) + ' ' + base + ' H' + (p.x + p.w - 10) });
@@ -172,16 +173,20 @@
     return s;
   }
 
-  // The two apps of today: the weather, 5 degrees C, and the heating, 40 kWh.
-  function todayApps() {
-    var p = PH, s = '', cx = p.x + p.w / 2;
-    s += t('rect', { 'class': 'ph-card', x: p.x + 12, y: p.y + 26, width: p.w - 24, height: 70, rx: 8 });
-    s += cloudIcon(cx, p.y + 46, 1.25);
-    s += t('text', { 'class': 'ph-big', x: cx, y: p.y + 84 }, M.X + DEG + 'C');
-    s += t('rect', { 'class': 'ph-card', x: p.x + 12, y: p.y + 106, width: p.w - 24, height: 76, rx: 8 });
-    s += flame(cx, p.y + 126, 1.15);
-    s += t('text', { 'class': 'ph-big', x: cx, y: p.y + 164 }, String(M.Y));
-    s += t('text', { 'class': 'ph-small', x: cx, y: p.y + 176 }, 'kWh');
+  // Her notes of six days on the phone: a cloud over the temperatures, a flame over the energies,
+  // a row a day, coldest first, as the columns of the diagram will have them.
+  function sixDays() {
+    var p = PH, s = '', cl = p.x + 30, cr = p.x + 70, top = p.y + 56, rh = 21;
+    s += t('rect', { 'class': 'ph-card', x: p.x + 11, y: p.y + 22, width: p.w - 22, height: p.h - 38, rx: 8 });
+    s += cloudIcon(cl, p.y + 37, 1.0);
+    s += flame(cr, p.y + 37, 0.95);
+    s += t('path', { 'class': 'ph-axis', d: 'M' + (p.x + 16) + ' ' + (top - 6) + ' H' + (p.x + p.w - 16) });
+    M.X.forEach(function (T, i) {
+      var y = top + 15 + i * rh;
+      if (i > 0) s += t('path', { 'class': 'ph-rule', d: 'M' + (p.x + 16) + ' ' + (y - 15.5) + ' H' + (p.x + p.w - 16) });
+      s += t('text', { 'class': 'ph-row', x: cl + 9, y: y }, (T < 0 ? '&#8722;' + (-T) : String(T)) + '&#176;');
+      s += t('text', { 'class': 'ph-row', x: cr + 11, y: y }, String(M.Y[i]));
+    });
     return s;
   }
 
@@ -204,20 +209,20 @@
     return s;
   }
 
-  function picToday() {
-    var s = sceneDefs('sky-today', false);
-    s += t('rect', { x: 0, y: 0, width: 320, height: 240, fill: 'url(#sky-today)' });
+  function picSix() {
+    var s = sceneDefs('sky-six', false);
+    s += t('rect', { x: 0, y: 0, width: 320, height: 240, fill: 'url(#sky-six)' });
     s += cloudIcon(48, 34, 2.2) + cloudIcon(150, 22, 1.6);
     s += house(false) + ground() + snowflakes(SNOW.slice(0, 7), 1.4);
     s += lina(LINA.x, LINA.y, LINA.s, 'surprised', true);
     var z = linaPhone();
-    s += zoomFrom(z[0], z[1]) + phone(todayApps());
+    s += zoomFrom(z[0], z[1]) + phone(sixDays());
     return s;
   }
 
-  // The eight days as bars against the temperature: cold on the left, warm on the right.
+  // The six days as bars against the temperature: cold on the left, warm on the right.
   function picDays() {
-    var D = M.DAYS, s = '', L = 40, R = 300, base = 196, top = 46;
+    var D = { x: M.X, y: M.Y }, s = '', L = 40, R = 300, base = 196, top = 46;
     function X(T) { return L + (T + 4) / 26 * (R - L); }
     function H(E) { return E / 70 * (base - top); }
     s += t('rect', { 'class': 'chart-paper', x: 8, y: 8, width: 304, height: 224, rx: 12 });
@@ -249,19 +254,15 @@
       c.pic.style.width = P.w + 'px';
       c.pic.style.height = P.h + 'px';
       if (name === 'symbols') {
+        // the six days as the two columns of the diagram, then the model
         c.pic.classList.add('board');
-        var lines = [
-          'x = ' + M.X + '\\,{}^\\circ\\mathrm{C}',
-          'y = ' + M.Y + '\\ \\mathrm{kWh}',
-          '\\hat y = \\mathrm{ReLU}(w\\,x + b)'
-        ];
-        lines.forEach(function (src, i) {
-          var d = K.div('chalk chalk-' + i, c.pic);
-          K.tex(d, src);
-        });
+        var rows = M.X.map(function (T, i) { return (T < 0 ? '-' : '') + Math.abs(T) + ' & \\quad ' + M.Y[i]; });
+        var table = '\\begin{array}{rr} x & \\quad y \\\\ \\hline ' + rows.join(' \\\\ ') + ' \\end{array}';
+        K.tex(K.div('chalk chalk-0', c.pic), table);
+        K.tex(K.div('chalk chalk-1', c.pic), '\\hat y = \\mathrm{ReLU}(w\\,x + b)');
       } else {
         var svg = K.svg('svg', { viewBox: '0 0 320 240', width: P.w, height: P.h, role: 'img' }, c.pic, 'story-svg');
-        svg.innerHTML = name === 'home' ? picHome() : name === 'days' ? picDays() : picToday();
+        svg.innerHTML = name === 'home' ? picHome() : name === 'days' ? picDays() : picSix();
       }
       c.words = K.div('story-words', el.box);
       K.pos(c.words, T.x, T.y, 'tl');
