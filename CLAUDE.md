@@ -85,6 +85,9 @@ folders by hand: the script rebuilds them from scratch on every run.
   the whole attention deck). The introduction holds the deck on the experimental studies (its
   frames quote the contact addresses of the study's information sheet) and the cold intro, Popper's
   tetradic schema as shown at the CSCS workshop (since 2 November 2026; until then William James).
+- On 2 November 2026 section 3 gained, as its last row, one slide on training any network
+  (`slides/training-neural-networks`: X and y, the layers as blocks, the forward and the backward
+  pass), which generalizes sections 2 and 3 before the language models.
 - On 2 November 2026 Carlos took the slides and the notes of the shallow and deep ReLU networks
   off the site: the hinge-fan and hinge-chain decks, the notes on hinge-chain, shallow and narrow
   ReLU networks, and frame 9 of the hinge-fan deck. Sections 2 and 3 show only their pages, and

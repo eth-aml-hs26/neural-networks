@@ -64,6 +64,11 @@ export const materials = {
     title: 'Karl Popper, the tetradic schema',
     links: deckLinks('popper-cold-intro'),
   },
+  'slides/training-neural-networks': {
+    kind: 'slides',
+    title: 'Training a neural network',
+    links: deckLinks('training-neural-networks'),
+  },
   'slides/language-models': {
     kind: 'slides',
     title: 'Language models',

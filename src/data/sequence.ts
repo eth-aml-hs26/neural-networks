@@ -54,9 +54,10 @@ export const sections: Section[] = [
   {
     id: 'deep-networks',
     title: 'Deep ReLU networks',
-    summary: 'The same functions as a ReLU network of width two, with one kink per layer.',
+    summary: 'The same functions as a ReLU network of width two, with one kink per layer, and how any network is trained.',
     steps: [
       step('viz/hinge-chain-networks', 'The free parameters, layer by layer'),
+      step('slides/training-neural-networks', 'Any network: the forward pass and the backward pass'),
     ],
   },
   {
