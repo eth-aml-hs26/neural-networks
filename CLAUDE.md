@@ -83,8 +83,8 @@ folders by hand: the script rebuilds them from scratch on every run.
   `docs/lecture-plans/neural-networks-llms-transformers.md`, regrouped by topic on 1 November 2026
   with visualizations first: within a section a page comes before its deck (the Wuggish game before
   the whole attention deck). The introduction holds the deck on the experimental studies (its
-  frames quote the contact addresses of the study's information sheet) and the cold intro on
-  William James.
+  frames quote the contact addresses of the study's information sheet) and the cold intro, Popper's
+  tetradic schema as shown at the CSCS workshop (since 2 November 2026; until then William James).
 - On 2 November 2026 Carlos took the slides and the notes of the shallow and deep ReLU networks
   off the site: the hinge-fan and hinge-chain decks, the notes on hinge-chain, shallow and narrow
   ReLU networks, and frame 9 of the hinge-fan deck. Sections 2 and 3 show only their pages, and

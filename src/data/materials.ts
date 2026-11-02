@@ -59,10 +59,10 @@ export const materials = {
     title: 'The experimental studies',
     links: deckLinks('experimental-studies'),
   },
-  'slides/neural-networks-cold-intro': {
+  'slides/popper-cold-intro': {
     kind: 'slides',
-    title: 'William James, The Principles of Psychology (1890)',
-    links: deckLinks('neural-networks-cold-intro'),
+    title: 'Karl Popper, the tetradic schema',
+    links: deckLinks('popper-cold-intro'),
   },
   'slides/language-models': {
     kind: 'slides',

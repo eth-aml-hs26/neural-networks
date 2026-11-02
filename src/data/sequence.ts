@@ -27,7 +27,7 @@ export const sections: Section[] = [
     summary: 'The experimental studies of the course, and a prologue.',
     steps: [
       step('slides/experimental-studies', 'Course organisation'),
-      step('slides/neural-networks-cold-intro', 'Prologue'),
+      step('slides/popper-cold-intro', 'Prologue'),
     ],
   },
   {
