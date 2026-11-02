@@ -1,5 +1,6 @@
 /* kit.js: small helpers shared by the four parts, as window.GFKit (copied from step 0,
- * ../grasshopper-finds-w/, with an arrow without a head and a flying dot added).
+ * ../grasshopper-finds-w/, with an arrow without a head and a flying dot added; the band of a pass
+ * and the count of pending animations copied again from step 0 on 2 November 2026).
  *
  *   svg(tag, attrs, parent, cls), div(cls, parent, tag)   make elements
  *   pos(el, x, y, anchor)        place an HTML element on the stage ('tl', 'cc', 'br', ...)
@@ -7,8 +8,11 @@
  *   row(el, pieces)              a formula as separate KaTeX pieces, so numbers can fly into one
  *   show(el, on)                 the class "on": .vis elements fade in and out (css/style.css)
  *   route(pts, r), arrow(...)    polylines with rounded corners and an arrowhead (or none)
+ *   roundPoly(pts, r)            a closed polygon with rounded corners
+ *   band(...), revealBand(...)   a pass drawn as a broad arrow, and its reveal from tail to head
  *   rect(el)                     an element's box in stage coordinates (the stage is scaled)
  *   tween, wait, drawOn, flyTex, flyDot, flash, pulse   decoration for a forward click
+ *   pending()                    waits and tweens still to run (Play waits for 0)
  *   temp(el, prop, value), tempClass(el, cls) changes that the next render undoes
  *
  * State is the truth and animation is decoration: every render first calls cancel() (running
@@ -149,19 +153,35 @@
     return a;
   };
 
-  // A smooth closed curve through pts (Catmull-Rom turned into cubic Beziers).
-  K.closedSpline = function (pts, tension) {
-    var t = tension === undefined ? 1 : tension, n = pts.length;
-    var d = 'M ' + pts[0][0] + ' ' + pts[0][1];
+  // A closed polygon through pts with its corners rounded by radius r (smaller at short sides).
+  K.roundPoly = function (pts, r) {
+    var n = pts.length, d = '';
     for (var i = 0; i < n; i++) {
-      var p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
-      var c1 = [p1[0] + (p2[0] - p0[0]) / 6 * t, p1[1] + (p2[1] - p0[1]) / 6 * t];
-      var c2 = [p2[0] - (p3[0] - p1[0]) / 6 * t, p2[1] - (p3[1] - p1[1]) / 6 * t];
-      d += ' C ' + c1[0].toFixed(1) + ' ' + c1[1].toFixed(1) + ' ' + c2[0].toFixed(1) + ' ' + c2[1].toFixed(1) +
-        ' ' + p2[0] + ' ' + p2[1];
+      var p = pts[(i - 1 + n) % n], q = pts[i], m = pts[(i + 1) % n];
+      var l1 = Math.hypot(q[0] - p[0], q[1] - p[1]), l2 = Math.hypot(m[0] - q[0], m[1] - q[1]);
+      var rr = Math.min(r, l1 / 2, l2 / 2);
+      var a = [q[0] - (q[0] - p[0]) / l1 * rr, q[1] - (q[1] - p[1]) / l1 * rr];
+      var b = [q[0] + (m[0] - q[0]) / l2 * rr, q[1] + (m[1] - q[1]) / l2 * rr];
+      d += (i ? ' L ' : 'M ') + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' Q ' + q[0] + ' ' + q[1] + ' ' +
+        b[0].toFixed(1) + ' ' + b[1].toFixed(1);
     }
     return d + ' Z';
   };
+
+  // A pass as a broad arrow (spec from GF.geo.pass): a light fill and a firm outline, behind a mask
+  // that a reveal draws along the spine, so the band flows in from its tail to its head. spec.reach
+  // is the width of that stroke: wide enough to cover the band on either side of the spine.
+  K.band = function (parent, spec, id, cls) {
+    var g = K.svg('g', null, parent, 'pass vis ' + (cls || ''));
+    var mask = K.svg('mask', { id: id, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: 1600, height: 900 }, g);
+    var mp = K.svg('path', { d: K.route(spec.spine, 40), 'stroke-width': spec.reach || 300 }, mask, 'pass-mask');
+    var body = K.svg('g', { mask: 'url(#' + id + ')' }, g);
+    var d = K.roundPoly(spec.outline, 20);
+    K.svg('path', { d: d }, body, 'pass-fill');
+    K.svg('path', { d: d }, body, 'pass-line');
+    return { g: g, mask: mp };
+  };
+  K.revealBand = function (b, ms, delay, done) { K.drawOn(b.mask, ms, delay, done); };
 
   // ===== geometry on the stage
 
@@ -204,24 +224,35 @@
     back: function (t) { var c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); }
   };
 
+  // How many waits and tweens of the current render are still to run: Play (js/engine.js) moves on
+  // once this is 0, so every animation must go through K.wait and K.tween (never a bare
+  // setTimeout). They are counted per render, so those a new render cancelled never hold Play up.
+  var PENDING = {};
+  function hold(g) { PENDING[g] = (PENDING[g] || 0) + 1; }
+  function free(g) { if (--PENDING[g] <= 0) delete PENDING[g]; }
+  K.pending = function () { return PENDING[GEN] || 0; };
+
   // Calls fn(e) with e from 0 to 1 over ms, then done(). Stops silently once a new render ran.
   K.tween = function (ms, fn, ease, done) {
     var g = GEN, t0 = null, ez = ease || K.ease.inOut;
     if (ms <= 0) { fn(1); if (done) done(); return; }
+    hold(g);
     function frame(now) {
-      if (g !== GEN) return;
+      if (g !== GEN) { free(g); return; }
       if (t0 === null) t0 = now;
       var t = Math.min(1, (now - t0) / ms);
       fn(ez(t));
-      if (t < 1) requestAnimationFrame(frame);
-      else if (done) done();
+      if (t < 1) { requestAnimationFrame(frame); return; }
+      free(g);
+      if (done) done();
     }
     requestAnimationFrame(frame);
   };
 
   K.wait = function (ms, fn) {
     var g = GEN;
-    setTimeout(function () { if (g === GEN) fn(); }, ms);
+    hold(g);
+    setTimeout(function () { free(g); if (g === GEN) fn(); }, ms);
   };
 
   // Draw a path from its start: the stroke grows over ms.

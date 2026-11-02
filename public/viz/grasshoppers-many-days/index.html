@@ -18,11 +18,15 @@
     <div id="title">Two grasshoppers, eight days</div>
     <div id="controls">
       <button id="next" class="btn" type="button" title="Next (right arrow, space, page down)">Next <span class="chev">&#8250;</span></button>
+      <div id="play" role="group" aria-label="Play">
+        <button id="play1" class="play" type="button" title="Play everything (p plays or pauses)" aria-label="Play everything"><span class="tri"></span></button>
+        <button id="play2" class="play" type="button" title="Play quickly: the slopes straight from the derivatives, without the hops" aria-label="Play quickly"><span class="tri"></span><span class="tri"></span></button>
+        <button id="play3" class="play" type="button" title="Play only the jumps, until the run settles" aria-label="Play only the jumps"><span class="tri"></span><span class="tri"></span><span class="tri"></span></button>
+      </div>
       <span class="runs">
         <button id="plus1" class="btn run" type="button" title="The next iteration">+1</button>
         <button id="plus10" class="btn run" type="button" title="Ten iterations on">+10</button>
         <button id="plus100" class="btn run" type="button" title="A hundred iterations on">+100</button>
-        <button id="play" class="btn run" type="button" title="Play until the run settles (p)" aria-label="Play">&#9654;</button>
       </span>
       <span id="where"></span>
       <button id="theme" type="button" title="Theme (t)" aria-label="Switch the theme">&#9680;</button>

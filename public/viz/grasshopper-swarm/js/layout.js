@@ -166,30 +166,34 @@
     };
   };
 
-  // ===== the red loop of the forward pass: round w, b, A, Z, yhat, l and lbar, with their
-  // grasshoppers; y and x stay outside, and it dips under the columns of the gradient, which belong
-  // to the backward pass. Past l it keeps to the height of the dip until it is right of lbar, so
-  // that the column beside l stays free for the blue numbers of the gradient part (the change of
-  // each l during a hop, the terms of the shortcut).
+  // ===== the forward pass as a band (2 November 2026, step 0's red band in place of the hand-drawn
+  // loop): a broad arrow behind the boxes, an outline (clockwise; corners rounded when drawn) and the
+  // spine its reveal follows. It holds w and b with their grasshoppers and names in its top block,
+  // comes down into A, and runs right through A, Z, yhat, l (the names under the tables inside) to
+  // its head, which points past lbar and stops short of the numbers of the plot's axis. Its top edge
+  // runs under the columns of the gradient and their names, which belong to the backward pass, and
+  // the column beside l stays inside it, clear of the outline, for the blue numbers of the gradient
+  // part (the change of each l during a hop, the terms of the shortcut). y and x stay outside.
 
-  G.loopPts = function () {
+  G.passForward = function () {
     var w = G.mframe('w', 1), b = G.mframe('b', 1), A = G.tframe('A'), l = G.frame('l'), lb = G.lbarBox();
-    var gw = G.mframe('gw', 1), x = G.frame('x');
-    var top = G.mTop - 16, lx = w.left - 64, dip = G.colTop - 17, bot = G.nameY + 22;
-    var gap = (x.right + A.left) / 2, under = (w.bottom + G.colTop) / 2 + 2;
-    return [
-      [lx, top + 40], [lx + 22, top], [b.right + 90, top], [gw.left - 30, top + 6],
-      [gw.left - 16, dip - 26], [gw.left + 14, dip], [l.right - 10, dip], [lb.right - 20, dip + 8],
-      [lb.right + 22, lb.top - 4], [lb.right + 22, lb.bottom + 14], [lb.right - 30, bot - 6],
-      [l.left - 40, bot], [gap + 26, bot], [gap, bot - 26], [gap, G.colTop + 16], [gap - 22, under],
-      [lx + 40, under], [lx, under - 26]
-    ];
+    var top = G.mTop - 18, join = G.colTop - 32, left = w.left - 67, right = b.right + 75;
+    var bl = A.left - 16, br = l.right + 92, bot = G.nameY + 26;
+    var tip = [lb.right + 56, G.mid], sx = b.cx - 10, sy = (top + join) / 2;
+    // right of Z's discs the top edge steps down, under the names of the gradient's columns
+    var step = G.tframe('Z').right + 12, low = join + 18;
+    return {
+      outline: [[left, top], [right, top], [right, join], [step, join], [step + 22, low], [br, low], tip,
+                [br, bot], [bl, bot], [bl, join], [left, join]],
+      spine: [[left - 20, sy], [sx, sy], [sx, G.mid], [tip[0] + 10, G.mid]],
+      reach: 600
+    };
   };
 
   // ===== the names and the marks on the arrows
 
   G.label = {
-    forward:  [672, 300, 'cc'],
+    forward:  [672, G.colTop - 56, 'cc'],
     backward: [1100, G.top - 18, 'cc'],
     nabla:    [1018, G.top - 18, 'cr']
   };

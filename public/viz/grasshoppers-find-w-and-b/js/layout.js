@@ -58,7 +58,7 @@
 
     // labels: [x, y, anchor] (anchor as in GFKit.pos)
     label: {
-      forward:  [592, 350, 'cc'],
+      forward:  [600, 370, 'cc'],
       backward: [600, 206, 'cc'],
       gw:       [878, 298, 'bc'],
       gb:       [978, 298, 'bc']
@@ -69,13 +69,21 @@
     // the card stands gap pixels above the arrow
     relu: { x: 461, w: 92, h: 84, ox: 46, oy: 64, half: 36, A: 80, gap: 33 },
 
-    // the red loop of the forward pass, clockwise from the left of w: round w, b, the grasshoppers,
-    // a, the ReLU, yhat, l and lbar, leaving x and y outside; it comes down left of the pair of the
-    // gradient and passes under it
-    loop: [[96, 330], [112, 268], [262, 246], [450, 244], [612, 250], [690, 270], [716, 320],
-           [722, 372], [760, 400], [900, 402], [1006, 408], [1034, 480], [1030, 600], [998, 666],
-           [900, 728], [650, 738], [420, 738], [312, 730], [290, 676], [288, 540], [290, 440],
-           [278, 410], [190, 404], [104, 390]],
+    // The forward pass as a broad arrow behind the boxes, as on the page before (2 November 2026):
+    // an outline (clockwise, corners rounded when drawn) and the centre line the reveal follows.
+    // It runs along w and b (their names too), turns down into a, runs right through a, the ReLU,
+    // yhat and l (the whole columns, 16 pixels clear of their frames; their names sit below it),
+    // narrows round lbar and its name, and ends in a head past lbar, left of the plot. x and y stay
+    // outside. width: the mask's stroke, so the whole spine covers the whole band.
+    pass: {
+      forward: {
+        outline: [[102, 284], [476, 284], [476, 400], [836, 400], [836, 452], [1002, 452], [1002, 434],
+                  [1068, 539], [1002, 644], [1002, 626], [836, 626], [836, 696], [276, 696], [276, 392],
+                  [102, 392]],
+        spine: [[96, 338], [340, 338], [340, 547], [1084, 547]],
+        width: 460
+      }
+    },
 
     // the two grounds: axes cross at (ox, oy), the curve fills x0..x1 and rises to ytop; row is
     // where the formula of the ground (or the slope of a hop) sits over it
@@ -145,7 +153,8 @@
   // Where the names sit under the columns: centred, except the name of l, which sits right of the
   // line from y that comes up into l (as on the pages before). And where the operations sit on the
   // arrows.
-  G.nameY = function () { return G.frame('y').bottom + 24; };
+  // (42 pixels under the frames, so the band of the forward pass passes between them)
+  G.nameY = function () { return G.frame('y').bottom + 42; };
   G.nameAt = function (name) {
     var f = G.frame(name), y = G.nameY();
     if (name === 'l') return [f.left + 28, y, 'cl'];

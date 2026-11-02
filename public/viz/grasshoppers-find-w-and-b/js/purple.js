@@ -11,6 +11,8 @@
  * Iteration 2 on, two clicks:
  *   grad     all of grad, back and formula at once
  *   update   as above
+ * At speed 3 (the jumps only) there is no purple part: the next iteration's forward pass shows the
+ * new pair.
  */
 (function () {
   'use strict';
@@ -214,7 +216,10 @@
   }
 
   GF.parts.purple = {
-    steps: function (iter) { return iter === 1 ? ['grad', 'back', 'formula', 'update'] : ['grad', 'update']; },
+    steps: function (iter, ctx) {
+      if (ctx && ctx.mode === 3) return [];
+      return iter === 1 ? ['grad', 'back', 'formula', 'update'] : ['grad', 'update'];
+    },
     build: build, render: render, animate: animate,
     el: el
   };

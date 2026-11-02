@@ -12,7 +12,8 @@
  *   loss    the column l = (y - yhat)^2, the same way, and the gaps in the plot
  *   mean    the column l folds into one number, its average lbar
  * Iteration 2 on, one click:
- *   recompute   the new w and b flow through every column, lbar and the plot
+ *   recompute   the new w and b flow through every column, lbar and the plot; at speed 3, where no
+ *               update was shown, both grasshoppers first jump and their boxes take the new w and b
  *
  * While a grasshopper stands hopped (the blue part says which), the columns a, yhat and l and the
  * box of lbar show the forward pass at the hopped numbers, in blue wherever a cell changed.
@@ -518,28 +519,45 @@
         })(j);
       }
     } else if (st.is('black', 'recompute')) {
+      // At speed 3 (the jumps only) no update was shown: both grasshoppers jump and their boxes
+      // take the new w and b, then the forward pass runs.
+      var D = 0;
+      if (st.mode === 3 && prev && st.iter === prev.iter + 1) {
+        D = 450;
+        paintBox('w', prev.w, false);
+        paintBox('b', prev.b, false);
+        ['w', 'b'].forEach(function (who) {
+          GF.hopper.jump(GF.hopper[who], GF.hopper.perchPose(who), 520, 45, function () {
+            paintBox(who, who === 'w' ? st.w : st.b, false);
+            K.flash(el[who].val);
+          });
+        });
+      }
       // the new numbers run through the columns, left to right, while the line moves to them
       ['a', 'yhat', 'l'].forEach(function (name, c) {
         el.cells[name].forEach(function (cell, i) {
           K.temp(cell.v, 'opacity', '0.25');
-          K.wait(c * 380 + i * 35, function () { cell.v.style.opacity = ''; K.flash(cell.v); });
+          K.wait(D + c * 380 + i * 35, function () { cell.v.style.opacity = ''; K.flash(cell.v); });
         });
       });
       K.temp(el.lbar.val, 'opacity', '0.25');
-      K.wait(3 * 380 + 100, function () { el.lbar.val.style.opacity = ''; K.flash(el.lbar.val); });
+      K.wait(D + 3 * 380 + 100, function () { el.lbar.val.style.opacity = ''; K.flash(el.lbar.val); });
       if (prev && st.iter === prev.iter + 1) {
         var w0 = prev.w, b0 = prev.b, w1 = st.w, b1 = st.b, tr = [];
         for (var k = Math.max(0, st.ws.length - 1 - GF.plot.TRAIL); k < st.ws.length - 1; k++) tr.push([st.ws[k], st.bs[k]]);
-        K.tween(900, function (e) {
+        var at = function (e) {
           GF.plot.render({ axes: true, points: true, line: true, marks: true, gaps: true,
                            w: w0 + (w1 - w0) * e, b: b0 + (b1 - b0) * e, trail: e < 1 ? tr.slice(0, -1) : tr });
-        }, K.ease.inOut);
+        };
+        at(0);
+        K.wait(D, function () { K.tween(900, at, K.ease.inOut); });
       }
     }
   }
 
   GF.parts.black = {
     steps: function (iter) {
+      // the same at every speed
       return iter === 1 ? ['day', 'days', 'plot', 'a', 'relu', 'line', 'loss', 'mean'] : ['recompute'];
     },
     build: build, render: render, animate: animate,

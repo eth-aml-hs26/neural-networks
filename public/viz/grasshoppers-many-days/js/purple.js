@@ -11,6 +11,8 @@
  * Iteration 2 on, two clicks:
  *   grad    grad and back at once
  *   update  as above
+ * At speed 2 the same; at speed 3 (the jumps only) no click: the update shows as the jump of the
+ * next iteration (black.js, recompute).
  * The arrangement is step 1's (../grasshoppers-find-w-and-b/): the pair, the bracket, the updates.
  */
 (function () {
@@ -192,7 +194,10 @@
   }
 
   GF.parts.purple = {
-    steps: function (iter) { return iter === 1 ? ['grad', 'back', 'update'] : ['grad', 'update']; },
+    steps: function (iter, mode) {
+      if (mode === 3) return [];
+      return iter === 1 ? ['grad', 'back', 'update'] : ['grad', 'update'];
+    },
     build: build, render: render, animate: animate,
     el: el
   };

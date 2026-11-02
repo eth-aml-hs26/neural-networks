@@ -16,6 +16,8 @@
  *            grasshopper jumps as its number lands; the bends and the curve move in the plot
  * Iteration 2 on, one click:
  *   update   as all (the bracket and the formula are in view from iteration 2 on)
+ * At speed 3 (the jumps only) purple has no click: the update shows as black:jump, the next
+ * iteration's numbers.
  */
 (function () {
   'use strict';
@@ -73,9 +75,12 @@
     for (j = 0; j < MM; j++) { f.w.push(false); f.b.push(false); }
     function row(j) { f.w[j] = true; f.b[j] = true; }
     if (st.iter > 1) {
-      if (st.reached('blue', 'hops')) for (j = 0; j < MM; j++) row(j);
+      if (st.reached('blue', 'hops') || st.reached('blue', 'direct') || st.reached('black', 'jump')) {
+        for (j = 0; j < MM; j++) row(j);
+      }
       return f;
     }
+    if (st.reached('blue', 'direct')) for (j = 0; j < MM; j++) row(j);
     if (st.reached('blue', 'cell')) f.w[0] = true;
     if (st.reached('blue', 'b1')) f.b[0] = true;
     if (st.reached('blue', 'n2')) row(1);
@@ -86,7 +91,7 @@
   function shows(st) {
     var later = st.iter > 1;
     return {
-      cols: later || st.reached('blue', 'cell'),
+      cols: later || st.reached('blue', 'cell') || st.reached('blue', 'direct'),
       bracket: later || st.reached('purple', 'bracket'),
       formula: (later && st.iter < st.K) || st.reached('purple', 'formula'),
       one: st.iter === 1 && st.reached('purple', 'one')
@@ -191,7 +196,13 @@
       });
     }
     // the plot keeps the old bends and curve while the numbers travel, then glides to the new ones
-    var shown = GF.parts.black.shows(st), from = st.P, to = st.Pn;
+    glide(st, st.P, st.Pn, delay + MM * 260 + 1100, 900);
+  }
+
+  // The plot's bends and curve glide from the numbers from to the numbers to, after delay, over ms;
+  // they show from at once. Also speed 3's jump (black:jump). The next render draws the state again.
+  function glide(st, from, to, delay, ms) {
+    var shown = GF.parts.black.shows(st);
     function at(e) {
       var w = [], b = [];
       for (var q = 0; q < MM; q++) {
@@ -203,7 +214,7 @@
                        curve: shown.curve ? P : null, reading: shown.curve ? P : null });
     }
     at(0);
-    K.wait(delay + MM * 260 + 1100, function () { K.tween(900, at, K.ease.inOut); });
+    K.wait(delay, function () { K.tween(ms, at, K.ease.inOut, function () { GF.engine.replot(st); }); });
   }
 
   function animate(st) {
@@ -240,10 +251,11 @@
 
   GF.parts.purple = {
     steps: function (iter, ctx) {
+      if (ctx.mode === 3) return [];
       if (iter === 1) return ['bracket', 'formula', 'one', 'all'];
       return iter < ctx.K ? ['update'] : [];
     },
     build: build, render: render, plot: plot, animate: animate,
-    el: el, filled: filled
+    el: el, filled: filled, glide: glide
   };
 })();

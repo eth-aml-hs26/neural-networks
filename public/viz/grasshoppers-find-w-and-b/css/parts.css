@@ -18,6 +18,8 @@
 
 /* ===== the grounds */
 
+/* speed 2: the tangent at the point of a ground */
+.tangent { fill: none; stroke: currentColor; stroke-width: 3; stroke-dasharray: 9 6; stroke-linecap: round; }
 .leg { fill: none; stroke: currentColor; stroke-width: 3; stroke-dasharray: 7 5; stroke-linecap: round; }
 .hop-end { fill: var(--bg); stroke: currentColor; stroke-width: 3; }
 .leg-lab { font-size: 21px; }

@@ -10,6 +10,10 @@
  * Iteration 2 on, one click each:
  *   hopw    the hop and the whole row of w; a day on the flat side keeps its yhat and its l
  *   hopb    w hops back; the hop and the whole row of b
+ * At speed 2 (quick, step 0's two triangles), one click in every iteration:
+ *   direct  no hop: the two slopes straight from the derivatives, (1/8) of the sum over the days on
+ *           the rising side of -2 x (y - yhat) and of -2 (y - yhat); the cells they read light up
+ * At speed 3 (the jumps only) the blue part has no click.
  * While a grasshopper stands hopped, the columns show the hopped numbers: black.js asks hopped().
  */
 (function () {
@@ -50,8 +54,31 @@
   }
   var TAIL = ['eq', 's', 'to', 'dl', 'dv'];
 
+  // The row of one derivative at speed 2: its formula, then its value (the number purple's box
+  // takes). Only the days on the rising side (a > 0) count: the ReLU's slope is 0 on the flat side.
+  function directPieces(which, g) {
+    var term = which === 'w' ? '-2\\,x_i\\,(y_i - \\hat y_i)' : '-2\\,(y_i - \\hat y_i)';
+    return [
+      { key: 'dl', tex: '\\tfrac{\\partial\\bar\\ell}{\\partial ' + which + '} = \\tfrac{1}{8}\\sum_{a_i > 0} ' + term },
+      { key: 'eq', tex: '{}={}' },
+      { key: 'dv', tex: M.fmtGrad(g) }
+    ];
+  }
+
   function render(st) {
     var later = st.iter > 1, purple = st.partReached('purple');
+    if (st.mode === 2) {
+      var on = !purple && st.reached('blue', 'direct');
+      K.show(el.row.w, on);
+      K.show(el.row.b, on);
+      if (on) {
+        K.row(el.row.w, directPieces('w', st.g.w));
+        K.row(el.row.b, directPieces('b', st.g.b));
+        K.fit(el.row.w, 1130 - GF.geo.band.x);
+        K.fit(el.row.b, 1130 - GF.geo.band.x);
+      }
+      return;
+    }
     var showW = !purple && st.reached('blue', 'hopw');
     var showB = !purple && st.reached('blue', 'hopb');
     K.show(el.row.w, showW);
@@ -146,9 +173,33 @@
     });
   }
 
+  // Speed 2: each row writes its formula while the cells it reads light up, day by day on the
+  // rising side, then its value.
+  function directRows(st, delay) {
+    var C = GF.parts.black.el.cells;
+    ['w', 'b'].forEach(function (which, j) {
+      var sp = el.row[which].__spans || {}, t = delay + j * 1500;
+      ['dl', 'eq', 'dv'].forEach(function (k) { if (sp[k]) K.temp(sp[k], 'opacity', '0'); });
+      K.wait(t, function () { sp.dl.style.opacity = ''; });
+      var cols = which === 'w' ? ['x', 'y', 'yhat'] : ['y', 'yhat'];
+      var on = [];
+      for (var i = 0; i < M.N; i++) if (st.f.a[i] > 0) on.push(i);
+      on.forEach(function (i, n) {
+        K.wait(t + 250 + n * 70, function () { cols.forEach(function (c) { K.flash(C[c][i].v); }); });
+      });
+      K.wait(t + 250 + on.length * 70 + 400, function () {
+        sp.eq.style.opacity = '';
+        sp.dv.style.opacity = '';
+        K.flash(sp.dv);
+      });
+    });
+  }
+
   function animate(st, prev) {
     var later = st.iter > 1;
-    if (st.is('blue', 'hopw')) {
+    if (st.is('blue', 'direct')) {
+      directRows(st, 200);
+    } else if (st.is('blue', 'hopw')) {
       hopSequence('w', st, later ? 0 : 300, later);
     } else if (st.is('blue', 'slopew')) {
       var sp = el.row.w.__spans || {};
@@ -166,7 +217,11 @@
   }
 
   GF.parts.blue = {
-    steps: function (iter) { return iter === 1 ? ['hopw', 'slopew', 'hopb'] : ['hopw', 'hopb']; },
+    steps: function (iter, mode) {
+      if (mode === 3) return [];
+      if (mode === 2) return ['direct'];
+      return iter === 1 ? ['hopw', 'slopew', 'hopb'] : ['hopw', 'hopb'];
+    },
     build: build, render: render, animate: animate,
     hopped: hopped, hopBack: hopBack, el: el
   };

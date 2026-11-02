@@ -23,6 +23,11 @@
  * Iteration 2 on, one click:
  *   hops     the swarm hops in turn, neuron by neuron, each lighting its column, its gate, its days
  *            and its points; the columns of the gradient refill row by row
+ * At speed 2 (quick) the blue part is one click in every iteration:
+ *   direct   the slopes straight from the derivative, with no hop: the shortcut's formula in the
+ *            band and its column of terms beside l; each w slope gathers the terms of the days its
+ *            neuron hears, and row by row both columns of the gradient fill
+ * At speed 3 (the jumps only) the blue part has no click.
  *
  * The black part draws the cells; it asks hopView(st) which hop they show, and how far it has
  * flowed (lv 1 to 5).
@@ -101,8 +106,8 @@
       });
     }
 
-    // the shortcut: the column of terms beside l and the formula
-    var sc = st.iter === 1 && st.is('blue', 'shortcut');
+    // the shortcut: the column of terms beside l and the formula (also speed 2's direct)
+    var sc = termsOn(st);
     K.show(el.formula, sc);
     // the terms of neuron 1, which hears every day that anybody hears (GRADIENTS.md): day 1 counts
     // 0 at the start, since nobody hears it yet
@@ -112,6 +117,11 @@
       if (sc) GF.parts.black.setNum(d, M.fmt(TW.t[i], 2));
       d.classList.remove('lit');
     });
+  }
+
+  // the shortcut's formula and terms show: at the click shortcut, and at speed 2's click direct
+  function termsOn(st) {
+    return (st.iter === 1 && st.is('blue', 'shortcut')) || st.is('blue', 'direct');
   }
 
   function plot(st, o) {
@@ -269,6 +279,8 @@
           K.wait(1300 + k * 900 + 750, function () { hs.forEach(function (i) { el.terms[i].classList.remove('lit'); }); });
         })(q, MM - 1 - q);
       }
+    } else if (st.is('blue', 'direct')) {
+      direct(st);
     } else if (st.is('blue', 'hops')) {
       var t2 = 150;
       for (var jj = 0; jj < MM; jj++) {
@@ -278,12 +290,42 @@
     }
   }
 
+  // Speed 2: the formula, the terms beside l, then row by row each neuron's two slopes, from the
+  // terms of the days it hears, straight into their cells (iteration 1: the columns appear first).
+  function direct(st) {
+    var P = GF.parts.purple.el, quick = st.iter > 1;
+    if (st.iter === 1) {
+      [P.frame.w, P.frame.b, P.lab.w, P.lab.b].forEach(function (e) { K.later(e, 0); });
+      P.cells.w.concat(P.cells.b).forEach(function (c) { K.later(c.d, 0); });
+    }
+    K.later(el.formula, 100);
+    el.terms.forEach(function (d, i) { K.later(d, 250 + i * (quick ? 50 : 80)); });
+    var t0 = quick ? 800 : 1200, gap = quick ? 450 : 700;
+    for (var q = 0; q < MM; q++) {
+      (function (q) {
+        var hs = M.hears(st.D, st.P, q);
+        ['w', 'b'].forEach(function (which) { K.temp(P.cells[which][q].v, 'opacity', '0'); });
+        K.wait(t0 + q * gap, function () {
+          hs.forEach(function (i) { el.terms[i].classList.add('lit'); });
+          ['w', 'b'].forEach(function (which) {
+            var v = P.cells[which][q].v;
+            v.style.opacity = '';
+            K.flash(v);
+          });
+        });
+        K.wait(t0 + q * gap + gap * 0.85, function () { hs.forEach(function (i) { el.terms[i].classList.remove('lit'); }); });
+      })(q);
+    }
+  }
+
   function flashCells(list, delay, step) {
     list.forEach(function (c, q) { K.wait(delay + q * step, function () { K.flash(c); }); });
   }
 
   GF.parts.blue = {
     steps: function (iter, ctx) {
+      if (ctx.mode === 3) return [];
+      if (ctx.mode === 2) return ['direct'];
       if (iter === 1) {
         var s = ['hop', 'column', 'gate', 'hears', 'slope', 'cell', 'b1', 'n2', 'swarm'];
         if (!ctx.lean) s.push('shortcut');
@@ -292,6 +334,6 @@
       return ['hops'];
     },
     build: build, render: render, plot: plot, animate: animate,
-    hopView: hopView, el: el
+    hopView: hopView, termsOn: termsOn, el: el
   };
 })();

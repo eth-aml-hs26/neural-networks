@@ -13,6 +13,9 @@
  * (or drop) Delta_eps to the ground, a right triangle; over the plot, the slope Delta_eps / eps,
  * which then turns into its limit, the derivative.
  *
+ * At speed 2 (blue:direct) the ground stays in its full view: the grasshopper stands on its point,
+ * the tangent at the point is drawn, and the derivative is written over the ground straight away.
+ *
  * A view maps (v, l) to the stage: x = sx + (v - v0) kx, y = sy - (l - l0) ky, anchored on the
  * point (v0, l0) where the pair stands. The full view comes from the frame of the start
  * (GFMath.frames); the zoomed one makes eps G.EPS_PX wide and uses one vertical scale for both
@@ -63,8 +66,13 @@
   // ===== what a ground shows, from the state
 
   function stateOf(who, st) {
-    var s = { shown: false, zoom: false, hopper: null, legs: 0, row: 'formula' };
+    var s = { shown: false, zoom: false, hopper: null, legs: 0, row: 'formula', tan: false };
     if (st.part === 'story' || st.partReached('purple') || st.partReached('coda')) return s;
+    if (st.reached('blue', 'direct')) {
+      // speed 2: the full view, the grasshopper on its point, the tangent and the derivative
+      s.shown = true; s.hopper = 'point'; s.row = 'deriv'; s.tan = true;
+      return s;
+    }
     if (st.iter > 1) {
       s.shown = st.reached('red', 'plot');
       if (st.reached('blue', 'measure')) { s.zoom = true; s.hopper = 'point'; s.legs = 2; s.row = 'limit'; }
@@ -116,6 +124,7 @@
     o.legH = K.svg('path', null, clipped, 'leg k-blue vis');
     o.legV = K.svg('path', null, clipped, 'leg k-blue vis');
     o.end = K.svg('circle', { r: 6 }, clipped, 'hop-end k-blue vis');
+    o.tan = K.svg('path', null, clipped, 'tangent k-blue vis');
     o.point = K.svg('circle', { r: 9 }, clipped, 'point vis');
     // the magnifying glass of the page before this one: it lands on the point when the zoom
     // starts, and a small one stays in the corner of a magnified ground
@@ -176,6 +185,12 @@
             { key: 'v', tex: val === undefined ? M.fmtGrad(h.deriv) : val }];
   }
 
+  // speed 2: the derivative straight away, no limit
+  function derivPieces(h) {
+    return [{ key: 'lhs', tex: '\\dfrac{\\partial \\bar\\ell}{\\partial ' + h.who + '} =' },
+            { key: 'v', tex: M.fmtGrad(h.deriv) }];
+  }
+
   function path(pts) {
     return pts.map(function (p, i) { return (i ? 'L ' : 'M ') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
   }
@@ -198,6 +213,9 @@
     o.curve.setAttribute('d', path(pts));
 
     var S = [sx(V, h.v), sy(V, h.l)], E = [sx(V, h.vp), sy(V, h.lp)], C = [E[0], S[1]];
+    // the tangent at the point: 220 pixels long on the stage, centred on the point
+    var m = -derivAt(who, h.v, st) * V.ky / V.kx, u = 110 / Math.hypot(1, m);
+    o.tan.setAttribute('d', path([[S[0] - u, S[1] - m * u], [S[0] + u, S[1] + m * u]]));
     o.point.setAttribute('cx', S[0].toFixed(1));
     o.point.setAttribute('cy', S[1].toFixed(1));
     o.guideV.setAttribute('d', path([S, [S[0], Q.oy]]));
@@ -259,7 +277,8 @@
     [o.labV, o.labL, o.tickV, o.tickL].forEach(function (e) { e.classList.toggle('k-blue', z); });
     K.show(o.mark, on && z);
     [o.labV, o.labL, o.tickV, o.tickL, o.point, o.guideV, o.guideH, o.curve].forEach(function (e) { K.show(e, on); });
-    K.show(o.formula, on && !z);
+    K.show(o.formula, on && !z && s.row !== 'deriv');
+    K.show(o.tan, on && s.tan);
     K.show(o.q, on && !z && o.qFits);
     K.show(o.legH, on && z && s.legs >= 1);
     K.show(o.tickVp, on && z && s.legs >= 1);
@@ -272,7 +291,7 @@
     K.show(o.guideHp, two);
     // the two numbers of the loss on the axis, unless they would sit on each other
     K.show(o.tickLp, two && Math.abs(o.E[1] - o.S[1]) > 30);
-    K.show(o.row, on && z && !!s.row);
+    K.show(o.row, on && ((z && !!s.row) || s.row === 'deriv'));
   }
 
   function renderOne(who, st) {
@@ -285,6 +304,7 @@
     var h = M.hop(who, st.w, st.b, st.eps);
     if (s.row === 'slope') K.row(o.row, slopePieces(h));
     else if (s.row === 'limit') K.row(o.row, limitPieces(h));
+    else if (s.row === 'deriv') K.row(o.row, derivPieces(h));
     showAll(who, st, s);
     if (s.hopper) GF.hopper[who].show(true);
   }
@@ -487,6 +507,20 @@
         K.wait(m - 300, function () { GF.hopper.jump(GF.hopper.b, poseAt('b', st, 'point'), 650, 30); });
       });
       GF.hopper.b.setPose(poseAt('b', st, 'up'));
+    } else if (st.is('blue', 'direct')) {
+      // speed 2: both jump onto their points, the tangent is drawn, the derivative appears
+      ['w', 'b'].forEach(function (who, i) {
+        var o = P[who], t0 = i * 250;
+        K.temp(o.tan, 'opacity', '0');
+        K.temp(o.row, 'opacity', '0');
+        jumpOn(who, st, t0);
+        K.wait(t0 + 1050, function () { o.tan.style.opacity = ''; K.drawOn(o.tan, 600, 0); });
+        K.wait(t0 + 1500, function () {
+          o.row.style.opacity = '';
+          var sp = o.row.__spans;
+          if (sp && sp.v) K.flash(sp.v, 300);
+        });
+      });
     } else if (st.is('blue', 'measure') && later2) {
       ['w', 'b'].forEach(function (who, i) {
         measure(who, st, {

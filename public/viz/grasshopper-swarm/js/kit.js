@@ -8,11 +8,15 @@
  *   row(el, pieces)              a formula as separate KaTeX pieces, so numbers can fly into one
  *   show(el, on)                 the class "on": .vis elements fade in and out (css/style.css)
  *   route(pts, r), arrow(...)    polylines with rounded corners and an arrowhead (or none)
+ *   roundPoly(pts, r)            a closed polygon with rounded corners (from step 0)
+ *   band(...), revealBand(...)   a pass drawn as a broad arrow, and its reveal from tail to head
+ *                                (from step 0, 2 November 2026: the forward pass is a band)
  *   rect(el)                     an element's box in stage coordinates (the stage is scaled)
  *   tween, wait, drawOn, flyTex, flyDot, flyPath, flash, pulse   decoration for a forward click
  *                                (flyPath, added on the swarm page: a number travels along a polyline,
  *                                as the new numbers run down the bracket of the gradient)
  *   temp(el, prop, value), tempClass(el, cls) changes that the next render undoes
+ *   pending()                    waits and tweens still to run (Play at speeds 1 and 2 waits for 0)
  *
  * State is the truth and animation is decoration: every render first calls cancel() (running
  * tweens stop), clearTemps() and clearFlies(), then draws the state from scratch. No colour is
@@ -166,6 +170,36 @@
     return d + ' Z';
   };
 
+  // A closed polygon through pts with its corners rounded by radius r (smaller at short sides).
+  K.roundPoly = function (pts, r) {
+    var n = pts.length, d = '';
+    for (var i = 0; i < n; i++) {
+      var p = pts[(i - 1 + n) % n], q = pts[i], m = pts[(i + 1) % n];
+      var l1 = Math.hypot(q[0] - p[0], q[1] - p[1]), l2 = Math.hypot(m[0] - q[0], m[1] - q[1]);
+      var rr = Math.min(r, l1 / 2, l2 / 2);
+      var a = [q[0] - (q[0] - p[0]) / l1 * rr, q[1] - (q[1] - p[1]) / l1 * rr];
+      var b = [q[0] + (m[0] - q[0]) / l2 * rr, q[1] + (m[1] - q[1]) / l2 * rr];
+      d += (i ? ' L ' : 'M ') + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' Q ' + q[0] + ' ' + q[1] + ' ' +
+        b[0].toFixed(1) + ' ' + b[1].toFixed(1);
+    }
+    return d + ' Z';
+  };
+
+  // A pass as a broad arrow (spec from GF.geo.pass): a light fill and a firm outline, behind a mask
+  // that a reveal draws along the spine, so the band flows in from its tail to its head. The mask's
+  // stroke is spec.reach wide (step 0: 300), wide enough to cover the band on both sides of the spine.
+  K.band = function (parent, spec, id, cls) {
+    var g = K.svg('g', null, parent, 'pass vis ' + (cls || ''));
+    var mask = K.svg('mask', { id: id, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: 1600, height: 900 }, g);
+    var mp = K.svg('path', { d: K.route(spec.spine, 40), 'stroke-width': spec.reach || 300 }, mask, 'pass-mask');
+    var body = K.svg('g', { mask: 'url(#' + id + ')' }, g);
+    var d = K.roundPoly(spec.outline, 20);
+    var fill = K.svg('path', { d: d }, body, 'pass-fill');
+    var line = K.svg('path', { d: d }, body, 'pass-line');
+    return { g: g, mask: mp, fill: fill, line: line };
+  };
+  K.revealBand = function (b, ms, delay, done) { K.drawOn(b.mask, ms, delay, done); };
+
   // ===== geometry on the stage
 
   K.rect = function (el) {
@@ -207,24 +241,32 @@
     back: function (t) { var c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); }
   };
 
+  // How many waits and tweens are still to run: Play at speeds 1 and 2 (js/engine.js) moves on once
+  // this is 0, so every animation must go through K.wait and K.tween (never a bare setTimeout).
+  var PENDING = 0;
+  K.pending = function () { return PENDING; };
+
   // Calls fn(e) with e from 0 to 1 over ms, then done(). Stops silently once a new render ran.
   K.tween = function (ms, fn, ease, done) {
     var g = GEN, t0 = null, ez = ease || K.ease.inOut;
     if (ms <= 0) { fn(1); if (done) done(); return; }
+    PENDING++;
     function frame(now) {
-      if (g !== GEN) return;
+      if (g !== GEN) { PENDING--; return; }
       if (t0 === null) t0 = now;
       var t = Math.min(1, (now - t0) / ms);
       fn(ez(t));
-      if (t < 1) requestAnimationFrame(frame);
-      else if (done) done();
+      if (t < 1) { requestAnimationFrame(frame); return; }
+      PENDING--;
+      if (done) done();
     }
     requestAnimationFrame(frame);
   };
 
   K.wait = function (ms, fn) {
     var g = GEN;
-    setTimeout(function () { if (g === GEN) fn(); }, ms);
+    PENDING++;
+    setTimeout(function () { PENDING--; if (g === GEN) fn(); }, ms);
   };
 
   // Draw a path from its start: the stroke grows over ms.

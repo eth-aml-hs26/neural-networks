@@ -19,6 +19,9 @@
  *   mean     l folds into one number, its average lbar
  * Iteration 2 on, one click:
  *   recompute   the new numbers flow through A, Z, yhat, l and lbar; the gaps come back
+ *   jump        (speed 3, in place of recompute: the jumps only) the swarm jumps to its new
+ *               numbers, the curve and the bends glide there, and the new numbers flow through A, Z,
+ *               yhat, l and lbar, with the slopes of this iteration (the picture +1 shows)
  *
  * While a grasshopper hops (the blue part says which, and how far its change has flowed:
  * GF.parts.blue.hopView), the cells show the hopped pass in blue wherever a value changed, and
@@ -313,7 +316,7 @@
     K.show(el.a.Z2yhat.g, on && s.sum); K.show(el.plus, on && s.sum);
     K.show(el.a.yhat2l.g, showL); K.show(el.a.y2l.g, showL);
     K.show(el.a.l2lbar.g, showB);
-    K.show(el.mean, showB && !(H && V.lv >= 4) && !(st.iter === 1 && st.is('blue', 'shortcut')));
+    K.show(el.mean, showB && !(H && V.lv >= 4) && !GF.parts.blue.termsOn(st));
 
     // the worked cell of the click
     var S = stripFor(st);
@@ -648,23 +651,44 @@
         })(j);
       }
     } else if (st.is('black', 'recompute')) {
-      // the new numbers run through the tables and columns, left to right
-      var waves = [tableCells('A'), tableCells('Z'), C.yhat.map(function (c) { return c.v; }), C.l.map(function (c) { return c.v; })];
-      waves.forEach(function (list, w) {
-        list.forEach(function (v, q) {
-          K.temp(v, 'opacity', '0.25');
-          K.wait(w * 320 + (q % N) * 25, function () { v.style.opacity = ''; });
+      flow(320);
+    } else if (st.is('black', 'jump')) {
+      // speed 3: every grasshopper jumps onto its new number, the plot glides from the numbers of
+      // the iteration before, and the new numbers flow on, faster than at recompute
+      var before = st.R.ps[st.iter - 2];
+      for (var j = 0; j < MM; j++) {
+        ['w', 'b'].forEach(function (which) {
+          var h = GF.hopper.swarm[which][j];
+          K.flash(el.m[which].cells[j].v, 0);
+          GF.hopper.jump(h, GF.hopper.perchPose(which, j), 380, 20);
         });
-      });
-      K.temp(el.lbarVal, 'opacity', '0.25');
-      K.wait(4 * 320 + 80, function () { el.lbarVal.style.opacity = ''; K.flash(el.lbarVal); });
-      GF.plot.el.gaps.forEach(function (g) { K.later(g, 4 * 320); });
-      GF.plot.el.marks.forEach(function (m) { K.later(m, 3 * 320); });
+      }
+      if (before) GF.parts.purple.glide(st, before, st.P, 0, 650);
+      flow(170);
     }
   }
 
+  // the new numbers run through the tables and columns, left to right, a wave every ms
+  function flow(ms) {
+    var C = el.cells;
+    var waves = [tableCells('A'), tableCells('Z'), C.yhat.map(function (c) { return c.v; }), C.l.map(function (c) { return c.v; })];
+    waves.forEach(function (list, w) {
+      list.forEach(function (v, q) {
+        K.temp(v, 'opacity', '0.25');
+        K.wait(w * ms + (q % N) * ms / 13, function () { v.style.opacity = ''; });
+      });
+    });
+    K.temp(el.lbarVal, 'opacity', '0.25');
+    K.wait(4 * ms + 80, function () { el.lbarVal.style.opacity = ''; K.flash(el.lbarVal); });
+    GF.plot.el.gaps.forEach(function (g) { K.later(g, 4 * ms); });
+    GF.plot.el.marks.forEach(function (m) { K.later(m, 3 * ms); });
+  }
+
   GF.parts.black = {
-    steps: function (iter) { return iter === 1 ? STEPS1.slice() : ['recompute']; },
+    steps: function (iter, ctx) {
+      if (iter === 1) return STEPS1.slice();
+      return ctx && ctx.mode === 3 ? ['jump'] : ['recompute'];
+    },
     build: build, render: render, plot: plot, animate: animate,
     el: el, shows: shows, setNum: setNum, tableCells: tableCells
   };

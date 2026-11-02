@@ -3,8 +3,8 @@
  *
  * The diagram of Carlos's sketch (IMG_9251, middle, 30 October 2026), left to right: the tall
  * columns y, x, a, yhat and l, one cell per day, and the small square lbar at the right end; the
- * small squares w above x and b above a; over the top, the bracket of the gradient from lbar into
- * w and b. Right: the plot of y against x. The band above the bracket holds the formulas of the
+ * small squares w above x and b above a; behind them the red band of the forward pass; over the
+ * top, the bracket of the gradient from lbar into w and b. Right: the plot of y against x. The band above the bracket holds the formulas of the
  * click: a worked cell (black), the two slopes (blue), the two updates (purple).
  *
  * The columns grow from one day (day 3, the day of step 1) to eight: frame(name, t) is the frame of
@@ -70,12 +70,20 @@
     // inside the card, and the card stands gap pixels above the arrow
     relu: { x: 505, w: 92, h: 84, ox: 46, oy: 64, half: 36, A: 80, gap: 33 },
 
-    // the red loop of the forward pass round w, b, a, yhat, l and lbar, clockwise from the left of
-    // w; it leaves y and x outside, and dips under the pair of the gradient
-    loop: [[106, 300], [124, 226], [262, 208], [450, 206], [610, 210], [748, 224], [806, 270],
-           [832, 334], [940, 346], [1104, 350], [1124, 452], [1116, 590], [1064, 652], [944, 740],
-           [646, 748], [420, 748], [316, 734], [302, 660], [303, 520], [304, 404], [292, 368],
-           [190, 364], [112, 346]],
+    // The forward pass as a broad arrow behind the boxes, as in step 0 (../grasshopper-finds-w/,
+    // pass.forward in its js/layout.js): an outline, clockwise, its corners rounded when drawn, and
+    // the centre line its reveal follows, with the width of the stroke that reveals it. Its tail
+    // holds w and b with their names, its body the columns a, yhat and l with their names, its
+    // neck lbar, and its head points past lbar; y and x stay outside, as in the sketch.
+    pass: {
+      forward: {
+        outline: [[114, 246], [522, 246], [522, 360], [980, 360], [980, 432], [1102, 432], [1102, 408],
+                  [1156, 523], [1102, 638], [1102, 614], [980, 614], [980, 742], [304, 742], [304, 354],
+                  [114, 354]],
+        spine: [[114, 300], [400, 300], [400, 580], [1156, 580]],
+        reach: 500
+      }
+    },
 
     // the plot of y against x: the axes cross at (x0, oy); x from xmin to xmax fills x0..x1, y
     // from 0 to ymax rises from oy to top

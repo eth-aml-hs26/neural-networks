@@ -8,6 +8,8 @@
  *   row(el, pieces)              a formula as separate KaTeX pieces, so numbers can fly into one
  *   show(el, on)                 the class "on": .vis elements fade in and out (css/style.css)
  *   route(pts, r), arrow(...)    polylines with rounded corners and an arrowhead
+ *   band(...), revealBand(...)   a pass drawn as a broad arrow, and its reveal from tail to head
+ *                                (from the page before, 2 November 2026)
  *   rect(el)                     an element's box in stage coordinates (the stage is scaled)
  *   tween, wait, drawOn, flyTex, flash, pulse   decoration for a forward click
  *   temp(el, prop, value), tempClass(el, cls) changes that the next render undoes
@@ -164,6 +166,36 @@
     }
     return d + ' Z';
   };
+
+  // A closed polygon through pts with its corners rounded by radius r (smaller at short sides).
+  K.roundPoly = function (pts, r) {
+    var n = pts.length, d = '';
+    for (var i = 0; i < n; i++) {
+      var p = pts[(i - 1 + n) % n], q = pts[i], m = pts[(i + 1) % n];
+      var l1 = Math.hypot(q[0] - p[0], q[1] - p[1]), l2 = Math.hypot(m[0] - q[0], m[1] - q[1]);
+      var rr = Math.min(r, l1 / 2, l2 / 2);
+      var a = [q[0] - (q[0] - p[0]) / l1 * rr, q[1] - (q[1] - p[1]) / l1 * rr];
+      var b = [q[0] + (m[0] - q[0]) / l2 * rr, q[1] + (m[1] - q[1]) / l2 * rr];
+      d += (i ? ' L ' : 'M ') + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' Q ' + q[0] + ' ' + q[1] + ' ' +
+        b[0].toFixed(1) + ' ' + b[1].toFixed(1);
+    }
+    return d + ' Z';
+  };
+
+  // A pass as a broad arrow (spec from GF.geo.pass): a light fill and a firm outline, behind a mask
+  // that a reveal draws along the spine, so the band flows in from its tail to its head. spec.width
+  // is the width of the mask's stroke: wide enough that the whole spine covers the whole band.
+  K.band = function (parent, spec, id, cls) {
+    var g = K.svg('g', null, parent, 'pass vis ' + (cls || ''));
+    var mask = K.svg('mask', { id: id, maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: 1600, height: 900 }, g);
+    var mp = K.svg('path', { d: K.route(spec.spine, 40), 'stroke-width': spec.width || 300 }, mask, 'pass-mask');
+    var body = K.svg('g', { mask: 'url(#' + id + ')' }, g);
+    var d = K.roundPoly(spec.outline, 20);
+    K.svg('path', { d: d }, body, 'pass-fill');
+    K.svg('path', { d: d }, body, 'pass-line');
+    return { g: g, mask: mp };
+  };
+  K.revealBand = function (b, ms, delay, done) { K.drawOn(b.mask, ms, delay, done); };
 
   // ===== geometry on the stage
 

@@ -1,17 +1,18 @@
 /* engine.js: the click plan, the state, the render loop, the keys, the address, the theme and the
  * run. Grown from the engine of the page before this one (../grasshopper-finds-w/js/engine.js): the
  * same contract, with a second number b, the story in front, a closing part at the end, and the
- * buttons +1, +10, +100 and Play of the next page (../grasshoppers-many-days/js/engine.js).
+ * buttons +1, +10 and +100 of the next page (../grasshoppers-many-days/js/engine.js), and the three
+ * speeds of the page before (2 November 2026).
  *
  * THE PARTS. Each part registers itself in window.GF.parts:
  *
  *   GF.parts.<p> = {
  *     steps(iter, ctx) -> the names of its clicks in iteration iter (iter 1 tells the whole story,
  *                     iter >= 2 repeats it in fewer clicks); ctx.settle is the iteration where the
- *                     run settles (the closing part has its clicks there only)
+ *                     run settles (the closing part has its clicks there only), ctx.mode the speed
  *     build(layer) -> once at load: make its elements, hidden, in layer.back (SVG under the boxes),
  *                     layer.mid (HTML: boxes, cells, formulas), layer.front (SVG over the boxes) and
- *                     layer.top (HTML over everything)
+ *                     layer.top (HTML over everything); GF.under is an SVG group under everything
  *     render(st)   -> on every move: show exactly what state st shows, from scratch
  *     animate(st, prev) -> after render, on a single forward click only: decorate the change
  *   }
@@ -19,9 +20,18 @@
  * The plan of an iteration is the steps of story, black, red, blue, purple and coda, in that order.
  * The part `ground` (the two grounds on the right) has no clicks of its own: it draws what the red
  * and blue clicks ask for; the black part draws the plot of y against x whenever the grounds do
- * not show. The state is (iter, idx): idx clicks of iteration iter have been shown; (1, 0) is the
- * empty start.
+ * not show. The state is (iter, idx, mode): idx clicks of iteration iter have been shown; (1, 0) is
+ * the empty start.
  *
+ * THE SPEEDS (mode), as on the page before. 1 tells everything. 2 is quick: the blue part is one
+ * click, direct, in every iteration: each grasshopper stands on its point and the derivative is
+ * written straight away, with the tangent, without a hop. 3 shows only the jumps: after the model
+ * and the forward pass of iteration 1, one click per iteration, its forward pass (black:recompute).
+ * The three Play buttons pick a speed and play it; Next steps through the plan of the speed picked,
+ * and a change of speed keeps the place (the new plan up to where the old one stood). Play at
+ * speeds 1 and 2 plays click after click, each once the animations of the one before are over; at
+ * speed 3 it plays the clicks of iteration 1 so, then runs on as the run of the next page did:
+ * iterations one by one to the tenth, then faster and faster to where the run settles.
  * THE STATE GIVEN TO A PART (st):
  *   iter, idx, plan, cur {part, name}, part, name    where we are
  *   is(part, name)        the current click is that one (name optional)
@@ -39,13 +49,14 @@
  *   fresh                 true on a single forward click (animate runs), false otherwise
  *   hopFrom               {w, b}: the poses of the two grasshoppers before this render
  *
- * THE ADDRESS: #w=-1&b=60&k=1&s=12 (start, iteration, click), plus a=ALPHA, e=EPS, theme=dark,
+ * THE ADDRESS: #w=-1&b=60&k=1&s=12 (start, iteration, click), plus m=2 or m=3 (the speed), a=ALPHA, e=EPS, theme=dark,
  * still (no animation at all) and replay (show the click before, then play this one), so any moment
  * opens directly; at=blue:hopw names the click instead of s. The page rewrites it at every move.
  *
  * KEYS: right arrow, space, Enter, page down: next. Left arrow, Backspace, page up: back.
- * Home: the start. End: the update of the iteration where the run settles. p: play or pause.
- * t: theme. The buttons +1, +10 and +100 jump that many iterations on; Play runs to the end.
+ * Home: the start. End: the update of the iteration where the run settles (at speed 3 its forward
+ * pass). p: play or pause, at the speed picked. t: theme. The buttons +1, +10 and +100 jump that
+ * many iterations on. A move by hand stops Play.
  */
 (function () {
   'use strict';
@@ -54,8 +65,11 @@
   var DRAW = ['story', 'black', 'red', 'ground', 'blue', 'purple', 'coda'];
   var THEME_KEY = 'aml-grasshoppers-find-w-and-b-theme';
 
-  var S = { w0: null, b0: null, iter: 1, idx: 0, alpha: M.ALPHA, eps: M.EPS };
-  var still = false, prevSt = null, stage = null, playing = null;
+  var S = { w0: null, b0: null, iter: 1, idx: 0, mode: 1, alpha: M.ALPHA, eps: M.EPS };
+  var still = false, prevSt = null, stage = null;
+  var PLAY = { on: false, timer: null };
+  // the pause between two clicks while playing, by speed (speed 3 past iteration 1 runs on its own)
+  var PAUSE = { 1: 1100, 2: 750, 3: 300 };
   var frameCache = { key: null, F: null };
 
   function part(p) { return GF.parts[p] || null; }
@@ -72,14 +86,43 @@
 
   function settleIter() { return frames().K; }
 
-  function plan(iter) {
-    var out = [], ctx = { settle: settleIter() };
+  function plan(iter, mode) {
+    var out = [], ctx = { settle: settleIter(), mode: mode || S.mode };
     PLAN.forEach(function (p) {
       var x = part(p);
       if (!x || !x.steps) return;
       x.steps(iter, ctx).forEach(function (name) { out.push({ part: p, name: name }); });
     });
     return out;
+  }
+
+  // The place of a click in the story, across the speeds: its part, then its place among the names
+  // of that part at speed 1, then 2, then 3.
+  function rank(iter, p, name) {
+    var x = part(p), names = [];
+    [1, 2, 3].forEach(function (m) {
+      x.steps(iter, { settle: settleIter(), mode: m }).forEach(function (n) { if (names.indexOf(n) < 0) names.push(n); });
+    });
+    return PLAN.indexOf(p) * 1000 + Math.max(0, names.indexOf(name));
+  }
+
+  // never sit beyond a plan's end; from iteration 2 on, at least on its first click
+  function normalize() {
+    var n = plan(S.iter).length;
+    if (S.idx > n) S.idx = n;
+    if (S.iter > 1 && S.idx < 1) S.idx = 1;
+  }
+
+  // A new speed keeps the place: the clicks of the new plan up to where the old one stood.
+  function setMode(m) {
+    if (m === S.mode || [1, 2, 3].indexOf(m) < 0) return;
+    var P = plan(S.iter, S.mode), cur = S.idx > 0 ? P[S.idx - 1] : null;
+    var r = cur ? rank(S.iter, cur.part, cur.name) : -1;
+    S.mode = m;
+    var n = 0;
+    plan(S.iter, m).forEach(function (q) { if (rank(S.iter, q.part, q.name) <= r) n++; });
+    S.idx = n;
+    normalize();
   }
 
   // Which test hop the boxes show (see st.hop above).
@@ -109,7 +152,7 @@
     }
 
     var st = {
-      iter: S.iter, idx: idx, plan: P, cur: cur,
+      iter: S.iter, idx: idx, mode: S.mode, plan: P, cur: cur,
       part: cur ? cur.part : null, name: cur ? cur.name : null,
       is: function (p, name) { return !!cur && cur.part === p && (name === undefined || cur.name === name); },
       reached: reached, partReached: partReached,
@@ -160,37 +203,38 @@
     stage.setAttribute('data-iter', String(st.iter));
   }
 
-  // ===== moves
+  // ===== moves (the keys and buttons stop Play first, see byHand)
 
+  // One click forward; false when it could not move (a start that is refused).
   function next() {
-    stop();
     var st = makeSt();
     if (st.is('black', 'guess')) {
       var g = part('black').readGuess();
-      if (!g.ok) { part('black').shake(g.which); return; }
+      if (!g.ok) { part('black').shake(g.which); return false; }
       S.w0 = g.w;
       S.b0 = g.b;
     }
     if (S.idx < plan(S.iter).length) S.idx++;
     else { S.iter++; S.idx = 1; }
     render(true);
+    return true;
   }
 
   function prev() {
-    stop();
     if (S.idx > 1 || (S.iter === 1 && S.idx === 1)) S.idx--;
     else if (S.iter > 1) { S.iter--; S.idx = plan(S.iter).length; }
     render(false);
   }
 
-  function home() { stop(); S.iter = 1; S.idx = 0; render(false); }
+  function home() { S.iter = 1; S.idx = 0; render(false); }
 
-  // The update of the iteration where the run settles; the closing clicks follow it.
+  // The update of the iteration where the run settles (at speed 3, which has none, its forward
+  // pass); the closing clicks follow it.
   function toEnd() {
-    stop();
     S.iter = settleIter();
     var names = plan(S.iter).map(function (p) { return p.part + ':' + p.name; });
-    S.idx = names.indexOf('purple:update') + 1;
+    var i = names.indexOf('purple:update');
+    S.idx = i >= 0 ? i + 1 : 1;
     render(false);
   }
 
@@ -205,29 +249,61 @@
     return true;
   }
 
-  // Play: iterations one by one to the tenth, slowly enough to follow the hinge as it swings onto
-  // the six days, then two at a time, then faster and faster (each jump 15 percent of the
-  // iteration reached), until the run settles: about five seconds in all. Any other move stops it.
-  function play() {
-    if (playing) { stop(); return; }
-    if (S.iter >= settleIter()) return;
-    playing = { gen: 0 };
-    var me = playing;
-    function tick() {
-      if (playing !== me) return;
-      var k = S.iter, n = k < 10 ? 1 : k < 20 ? 2 : Math.ceil(k * 0.15);
-      if (!jump(n) || S.iter >= settleIter()) { stop(); return; }
-      setTimeout(tick, k < 10 ? 420 : k < 20 ? 120 : 30);
-    }
-    controls(makeSt());
-    tick();
+  // ===== Play, at the three speeds
+
+  function atEnd() { return S.iter >= settleIter() && S.idx >= plan(S.iter).length; }
+
+  // At speed 3, once iteration 1 has shown its forward pass, Play runs on by itself.
+  function running() { return S.mode === 3 && (S.iter > 1 || S.idx >= plan(S.iter).length); }
+
+  // The run of speed 3: iterations one by one to the tenth, slowly enough to follow the hinge as it
+  // swings onto the six days, then two at a time, then faster and faster (each jump 15 percent of
+  // the iteration reached), until the run settles: about five seconds in all.
+  function runStep() {
+    var k = S.iter, n = k < 10 ? 1 : k < 20 ? 2 : Math.ceil(k * 0.15);
+    if (!jump(n) || S.iter >= settleIter()) { stop(); return; }
+    PLAY.timer = setTimeout(tick, k < 10 ? 420 : k < 20 ? 120 : 30);
+  }
+
+  // The next move of Play, once the animations of the click before are over and a pause has passed.
+  function tick() {
+    if (!PLAY.on) return;
+    if (K.active > 0) { PLAY.timer = setTimeout(tick, 60); return; }
+    if (running()) { runStep(); return; }
+    PLAY.timer = setTimeout(function () {
+      if (!PLAY.on) return;
+      if (K.active > 0) { tick(); return; }
+      if (atEnd() || !next()) { stop(); return; }
+      tick();
+    }, PAUSE[S.mode]);
   }
 
   function stop() {
-    if (!playing) return;
-    playing = null;
+    clearTimeout(PLAY.timer);
+    if (!PLAY.on) return;
+    PLAY.on = false;
     controls(makeSt());
   }
+
+  // The button of speed m: plays at that speed, or pauses when it is the one playing.
+  function playAt(m) {
+    if (PLAY.on && m === S.mode) { stop(); return; }
+    var was = S.mode;
+    setMode(m);
+    if (S.mode !== was) render(false);
+    if (running() ? S.iter >= settleIter() : atEnd()) { stop(); controls(makeSt()); return; }
+    PLAY.on = true;
+    clearTimeout(PLAY.timer);
+    controls(makeSt());
+    // the first move comes at once
+    if (K.active === 0) {
+      if (running()) { runStep(); return; }
+      if (!next()) { stop(); return; }
+    }
+    tick();
+  }
+
+  function togglePlay() { if (PLAY.on) stop(); else playAt(S.mode); }
 
   // ===== the address
 
@@ -236,6 +312,7 @@
     if (S.w0 !== null) a.push('w=' + S.w0);
     if (S.b0 !== null) a.push('b=' + S.b0);
     a.push('k=' + S.iter, 's=' + S.idx);
+    if (S.mode !== 1) a.push('m=' + S.mode);
     if (S.alpha !== M.ALPHA) a.push('a=' + S.alpha);
     if (S.eps !== M.EPS) a.push('e=' + S.eps);
     if (still) a.push('still');
@@ -256,6 +333,7 @@
     // a start whose run cannot reach the best fit (the heating off on every day, or a run that
     // stops on another hinge) is not taken
     if (M.takes(w === null ? M.W_DEFAULT : w, b === null ? M.B_DEFAULT : b, S.alpha)) { S.w0 = w; S.b0 = b; }
+    S.mode = q.m === '2' ? 2 : q.m === '3' ? 3 : 1;
     if (q.k !== undefined) S.iter = Math.max(1, Math.min(parseInt(q.k, 10) || 1, M.KMAX - 1));
     if (q.s !== undefined) S.idx = Math.max(0, parseInt(q.s, 10) || 0);
     if (q.at !== undefined) {
@@ -278,12 +356,14 @@
     var where = document.getElementById('where');
     if (where) where.textContent = st.idx === 0 && st.iter === 1 || st.part === 'story' ? '' : 'iteration ' + st.iter;
     var runs = document.querySelector('#controls .runs');
-    if (runs) runs.classList.toggle('on', st.iter > 1 || st.reached('purple', 'update'));
-    var pb = document.getElementById('play');
-    if (pb) {
-      pb.innerHTML = playing ? '&#10074;&#10074;' : '&#9654;';
-      pb.setAttribute('aria-label', playing ? 'Pause' : 'Play');
-    }
+    if (runs) runs.classList.toggle('on', st.iter > 1 || st.reached('purple', 'update') || running());
+    [1, 2, 3].forEach(function (m) {
+      var b = document.getElementById('play' + m);
+      if (!b) return;
+      b.classList.toggle('picked', S.mode === m);
+      b.classList.toggle('playing', PLAY.on && S.mode === m);
+      b.setAttribute('aria-pressed', PLAY.on && S.mode === m ? 'true' : 'false');
+    });
   }
 
   function setTheme(t, remember) {
@@ -300,24 +380,28 @@
     K.scale = s;
   }
 
+  // a move by hand stops Play first
+  function byHand(f) { return function () { stop(); f(); }; }
+  var NEXT = byHand(next), PREV = byHand(prev), HOME = byHand(home), END = byHand(toEnd);
+
   function onKey(e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     var k = e.key, typing = e.target && e.target.tagName === 'INPUT';
-    if (k === 'PageDown') { e.preventDefault(); next(); return; }
-    if (k === 'PageUp') { e.preventDefault(); prev(); return; }
+    if (k === 'PageDown') { e.preventDefault(); NEXT(); return; }
+    if (k === 'PageUp') { e.preventDefault(); PREV(); return; }
     if (typing) {
-      if (k === 'Enter') { e.preventDefault(); if (!part('black').enterInField(e.target)) next(); }
+      if (k === 'Enter') { e.preventDefault(); if (!part('black').enterInField(e.target)) NEXT(); }
       else if (k === 'Tab') { e.preventDefault(); part('black').switchField(e.target, e.shiftKey); }
       else if (k === 'Escape') e.target.blur();
       return;
     }
     var st = makeSt();
     if (st.is('black', 'guess') && /^[0-9.,+-]$/.test(k)) { part('black').focusGuess(); return; }
-    if (k === 'ArrowRight' || k === ' ' || k === 'Enter') { e.preventDefault(); next(); }
-    else if (k === 'ArrowLeft' || k === 'Backspace') { e.preventDefault(); prev(); }
-    else if (k === 'Home') { e.preventDefault(); home(); }
-    else if (k === 'End') { e.preventDefault(); toEnd(); }
-    else if (k === 'p' || k === 'P') play();
+    if (k === 'ArrowRight' || k === ' ' || k === 'Enter') { e.preventDefault(); NEXT(); }
+    else if (k === 'ArrowLeft' || k === 'Backspace') { e.preventDefault(); PREV(); }
+    else if (k === 'Home') { e.preventDefault(); HOME(); }
+    else if (k === 'End') { e.preventDefault(); END(); }
+    else if (k === 'p' || k === 'P') togglePlay();
     else if (k === 't' || k === 'T') toggleTheme();
   }
 
@@ -332,6 +416,8 @@
     var back = document.getElementById('svg-back'), front = document.getElementById('svg-front');
     var mid = document.getElementById('html-mid');
     GF.hopper.defs(front);
+    // under everything: the band of the forward pass
+    GF.under = K.svg('g', null, back, 'under');
     GF.layers = {};
     var colour = { story: 'black', ground: 'red', coda: 'black' };
     DRAW.forEach(function (p) {
@@ -355,11 +441,11 @@
       var b = document.getElementById(id);
       if (b) b.addEventListener('click', function () { fn(); b.blur(); });
     }
-    button('next', next);
-    button('plus1', function () { stop(); jump(1); });
-    button('plus10', function () { stop(); jump(10); });
-    button('plus100', function () { stop(); jump(100); });
-    button('play', play);
+    button('next', NEXT);
+    button('plus1', byHand(function () { jump(1); }));
+    button('plus10', byHand(function () { jump(10); }));
+    button('plus100', byHand(function () { jump(100); }));
+    [1, 2, 3].forEach(function (m) { button('play' + m, function () { playAt(m); }); });
     button('theme', toggleTheme);
 
     function enter() {
@@ -380,7 +466,9 @@
   }
 
   GF.engine = {
-    next: next, prev: prev, home: home, toEnd: toEnd, jump: jump, play: play, stop: stop,
+    next: next, prev: prev, home: home, toEnd: toEnd, jump: jump, playAt: playAt, stop: stop,
+    togglePlay: togglePlay, setMode: setMode, playing: function () { return PLAY.on; },
+    mode: function () { return S.mode; },
     render: render, plan: plan, state: makeSt, PLAN: PLAN, DRAW: DRAW
   };
 

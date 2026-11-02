@@ -11,6 +11,13 @@
  * the dataviz skill's validator: in light, every adjacent pair passes (CVD Delta E 9.1, normal
  * 19.6), and all pairs sit in its legal band (CVD 6.1, normal 15.6) since every bend, column and
  * row also carries its number; the dark steps pass every adjacent pair on the dark paper.
+ *
+ * Since 2 November 2026 the red, the blue, the purple and the grasshopper's blues are step 0's
+ * (../grasshopper-finds-w/css/style.css), which its colour gate holds apart under three kinds of
+ * colour blindness; the purple was #7d2fa3 here, which step 0 dropped because it came within
+ * CIEDE2000 3.4 of the blue under deuteranopia. Step 0's dark purple (#c86e96) is a pink, so the
+ * dark pink of neuron 3 went pale (#ffc2e0, was #d2709e): at least 19 from the purple under normal
+ * vision and every colour blindness.
  */
 
 :root,
@@ -21,13 +28,13 @@
   --muted: #756e62;
   --rule: #d9d1c1;
   --shadow: rgba(70, 50, 20, 0.18);
-  --red: #c2352b;
-  --red-soft: rgba(194, 53, 43, 0.04);
-  --blue: #1f62b8;
-  --blue-soft: rgba(31, 98, 184, 0.09);
-  --blue-wash: rgba(31, 98, 184, 0.13);
-  --purple: #7d2fa3;
-  --purple-soft: rgba(125, 47, 163, 0.07);
+  --red: #d32a17;
+  --red-soft: rgba(211, 42, 23, 0.06);
+  --blue: #1969e1;
+  --blue-soft: rgba(25, 105, 225, 0.09);
+  --blue-wash: rgba(25, 105, 225, 0.13);
+  --purple: #9c1868;
+  --purple-soft: rgba(156, 24, 104, 0.06);
   --fresh: #ffd84d;
   --fresh-soft: rgba(255, 216, 77, 0.32);
   --focus: rgba(255, 216, 77, 0.55);
@@ -36,8 +43,8 @@
   --n2: #eda100;
   --n3: #e87ba4;
   --n4: #008300;
-  --hop-body: #2f74c8;
-  --hop-deep: #174f93;
+  --hop-body: #3d86e6;
+  --hop-deep: #1a55ad;
   --hop-ink: #1d1a16;
   --hop-eye: #fffdf8;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
@@ -52,23 +59,23 @@
   --muted: #a39b8c;
   --rule: #4a443a;
   --shadow: rgba(0, 0, 0, 0.55);
-  --red: #f07466;
-  --red-soft: rgba(240, 116, 102, 0.08);
-  --blue: #6ea9f0;
-  --blue-soft: rgba(110, 169, 240, 0.1);
-  --blue-wash: rgba(110, 169, 240, 0.16);
-  --purple: #c792e8;
-  --purple-soft: rgba(199, 146, 232, 0.09);
+  --red: #fe4614;
+  --red-soft: rgba(254, 70, 20, 0.09);
+  --blue: #8cbcff;
+  --blue-soft: rgba(140, 188, 255, 0.1);
+  --blue-wash: rgba(140, 188, 255, 0.16);
+  --purple: #c86e96;
+  --purple-soft: rgba(200, 110, 150, 0.1);
   --fresh: #7a6416;
   --fresh-soft: rgba(122, 100, 22, 0.45);
   --focus: rgba(122, 100, 22, 0.7);
   --gold: #e0b44a;
   --n1: #0f9a86;
   --n2: #c98500;
-  --n3: #d2709e;
+  --n3: #ffc2e0;
   --n4: #008300;
-  --hop-body: #5d9be6;
-  --hop-deep: #2e6bb8;
+  --hop-body: #8cbcff;
+  --hop-deep: #4f86d6;
   --hop-ink: #e8e2d4;
   --hop-eye: #fffdf8;
 }
@@ -174,7 +181,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .alpha-lab { font-size: 23px; }
 .grad-lab { font-size: 20px; }
 
-/* ===== SVG: arrows, the loop, the plot */
+/* ===== SVG: arrows, the band of the forward pass, the plot */
 
 .arrow .line { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .arrow .head { fill: currentColor; stroke: none; }
@@ -183,7 +190,17 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .grid-line { stroke: var(--rule); stroke-width: 1; fill: none; stroke-dasharray: 3 6; }
 .hang { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
-.loop { fill: var(--red-soft); stroke: currentColor; stroke-width: 3.5; stroke-linejoin: round; }
+/* a pass: a broad arrow behind the boxes, a light fill and a firm outline in the part's colour
+   (step 0's band, 2 November 2026) */
+.pass-fill { fill: currentColor; fill-opacity: 0.075; stroke: none; }
+.pass-line { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linejoin: round; stroke-opacity: 0.85; }
+.pass-mask { fill: none; stroke: #fff; stroke-linecap: butt; stroke-linejoin: round; }
+.pass.pulse .pass-fill { animation: band-glow 1.1s ease-in-out; }
+@keyframes band-glow {
+  0% { fill-opacity: 0.075; }
+  40% { fill-opacity: 0.2; }
+  100% { fill-opacity: 0.075; }
+}
 .curve { fill: none; stroke: currentColor; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
 .curve.ahead { stroke-dasharray: 7 7; stroke-width: 3; }
 .bend .line { fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.75; }
@@ -236,7 +253,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
   100% { background: transparent; }
 }
 
-.loop.pulse, .curve.pulse { animation: glow 1.1s ease-in-out; }
+.curve.pulse { animation: glow 1.1s ease-in-out; }
 @keyframes glow {
   0% { stroke-width: 3.5; }
   35% { stroke-width: 10; }
@@ -265,6 +282,22 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 #controls .runs { display: none; gap: 10px; }
 #controls .runs.on { display: flex; }
 #next .chev { font-size: 24px; line-height: 0; }
+/* the three Play buttons of step 0: one, two or three triangles; the one playing shows a pause sign */
+#play { display: flex; gap: 8px; }
+.play {
+  height: 44px; min-width: 50px; padding: 0 12px; border: 2px solid var(--muted); border-radius: 10px;
+  background: var(--paper); color: var(--ink); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 1px;
+}
+.play .tri {
+  width: 0; height: 0; border-style: solid; border-width: 8px 0 8px 12px;
+  border-color: transparent transparent transparent currentColor;
+}
+.play.picked { border-color: var(--ink); box-shadow: 2px 3px 0 var(--shadow); }
+.play.playing .tri { display: none; }
+.play.playing::before, .play.playing::after {
+  content: ""; width: 5px; height: 17px; margin: 0 2px; background: currentColor; border-radius: 1px;
+}
 #where { font: 14px var(--sans); color: var(--muted); letter-spacing: 0.04em; min-width: 110px; }
 #theme { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
 

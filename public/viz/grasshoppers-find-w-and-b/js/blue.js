@@ -18,6 +18,10 @@
  *   slopeb  its slope 45.01, then the limit, dlbar/db = 45
  * Iteration 2 on, one click:
  *   measure both grasshoppers measure at once
+ * At speed 2 (quick, Play with two triangles), one click in every iteration:
+ *   direct  both grasshoppers jump onto their grounds, each ground gets its tangent at the point,
+ *           and the derivative is written over it straight away, without a hop (2 November 2026)
+ * At speed 3 (the jumps only) there is no blue part.
  *
  * What these clicks show is drawn by js/ground.js (the grounds, the hops, the slopes) and by
  * js/black.js (the columns during a hop, from st.hop); this part only names the clicks.
@@ -27,7 +31,10 @@
   var GF = window.GF;
 
   GF.parts.blue = {
-    steps: function (iter) {
+    steps: function (iter, ctx) {
+      var mode = ctx && ctx.mode || 1;
+      if (mode === 3) return [];
+      if (mode === 2) return ['direct'];
       return iter === 1 ? ['onw', 'hopw', 'fwdw', 'slopew', 'limw', 'hopb', 'slopeb'] : ['measure'];
     }
   };
