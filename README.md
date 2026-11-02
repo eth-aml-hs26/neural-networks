@@ -7,16 +7,15 @@ https://eth-aml-hs26.github.io/neural-networks/
 
 The page has an introduction and seven numbered sections: gradient descent, shallow ReLU networks,
 deep ReLU networks, language models, attention, a language model with attention, and transformers.
-Within each section the visualizations come first, then the slides, the notebook and the notes.
+Within each section the visualizations come first, then the slides and the notebook.
 
 | Kind | What |
 |---|---|
 | Visualizations | Eight pages that run in the browser: *Will it last?*, the four grasshopper pages on gradient descent, the hinge-fan and hinge-chain networks, and the Wuggish game. |
-| Slides | Seven decks, each as projected (a page for every click) and as a handout (a page per slide). The decks link the pages of this site wherever they refer to one. |
+| Slides | Five decks, each as projected (a page for every click) and as a handout (a page per slide). The decks link the pages of this site wherever they refer to one. |
 | Notebook | A tiny language model, to run in Google Colab. |
-| Notes | The lecture notes on hinge-chain networks and two notes on ReLU networks. |
 
-Every file is in [`public/`](public/): the decks in `slides/`, the notes in `notes/`, each page in
+Every file is in [`public/`](public/): the decks in `slides/`, each page in
 `viz/<name>/` (open its `index.html`; the pages work offline, from a downloaded copy too), and the
 notebook in `notebooks/`.
 

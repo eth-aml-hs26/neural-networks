@@ -64,16 +64,6 @@ export const materials = {
     title: 'William James, The Principles of Psychology (1890)',
     links: deckLinks('neural-networks-cold-intro'),
   },
-  'slides/hinge-fan-networks': {
-    kind: 'slides',
-    title: 'Hinge-fan networks',
-    links: deckLinks('hinge-fan-networks'),
-  },
-  'slides/hinge-chain-networks': {
-    kind: 'slides',
-    title: 'Hinge-chain networks',
-    links: deckLinks('hinge-chain-networks'),
-  },
   'slides/language-models': {
     kind: 'slides',
     title: 'Language models',
@@ -98,23 +88,6 @@ export const materials = {
       { label: 'Colab', url: colab('notebooks/tiny_language_model.ipynb') },
       { label: 'Download', url: file('notebooks/tiny_language_model.ipynb'), download: true },
     ],
-  },
-
-  // Notes: texts to read after the lecture.
-  'notes/shallow-relu-networks': {
-    kind: 'notes',
-    title: 'A piecewise-linear function as a shallow ReLU network',
-    links: [{ label: 'PDF', url: file('notes/shallow-relu-networks.pdf') }],
-  },
-  'notes/hinge-chain-networks': {
-    kind: 'notes',
-    title: 'Hinge-chain networks: lecture notes',
-    links: [{ label: 'PDF', url: file('notes/hinge-chain-networks.pdf') }],
-  },
-  'notes/narrow-relu-networks': {
-    kind: 'notes',
-    title: 'A piecewise-linear function as a deep, narrow ReLU network',
-    links: [{ label: 'PDF', url: file('notes/narrow-relu-networks.pdf') }],
   },
 } satisfies Record<string, Material>;
 

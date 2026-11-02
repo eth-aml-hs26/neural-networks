@@ -11,7 +11,7 @@ import type { DeckName, DeckPages } from './links';
  * anchor per line: the script reads this file line by line.
  */
 export const anchors = {
-  'hinge-fan-networks#9': { slides: 38, handout: 14, expect: 'Two networks for one function' },
+  'language-models#3': { slides: 84, handout: 27, expect: 'A network computes the table' },
   'language-models#6': { slides: 171, handout: 54, expect: 'The notebook' },
   'attention-cscs#4': { slides: 81, handout: 22, expect: 'Multi-headed attention' },
   'attention-cscs#5': { slides: 94, handout: 25, expect: 'Cross-attention' },

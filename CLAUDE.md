@@ -30,7 +30,7 @@ The order and all of that text are one file, `src/data/sequence.ts`, a list of s
 1. A row is `step('<id>', topic, title?)` for a whole material of the catalogue,
    `part('<deck>#<part>', topic, title)` for a deck opened at one of its parts, or
    `soon(kind, topic, title)`, a greyed placeholder for material still to be made. `title`
-   replaces the material's own title, e.g. `'Language models, parts 1 to 5'`. In a topic,
+   replaces the material's own title, e.g. `'Language models, parts 1 and 2'`. In a topic,
    `$...$` sets a formula as LaTeX sets math (variables in serif italic, `ReLU` upright).
 2. A part's pages live in `src/data/anchors.ts`, one per line: the page of the projected PDF, the
    page of the handout, and a text that the part's first page shows. Read the pages off the PDF's
@@ -81,13 +81,17 @@ folders by hand: the script rebuilds them from scratch on every run.
 
 - The sections follow the running order of `aml-hs26`,
   `docs/lecture-plans/neural-networks-llms-transformers.md`, regrouped by topic on 1 November 2026
-  with visualizations first: within a section a page comes before its deck (the hinge-fan and
-  hinge-chain pages before their decks, the Wuggish game before the whole attention deck). The
-  introduction holds the deck on the experimental studies (its frames quote the contact addresses
-  of the study's information sheet) and the cold intro on William James. Frame 9 of the hinge-fan
-  deck, the chain and the fan side by side, is a row of the deep networks section. The language
-  model deck appears twice: parts 1 to 5 in section 4, part 6 (the notebook's network) in section
-  6, before the notebook.
+  with visualizations first: within a section a page comes before its deck (the Wuggish game before
+  the whole attention deck). The introduction holds the deck on the experimental studies (its
+  frames quote the contact addresses of the study's information sheet) and the cold intro on
+  William James.
+- On 2 November 2026 Carlos took the slides and the notes of the shallow and deep ReLU networks
+  off the site: the hinge-fan and hinge-chain decks, the notes on hinge-chain, shallow and narrow
+  ReLU networks, and frame 9 of the hinge-fan deck. Sections 2 and 3 show only their pages, and
+  the site serves no notes. The same day the parts of the language model deck were split as he
+  asked: parts 1 and 2 (the table, too big to store) in section 4; parts 3 to 5 (the network, the
+  loss, training) in section 6, before part 6 (the notebook's network and its results) and the
+  notebook.
 - The page names no dates and no frames to skip: the running order keeps those.
 - The transformer section opens the workshop version (`slides/attention-cscs`, the CSCS deck in
   the course's format) at seven of its parts, in the order of the section "The transformer part,

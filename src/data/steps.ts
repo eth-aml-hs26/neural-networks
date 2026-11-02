@@ -6,7 +6,7 @@ import { materials, type MaterialId } from './materials';
 /**
  * A row that shows a whole material of the catalogue. `topic` is the bold line: what the row
  * covers, in a few dry words. `title` replaces the material's own title on the linked line,
- * e.g. 'Language models, parts 1 to 5' for a row that covers only part of a deck.
+ * e.g. 'Language models, parts 1 and 2' for a row that covers only part of a deck.
  */
 export function step(id: MaterialId, topic: string, title?: string): Step {
   const m: Material = materials[id];

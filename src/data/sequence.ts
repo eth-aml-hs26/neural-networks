@@ -49,8 +49,6 @@ export const sections: Section[] = [
     summary: 'Continuous piecewise-linear functions as networks with one hidden layer of ReLUs.',
     steps: [
       step('viz/hinge-fan-networks', 'A weighted sum of hinges, fitted by hand or by least squares'),
-      step('slides/hinge-fan-networks', 'Construction, least-squares fit, approximation of smooth functions'),
-      step('notes/shallow-relu-networks', 'Proofs and approximation rates'),
     ],
   },
   {
@@ -59,21 +57,17 @@ export const sections: Section[] = [
     summary: 'The same functions as a ReLU network of width two, with one kink per layer.',
     steps: [
       step('viz/hinge-chain-networks', 'The free parameters, layer by layer'),
-      step('slides/hinge-chain-networks', 'Construction with one kink per layer'),
-      part('hinge-fan-networks#9', 'Shallow and deep compared', 'Hinge-fan networks, frame 9'),
-      step('notes/hinge-chain-networks', 'Construction, proofs and exercises'),
-      step('notes/narrow-relu-networks', 'The formula of every neuron'),
     ],
   },
   {
     id: 'language-models',
     title: 'Language models',
-    summary: 'Next-word prediction: a table of conditional probabilities, computed by a neural network.',
+    summary: 'Next-word prediction as a table of conditional probabilities, and why the table is too large to store.',
     steps: [
       step(
         'slides/language-models',
-        'The next-word table, the network, the loss and training',
-        'Language models, parts 1 to 5',
+        'The next-word table, and why it is too large to store',
+        'Language models, parts 1 and 2',
       ),
     ],
   },
@@ -89,8 +83,10 @@ export const sections: Section[] = [
   {
     id: 'tiny-language-model',
     title: 'A language model with attention',
-    summary: 'One layer of masked attention, trained as a language model on a language of six words.',
+    summary:
+      'A neural network that computes the next-word table, its loss and its training; one layer of masked attention, trained on a language of six words.',
     steps: [
+      part('language-models#3', 'The network that computes the table, the loss and training', 'Language models, parts 3 to 5'),
       part('language-models#6', 'The network and its results', 'Language models, part 6'),
       step('notebooks/tiny_language_model', 'Implementation and training in PyTorch'),
     ],
