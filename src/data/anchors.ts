@@ -12,7 +12,7 @@ import type { DeckName, DeckPages } from './links';
  */
 export const anchors = {
   'language-models#3': { slides: 84, handout: 27, expect: 'A network computes the table' },
-  'language-models#6': { slides: 177, handout: 55, expect: 'The notebook' },
+  'language-models#6': { slides: 176, handout: 55, expect: 'The notebook' },
   'attention-cscs#4': { slides: 81, handout: 22, expect: 'Multi-headed attention' },
   'attention-cscs#5': { slides: 94, handout: 25, expect: 'Cross-attention' },
   'attention-cscs#6': { slides: 103, handout: 28, expect: 'Masked self-attention' },
