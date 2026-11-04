@@ -83,9 +83,9 @@ export const sections: Section[] = [
   },
   {
     id: 'tiny-language-model',
-    title: 'A language model with attention',
+    title: 'A neural language model',
     summary:
-      'A neural network that computes the next-word table, its loss and its training; one layer of masked attention, trained on a language of six words.',
+      'A neural network that computes the next-word table, its loss and its training; a feed-forward network on a window of the last eleven words, trained on a language of six words.',
     steps: [
       part('language-models#3', 'The network that computes the table, the loss and training', 'Language models, parts 3 to 5'),
       part('language-models#6', 'The network and its results', 'Language models, part 6'),

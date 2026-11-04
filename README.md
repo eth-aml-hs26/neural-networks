@@ -6,7 +6,7 @@ autumn semester 2026), in logical order, live at
 https://eth-aml-hs26.github.io/neural-networks/
 
 The page has an introduction and seven numbered sections: gradient descent, shallow ReLU networks,
-deep ReLU networks, language models, attention, a language model with attention, and transformers.
+deep ReLU networks, language models, attention, a neural language model, and transformers.
 Within each section the visualizations come first, then the slides and the notebook.
 
 | Kind | What |

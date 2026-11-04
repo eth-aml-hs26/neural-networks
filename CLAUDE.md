@@ -19,7 +19,7 @@ slides. [...] I need the presentation to be a bit more academic [...] Dry text [
 explain[s] the minimum necessary for me to guide what each section contains." So the page is a
 title block with a table of contents, then an unnumbered introduction and seven numbered sections
 in logical order (gradient descent, shallow ReLU networks, deep ReLU networks, language models,
-attention, a language model with attention, transformers). Each section has one dry sentence, and
+attention, a neural language model, transformers). Each section has one dry sentence, and
 its rows are grouped by kind in the order of `KIND_ORDER` in `HomePage.tsx`: visualizations first,
 then slides, notebook, notes. A row is numbered n.i and shows a few dry words on what it covers
 (the topic, in bold) above the material that covers it (in italics, linked). Keep the text that
@@ -95,6 +95,10 @@ folders by hand: the script rebuilds them from scratch on every run.
   asked: parts 1 and 2 (the table, too big to store) in section 4; parts 3 to 5 (the network, the
   loss, training) in section 6, before part 6 (the notebook's network and its results) and the
   notebook.
+- On 4 November 2026 the notebook lost its attention layer: its network reads a window of the last
+  11 words through two plain layers, and part 6 of the language model deck presents it so. Section
+  6, until then "A language model with attention", became "A neural language model"; its id,
+  `tiny-language-model`, stayed.
 - The page names no dates and no frames to skip: the running order keeps those.
 - The transformer section opens the workshop version (`slides/attention-cscs`, the CSCS deck in
   the course's format) at seven of its parts, in the order of the section "The transformer part,
