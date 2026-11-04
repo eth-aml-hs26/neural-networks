@@ -78,7 +78,7 @@ export const sections: Section[] = [
     summary: 'How each token reads the other tokens: queries, keys, scores and values.',
     steps: [
       step('viz/wuggish-game', 'A toy language read by attention'),
-      step('slides/attention', 'Queries, keys, scores and values; the attention formula'),
+      step('slides/attention', 'Queries, keys, scores and values; the attention mechanism'),
     ],
   },
   {

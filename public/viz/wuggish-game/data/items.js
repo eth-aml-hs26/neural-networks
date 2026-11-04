@@ -445,8 +445,8 @@ window.ITEMS = {
   },
   {
    "id": 3,
-   "name": "In water or air",
-   "intro": "Two words for water and air. Two more name a thing that is in one of them already.",
+   "name": "In the water",
+   "intro": "Two words for the water. Two more name a thing that is in the water already.",
    "cards": [
     {
      "word": "swimmin",
@@ -457,20 +457,20 @@ window.ITEMS = {
      ]
     },
     {
-     "word": "flyin",
-     "flag": "flying",
+     "word": "divin",
+     "flag": "diving",
      "objects": [
       "duck",
       "fish"
      ]
     },
     {
-     "word": "flyfeesh",
+     "word": "divefeesh",
      "object": "fish",
      "flags": [
-      "flying"
+      "diving"
      ],
-     "same": "flyin feesh"
+     "same": "divin feesh"
     },
     {
      "word": "pondukk",
@@ -540,13 +540,13 @@ window.ITEMS = {
       {
        "scene": {
         "fish": {
-         "flying": true
+         "diving": true
         }
        },
        "correct": false,
        "error": "swap",
        "diff": "both",
-       "feedback": "That is flyin, the sentence says swimmin.",
+       "feedback": "That is divin, the sentence says swimmin.",
        "blame": [
         "swimmin"
        ]
@@ -557,7 +557,7 @@ window.ITEMS = {
      "id": "L3-02",
      "kind": "flip",
      "bag": [
-      "flyfeesh"
+      "divefeesh"
      ],
      "scramble": true,
      "before": [],
@@ -571,9 +571,9 @@ window.ITEMS = {
        "correct": false,
        "error": "swap",
        "diff": "both",
-       "feedback": "That is swimmin feesh, the sentence says flyfeesh.",
+       "feedback": "That is swimmin feesh, the sentence says divefeesh.",
        "blame": [
-        "flyfeesh"
+        "divefeesh"
        ]
       },
       {
@@ -583,15 +583,15 @@ window.ITEMS = {
        "correct": false,
        "error": "drop",
        "diff": "missing",
-       "feedback": "That is feesh, the sentence says flyfeesh.",
+       "feedback": "That is feesh, the sentence says divefeesh.",
        "blame": [
-        "flyfeesh"
+        "divefeesh"
        ]
       },
       {
        "scene": {
         "fish": {
-         "flying": true
+         "diving": true
         }
        },
        "correct": true,
@@ -603,15 +603,15 @@ window.ITEMS = {
       {
        "scene": {
         "duck": {
-         "flying": true
+         "diving": true
         }
        },
        "correct": false,
        "error": "thing",
        "diff": "both",
-       "feedback": "The sentence says flyfeesh.",
+       "feedback": "The sentence says divefeesh.",
        "blame": [
-        "flyfeesh"
+        "divefeesh"
        ]
       }
      ]
@@ -676,13 +676,13 @@ window.ITEMS = {
        "scene": {
         "duck": {
          "booted": true,
-         "flying": true
+         "diving": true
         }
        },
        "correct": false,
        "error": "swap",
        "diff": "both",
-       "feedback": "That is bootet flyin dukk, the sentence says pondukk.",
+       "feedback": "That is bootet divin dukk, the sentence says pondukk.",
        "blame": [
         "pondukk"
        ]
@@ -722,13 +722,13 @@ window.ITEMS = {
          "running": true
         },
         "fish": {
-         "flying": true
+         "diving": true
         }
        },
        "correct": false,
        "error": "add",
        "diff": "extra",
-       "feedback": "There is no flyin in this sentence.",
+       "feedback": "There is no divin in this sentence.",
        "blame": []
       },
       {
@@ -783,7 +783,7 @@ window.ITEMS = {
      "bag": [
       "bootet",
       "kat",
-      "flyin",
+      "divin",
       "feesh"
      ],
      "scramble": true,
@@ -793,7 +793,7 @@ window.ITEMS = {
        "kat"
       ],
       [
-       "flyin",
+       "divin",
        "feesh"
       ]
      ],
@@ -808,9 +808,9 @@ window.ITEMS = {
        "correct": false,
        "error": "drop",
        "diff": "missing",
-       "feedback": "You missed flyin.",
+       "feedback": "You missed divin.",
        "blame": [
-        "flyin"
+        "divin"
        ]
       },
       {
@@ -819,7 +819,7 @@ window.ITEMS = {
          "booted": true
         },
         "fish": {
-         "flying": true
+         "diving": true
         }
        },
        "correct": true,
@@ -835,7 +835,7 @@ window.ITEMS = {
          "running": true
         },
         "fish": {
-         "flying": true
+         "diving": true
         }
        },
        "correct": false,
@@ -856,9 +856,9 @@ window.ITEMS = {
        "correct": false,
        "error": "swap",
        "diff": "both",
-       "feedback": "That is swimmin, the sentence says flyin.",
+       "feedback": "That is swimmin, the sentence says divin.",
        "blame": [
-        "flyin"
+        "divin"
        ]
       }
      ],

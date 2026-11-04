@@ -7,9 +7,10 @@
  *
  * Rule for the art: no look may be signalled by colour alone.  Running is a
  * pose with speed lines, boots are boots, swimming is a band of water,
- * flying is a lift with wings or fins spread; colour only makes them
- * prettier.  scripts/check-palette.js gates the colours that carry a look
- * (boots on a cat or a duck, water around a duck or a fish) and the feedback
+ * diving is a mask and a snorkel in water that fills the box; colour only
+ * makes them prettier.  scripts/check-palette.js gates the colours that carry
+ * a look (boots on a cat or a duck, water and deep water around a duck or a
+ * fish, the snorkel on them and in the water) and the feedback
  * colours of css/game.css, in both themes, for colour-blind viewers; rerun
  * it after changing a token here, then node dev/snapshot.js.
  */
@@ -40,9 +41,12 @@
   --water-line: #2d78b4;
   --wave: #d4e9f7;
   --bubble: #eef6fc;
+  --deep: #3f7fbf;
+  --snorkel: #f9ee19;
+  --glass: #e8f6fc;
+  --glint: #ffffff;
   --speed: #77736b;
   --dust: #ddd8cd;
-  --shadow: #e4dfd4;
   --floor: #d8d4ca;
 }
 
@@ -72,9 +76,12 @@
   --water-line: #8cc4ec;
   --wave: #6fa6cf;
   --bubble: #cfe6f6;
+  --deep: #24527a;
+  --snorkel: #f9e319;
+  --glass: #d6ecf8;
+  --glint: #ffffff;
   --speed: #8f8a80;
   --dust: #4a463f;
-  --shadow: #2a2722;
   --floor: #3a3630;
 }
 
@@ -125,6 +132,11 @@ h1, h2, h3 {
 .s-water-line { stroke: var(--water-line); }
 .s-wave { stroke: var(--wave); }
 .f-bubble { fill: var(--bubble); }
+.f-deep { fill: var(--deep); }
+.f-snorkel { fill: var(--snorkel); }
+.s-snorkel { stroke: var(--snorkel); }
+.f-glass { fill: var(--glass); }
+.f-glint { fill: var(--glint); }
+.s-glint { stroke: var(--glint); }
 .s-speed { stroke: var(--speed); }
 .f-dust { fill: var(--dust); }
-.f-shadow { fill: var(--shadow); }

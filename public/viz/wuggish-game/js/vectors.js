@@ -9,15 +9,15 @@
  *
  * A word's ROW, its embedding, answers the nine questions of
  * LEXICON.features with 1 (yes) or 0 (no), in three groups: what a thing
- * HAS (legs, fins, wings), where a look GOES (feet, fluid) and what a look
- * BRINGS (run, boots, water, air).  The query, the key and the value are
+ * HAS (legs, fins, wings), where a look GOES (feet, water) and what a look
+ * BRINGS (run, boots, swim, dive).  The query, the key and the value are
  * the row times three blocks of weights, as in a transformer:
  *
  *   W_Q (d by k) sends legs to slot 1 and fins and wings to slot 2: a
  *       thing with legs asks for a look that goes on the feet, a thing with
- *       fins or wings for one that goes into water or air, and an
+ *       fins or wings for one that goes into the water, and an
  *       adjective, which has none of the three, asks nothing;
- *   W_K (d by k) sends feet to slot 1 and fluid to slot 2: an adjective
+ *   W_K (d by k) sends feet to slot 1 and water to slot 2: an adjective
  *       answers in the slot of where its look goes, and a noun answers
  *       nothing;
  *   W_V (d by d) keeps the four brings features: what a word adds.

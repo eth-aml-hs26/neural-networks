@@ -14,7 +14,7 @@
  *   5  Attention is one multiplication.   Q K^T = S for the running sentence,
  *                                         two inner products, the grammar
  *   6  Each thing adds what it read.      kat + bootet = the row of pussinbootz,
- *                                         feesh + flyin = the row of flyfeesh,
+ *                                         feesh + divin = the row of divefeesh,
  *                                         E + S V, the formula, the softmax
  *   7  The one you could not read.        the closer: Puss in Boots and a duck
  *                                         in boots
