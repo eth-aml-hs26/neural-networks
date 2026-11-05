@@ -16,9 +16,9 @@ import { part, step } from './steps';
  * row, in a few dry words; write $...$ around a formula to set it as math.
  *
  * The order follows the running order of the private course repository,
- * docs/lecture-plans/neural-networks-llms-transformers.md, by topic: the transformer
- * section opens the transformer deck at each of its parts, in the order Carlos gave on
- * 5 November 2026.
+ * docs/lecture-plans/neural-networks-llms-transformers.md, by topic. Since 5 November 2026 the
+ * transformer section shows its deck whole, in one row (Carlos found one row per part too
+ * fragmented), and the cold intro on Wittgenstein is the prologue to sections 6 and 7.
  */
 export const sections: Section[] = [
   {
@@ -85,6 +85,13 @@ export const sections: Section[] = [
     ],
   },
   {
+    id: 'prologue-attention',
+    title: 'Prologue to sections 6 and 7',
+    numbered: false,
+    summary: 'Ludwig Wittgenstein on language: excerpts of the Philosophische Untersuchungen and The Brown Book.',
+    steps: [step('slides/wittgenstein-cold-intro', 'Four excerpts')],
+  },
+  {
     id: 'attention',
     title: 'Attention',
     summary: 'How each token reads the other tokens: queries, keys, scores and values.',
@@ -99,13 +106,10 @@ export const sections: Section[] = [
     title: 'Transformers',
     summary: 'From one attention layer to the transformer architecture.',
     steps: [
-      part('transformers#multi-head', 'Multi-head attention', 'Transformers, part 1'),
-      part('transformers#masked', 'Masked self-attention', 'Transformers, part 2'),
-      part('transformers#cross', 'Cross-attention', 'Transformers, part 3'),
-      part('transformers#positions', 'Positional encodings', 'Transformers, part 4'),
-      part('transformers#residual', 'Residual blocks', 'Transformers, part 5'),
-      part('transformers#simplified', 'A simplified transformer', 'Transformers, part 6'),
-      part('transformers#vaswani', 'The transformer of Vaswani et al. (2017)', 'Transformers, end of part 6'),
+      step(
+        'slides/transformers',
+        'Multi-head, masked and cross-attention; positional encodings; residual blocks; the architecture',
+      ),
     ],
   },
   {

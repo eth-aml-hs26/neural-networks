@@ -14,13 +14,6 @@ import type { DeckName, DeckPages } from './links';
 export const anchors = {
   'language-models#3': { slides: 84, handout: 27, annotated: 27, expect: 'A network computes the table' },
   'language-models#6': { slides: 176, handout: 55, annotated: 56, expect: 'The notebook' },
-  'transformers#multi-head': { slides: 2, handout: 2, expect: 'Multi-head attention' },
-  'transformers#masked': { slides: 19, handout: 8, expect: 'Masked self-attention' },
-  'transformers#cross': { slides: 34, handout: 12, expect: 'Cross-attention' },
-  'transformers#positions': { slides: 45, handout: 16, expect: 'Positional encodings' },
-  'transformers#residual': { slides: 67, handout: 23, expect: 'Residual blocks' },
-  'transformers#simplified': { slides: 78, handout: 28, expect: 'The transformer' },
-  'transformers#vaswani': { slides: 90, handout: 31, expect: 'The five parts in the transformer of Vaswani' },
   'convolutional-neural-networks#6': { slides: 39, handout: 27, expect: 'Training a CNN to count islands' },
   'diffusion-models#conditional': { slides: 17, handout: 7, expect: 'Conditional diffusion models' },
 } satisfies Record<`${DeckName}#${string}`, DeckPages & { expect: string }>;

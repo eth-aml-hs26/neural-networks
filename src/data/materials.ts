@@ -90,6 +90,11 @@ export const materials = {
     title: 'Language models',
     links: deckLinks('language-models'),
   },
+  'slides/wittgenstein-cold-intro': {
+    kind: 'slides',
+    title: 'Ludwig Wittgenstein, Philosophische Untersuchungen and The Brown Book',
+    links: deckLinks('wittgenstein-cold-intro'),
+  },
   'slides/attention': {
     kind: 'slides',
     title: 'Attention',

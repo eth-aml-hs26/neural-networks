@@ -20,7 +20,8 @@ explain[s] the minimum necessary for me to guide what each section contains." So
 title block with a table of contents, then an unnumbered introduction and seven numbered sections
 in logical order (gradient descent, shallow ReLU networks, deep ReLU networks, language models,
 a neural language model, attention, transformers; since 5 November 2026 the neural language
-model comes before attention), then, since 5 November 2026, an unnumbered
+model comes before attention, and an unnumbered prologue, the cold intro on Wittgenstein, comes
+before sections 6 and 7), then, since 5 November 2026, an unnumbered
 prologue and three numbered sections on images (convolutional neural networks, U-Nets, diffusion
 models). Each section has one dry sentence, and
 its rows are grouped by kind in the order of `KIND_ORDER` in `HomePage.tsx`: visualizations first,
@@ -115,14 +116,19 @@ folders by hand: the script rebuilds them from scratch on every run.
   transformers. The language model deck now reaches the network, the loss and training before
   attention, as the attention deck's first frame assumes.
 - The page names no dates and no frames to skip: the running order keeps those.
-- Since 5 November 2026 the transformer section opens a deck of its own, `slides/transformers`
-  (`docs/slides/transformers/` of `aml-hs26`), at each of its parts, in the order Carlos gave that
-  day: multi-head attention, masked self-attention, cross-attention, positional encodings, residual
+- Since 5 November 2026 the transformer section shows a deck of its own, `slides/transformers`
+  (`docs/slides/transformers/` of `aml-hs26`), whole, in one row. Its parts, in the order Carlos
+  gave that day: multi-head attention, masked self-attention, cross-attention, positional encodings, residual
   blocks, a simplified transformer, and the transformer of Vaswani et al. (2017). It has the
   notation of the attention deck and covers the architecture only, since the language model deck
-  covers training. Until then the section opened the workshop version (`slides/attention-cscs`) at
-  eight of its parts, the last one generating a text one token at a time; the site no longer
+  covers training. Until the evening of that day the section opened it at each of its seven parts,
+  which Carlos found too fragmented, and before that the workshop version (`slides/attention-cscs`)
+  at eight of its parts, the last one generating a text one token at a time; the site no longer
   serves that deck.
+- Since 5 November 2026 an unnumbered prologue to sections 6 and 7 comes before attention:
+  `slides/wittgenstein-cold-intro`, the cold intro of the attention deck on Wittgenstein as a deck
+  of its own (`docs/slides/wittgenstein-cold-intro/` of `aml-hs26`), which Carlos asked to have on
+  the site. The attention deck still opens with the same frames.
 - On 5 November 2026 the section on attention (then 5, now 6) gained, after the game, the page
   *One layer of attention* (`viz/attention-walkthrough`, from
   `docs/visualizations/attention-walkthrough/` of `aml-hs26`): one attention layer on the sentence of the attention deck, worked out matrix by matrix. Its

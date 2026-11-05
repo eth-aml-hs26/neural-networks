@@ -6,15 +6,15 @@ autumn semester 2026), in logical order, live at
 https://eth-aml-hs26.github.io/neural-networks/
 
 The page has an introduction and seven numbered sections: gradient descent, shallow ReLU networks,
-deep ReLU networks, language models, a neural language model, attention, and transformers. A
-prologue and three numbered sections on images follow: convolutional neural networks, U-Nets and
+deep ReLU networks, language models, a neural language model, attention, and transformers, the
+last two after a prologue. A prologue and three numbered sections on images follow: convolutional neural networks, U-Nets and
 diffusion models. Within each section the visualizations come first, then the slides and the
 notebook.
 
 | Kind | What |
 |---|---|
 | Visualizations | Eleven pages that run in the browser: *Will it last?*, the four grasshopper pages on gradient descent, the hinge-fan and hinge-chain networks, the Wuggish game, *One layer of attention*, and the pages on tiles and on a deconvolutional filter. |
-| Slides | Eleven decks, each as projected (a page for every click) and as a handout (a page per slide); two of them also as annotated in the lecture. The decks link the pages of this site wherever they refer to one. |
+| Slides | Twelve decks, each as projected (a page for every click) and as a handout (a page per slide); two of them also as annotated in the lecture. The decks link the pages of this site wherever they refer to one. |
 | Notebook | A tiny language model, to run in Google Colab. |
 
 Every file is in [`public/`](public/): the decks in `slides/`, each page in
