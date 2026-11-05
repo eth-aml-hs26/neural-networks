@@ -130,8 +130,8 @@ folders by hand: the script rebuilds them from scratch on every run.
   per section that follows); 8, convolutional neural networks (the tiles page with its islands, the
   convolutional filters deck, the CNN deck in two rows, sections 1 to 5 and, anchored, section 6 on
   training a CNN to count islands); 9, U-Nets (the deconvolution page, the U-Net deck); 10, diffusion
-  models (the deck of the CSCS workshop). Rows marked soon wait for their material: the
-  deconvolution page and the diffusion deck. The page's title became "Neural networks" the same day.
+  models (the deck of the CSCS workshop in two rows, frames 1 to 5 and, anchored, frames 6 and 7 on
+  conditional diffusion). The page's title became "Neural networks" the same day.
 - **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
   is rebuilt for them, refresh the copies here. The game, the attention deck and *One layer of
   attention* run on the Wuggish of a cat, a duck and a fish

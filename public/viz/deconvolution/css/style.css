@@ -1,0 +1,218 @@
+/* style.css: tokens, the stage, the words of a step, the drawing, the controls, both themes.
+ *
+ * The look of the tiles page of this block (../tetris-tiles/css/style.css), itself the look of the
+ * grasshopper pages: a stage of 1600 x 900 scaled to the window, a warm page, serif words, the
+ * controls at the bottom left. Light is the lecture default; t switches to dark.
+ *
+ * The colours of slide 13 of BMAI's U-Net deck: the input cells blue (#215CAF, ETH blue), the zeros
+ * light grey (#E8EAF2), the kernel green. The slide's green #00B050 carries white numbers at a
+ * contrast of 2.9, so the kernel is the darker #188049 (5.0). The copies of the kernel in the output
+ * are that green, translucent, so that where copies overlap the green is deeper. The five windows of
+ * the slide (green, tan, yellow, magenta, red) keep its hues in colours that colour-blind viewers
+ * tell apart (scripts/check-palette.js gates every pair of both themes).
+ *
+ * Every colour is a token here. The drawing sets classes and never writes a colour.
+ */
+
+:root,
+:root[data-theme="light"] {
+  --bg: #f7f2e7;
+  --paper: #fffdf8;
+  --ink: #1d1a16;
+  --muted: #756e62;
+  --rule: #d9d1c1;
+  --shadow: rgba(70, 50, 20, 0.18);
+  --hair: #c9c6c0;
+  --input: #215caf;
+  --on-input: #ffffff;
+  --kernel: #188049;
+  --on-kernel: #ffffff;
+  --kernel-text: #146c3e;
+  --zero: #e8eaf2;
+  --box: #dde8f5;
+  --w-green: #009988;
+  --w-tan: #bf812d;
+  --w-yellow: #e6d600;
+  --w-magenta: #882255;
+  --w-red: #b2182b;
+  --tint: 0.16;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  --num: KaTeX_Main, "Times New Roman", serif;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #191714;
+  --paper: #25221d;
+  --ink: #f2ede2;
+  --muted: #a39b8c;
+  --rule: #4a443a;
+  --shadow: rgba(0, 0, 0, 0.55);
+  --hair: #4a4f57;
+  --input: #2e6bc4;
+  --on-input: #ffffff;
+  --kernel: #188049;
+  --on-kernel: #ffffff;
+  --kernel-text: #4cb47c;
+  --zero: #33373f;
+  --box: #2a3a52;
+  --w-green: #009988;
+  --w-tan: #e08214;
+  --w-yellow: #f0e442;
+  --w-magenta: #ee3377;
+  --w-red: #a0522d;
+  --tint: 0.24;
+  color-scheme: dark;
+}
+
+/* ===== the stage: 1600 x 900, scaled to the window by js/engine.js */
+
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+#viewport {
+  position: fixed; inset: 0; overflow: hidden; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+#stage {
+  position: relative; width: 1600px; height: 900px; flex: 0 0 auto;
+  transform-origin: center center; font-family: var(--sans); color: var(--ink);
+}
+.layer { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; pointer-events: none; }
+#drawing { z-index: 1; }
+#html-mid { z-index: 2; }
+#html-top { z-index: 4; }
+
+/* a phone held upright shows the stage as a strip: say how to see it whole */
+#turn {
+  display: none; position: absolute; left: 0; right: 0; bottom: 28px;
+  text-align: center; font: 15px var(--sans); color: var(--muted); padding: 0 16px;
+}
+@media (orientation: portrait) and (max-width: 760px) {
+  #turn { display: block; }
+}
+
+#stage.still, #stage.still * { transition: none !important; animation: none !important; }
+
+#title {
+  position: absolute; left: 40px; top: 22px; z-index: 5;
+  font: 500 30px var(--serif); color: var(--ink); letter-spacing: 0.01em;
+  transition: opacity 0.4s ease;
+}
+#stage.in-story #title { opacity: 0.55; }
+
+/* ===== the words of a step: its point, then a sentence or two */
+
+#words {
+  position: absolute; left: 40px; top: 76px; width: 1520px; z-index: 3;
+  font-family: var(--serif); color: var(--ink);
+}
+#words h2 { margin: 0 0 8px; font-weight: 500; font-size: 36px; line-height: 1.15; letter-spacing: 0.005em; }
+#words p { margin: 0; font-size: 24px; line-height: 1.42; max-width: 1480px; }
+#words .katex { font-size: 1.02em; }
+#words.off { visibility: hidden; }
+
+/* ===== the drawing */
+
+.cellline { stroke: var(--hair); stroke-width: 1; fill: none; }
+.frame { stroke: var(--ink); stroke-width: 2; fill: none; }
+.c-input { fill: var(--input); }
+.c-kernel { fill: var(--kernel); }
+.c-zero { fill: var(--zero); }
+.c-paper { fill: var(--paper); }
+.c-box { fill: var(--box); stroke: var(--ink); stroke-width: 2; }
+
+/* numbers in the face of the formulas */
+text { fill: var(--ink); }
+.n { font: 26px var(--num); dominant-baseline: central; text-anchor: middle; }
+.n-input { fill: var(--on-input); font-weight: 700; }
+.n-kernel { fill: var(--on-kernel); font-weight: 700; }
+.n-zero { font-size: 19px; fill: var(--muted); }
+.n-out { fill: var(--ink); }
+.n-ghost { fill: var(--muted); opacity: 0.5; }
+.n-small { font: 16px var(--num); fill: var(--kernel-text); dominant-baseline: hanging; text-anchor: start; font-weight: 700; }
+.label { font: 24px var(--serif); fill: var(--ink); dominant-baseline: central; text-anchor: middle; }
+.slide-label { font: 22px var(--sans); fill: var(--ink); dominant-baseline: central; text-anchor: middle; }
+.tag { font: italic 24px var(--num); fill: var(--kernel-text); dominant-baseline: central; }
+.op { font: 700 64px var(--sans); fill: var(--ink); dominant-baseline: central; text-anchor: middle; }
+.note { font: italic 20px var(--serif); fill: var(--muted); dominant-baseline: central; text-anchor: middle; }
+
+/* a copy of the kernel in the output: translucent green, so that overlaps run deeper */
+.copy { fill: var(--kernel); fill-opacity: var(--tint); stroke: none; }
+.copy-edge { fill: none; stroke: var(--kernel); stroke-width: 3; }
+/* the window of the slide's view, the cell it makes, the cell a formula explains */
+.win { fill: var(--kernel); fill-opacity: 0.1; stroke: var(--ink); stroke-width: 4; }
+.mark { fill: none; stroke: var(--ink); stroke-width: 4; }
+.ring { fill: none; stroke: var(--ink); stroke-width: 4; }
+.brace { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+
+/* the five windows of the slide, and the output cells they make */
+.w-green { stroke: var(--w-green); }
+.w-tan { stroke: var(--w-tan); }
+.w-yellow { stroke: var(--w-yellow); }
+.w-magenta { stroke: var(--w-magenta); }
+.w-red { stroke: var(--w-red); }
+.slide-win { fill: none; stroke-width: 6; }
+.slide-cell { fill: none; stroke-width: 5; }
+
+/* the U-Net of card 2 */
+.arrow { fill: none; stroke: var(--muted); stroke-width: 3; stroke-linecap: round; }
+.arrow-head { fill: var(--muted); }
+.up { fill: none; stroke: var(--kernel); stroke-width: 6; stroke-linecap: round; }
+.up-head { fill: var(--kernel); }
+.up-label { font: 22px var(--num); fill: var(--kernel-text); dominant-baseline: central; text-anchor: start; }
+.legend { font: italic 22px var(--serif); fill: var(--muted); dominant-baseline: central; text-anchor: start; }
+.legend-up { font: italic 22px var(--serif); fill: var(--kernel-text); dominant-baseline: central; text-anchor: start; }
+
+/* formulas set in KaTeX, on the stage */
+.formula { position: absolute; font-size: 30px; color: var(--ink); white-space: nowrap; transform: translateX(-50%); }
+.brace-tex { position: absolute; font-size: 22px; color: var(--ink); white-space: nowrap; transform: translateX(-50%); }
+
+/* ===== animations: the flying copy, waiting cells, pops */
+
+.fly { pointer-events: none; }
+.waiting { opacity: 0; }
+
+/* ===== controls, bottom left */
+
+#controls {
+  position: absolute; left: 40px; top: 822px; z-index: 20;
+  display: flex; align-items: center; gap: 14px;
+}
+#controls button.btn {
+  font: 600 20px var(--sans); letter-spacing: 0.02em;
+  padding: 9px 22px 10px; border: 2.5px solid var(--ink); border-radius: 10px;
+  background: var(--paper); color: var(--ink); box-shadow: 3px 4px 0 var(--shadow); cursor: pointer;
+}
+#controls button.btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+#controls button.btn:disabled { opacity: 0.35; cursor: default; }
+#controls button.quiet { padding: 9px 16px 10px; }
+#next .chev, #back .chev { font-size: 24px; line-height: 0; }
+/* the three Play buttons of the grasshopper pages: one, two or three triangles; the one playing
+   shows a pause sign */
+#play { display: flex; gap: 8px; }
+.play {
+  height: 44px; min-width: 50px; padding: 0 12px; border: 2px solid var(--muted); border-radius: 10px;
+  background: var(--paper); color: var(--ink); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 1px;
+}
+.play .tri {
+  width: 0; height: 0; border-style: solid; border-width: 8px 0 8px 12px;
+  border-color: transparent transparent transparent currentColor;
+}
+.play.picked { border-color: var(--ink); box-shadow: 2px 3px 0 var(--shadow); }
+.play.playing .tri { display: none; }
+.play.playing::before, .play.playing::after {
+  content: ""; width: 5px; height: 17px; margin: 0 2px; background: currentColor; border-radius: 1px;
+}
+#where { font: 15px var(--sans); color: var(--muted); letter-spacing: 0.04em; min-width: 110px; }
+#theme { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
+#controls button { pointer-events: auto; }
+
+/* ===== details of the drawing */
+
+.cell { stroke: var(--hair); stroke-width: 1; }
+.c-kernel.cell, .c-input.cell { stroke: var(--paper); stroke-opacity: 0.55; }
+.n, .ring, .mark, .tag, .slide-cell { transform-box: fill-box; transform-origin: center; }
+.tag.l { text-anchor: end; }
+.up-label.c { text-anchor: middle; }
+.n-small.on-input { fill: var(--on-input); }

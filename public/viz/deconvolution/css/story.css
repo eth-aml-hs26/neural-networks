@@ -1,0 +1,21 @@
+/* story.css: the two cards of the story (js/story.js). The frame, the words and the dots are the
+ * cards of the tiles page (../tetris-tiles/css/story.css); the pictures take the tokens of
+ * css/style.css, so the maps and the kernel look as in the steps. */
+
+.story { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; visibility: hidden; }
+.story.on { visibility: visible; }
+.story-pic, .story-words { opacity: 0; visibility: hidden; transition: opacity 0.45s ease, visibility 0s linear 0.45s; }
+.story-pic.cur, .story-words.cur { opacity: 1; visibility: visible; transition: opacity 0.45s ease, visibility 0s; }
+.story-pic {
+  position: absolute; box-sizing: border-box; overflow: hidden;
+  border: 3px solid var(--ink); border-radius: 18px; background: var(--paper);
+  box-shadow: 6px 7px 0 var(--shadow);
+}
+.story-svg { display: block; width: 100%; height: 100%; }
+.story-words { position: absolute; color: var(--ink); font-family: var(--serif); }
+.story-words h2 { margin: 0 0 26px; font-weight: 500; font-size: 50px; line-height: 1.08; letter-spacing: 0.005em; }
+.story-words p { margin: 0; font-size: 29px; line-height: 1.42; }
+.story-dots { position: absolute; display: flex; gap: 12px; }
+.story-dots .dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--muted); box-sizing: border-box; }
+.story-dots .dot.cur { background: var(--ink); border-color: var(--ink); }
+

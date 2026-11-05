@@ -62,6 +62,11 @@ export const materials = {
     title: 'Decomposing an image into tiles',
     links: [{ label: 'Open', url: file('viz/tetris-tiles/index.html') }],
   },
+  'viz/deconvolution': {
+    kind: 'viz',
+    title: 'A deconvolutional filter',
+    links: [{ label: 'Open', url: file('viz/deconvolution/index.html') }],
+  },
 
   // Slides: every deck as projected (a page per click) and as a handout (a page per frame), and
   // a deck that Carlos wrote on in class as annotated (rows of parts get it through anchors.ts).
@@ -114,6 +119,11 @@ export const materials = {
     kind: 'slides',
     title: 'U-Nets',
     links: deckLinks('u-nets'),
+  },
+  'slides/diffusion-models': {
+    kind: 'slides',
+    title: 'Diffusion models',
+    links: deckLinks('diffusion-models'),
   },
 
   // Notebooks: open in Google Colab, or download and run anywhere.

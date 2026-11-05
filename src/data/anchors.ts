@@ -23,6 +23,7 @@ export const anchors = {
   'attention-cscs#9': { slides: 177, handout: 44, expect: 'Residual blocks' },
   'attention-cscs#10': { slides: 182, handout: 47, expect: 'Transformer architecture' },
   'convolutional-neural-networks#6': { slides: 39, handout: 27, expect: 'Training a CNN to count islands' },
+  'diffusion-models#conditional': { slides: 17, handout: 7, expect: 'Conditional diffusion models' },
 } satisfies Record<`${DeckName}#${string}`, DeckPages & { expect: string }>;
 
 export type AnchorKey = keyof typeof anchors;
