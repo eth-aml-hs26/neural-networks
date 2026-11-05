@@ -3,7 +3,8 @@ import type { DeckName, DeckPages } from './links';
 /**
  * Where a step opens a deck that it shows only in part: the page in the projected PDF
  * (slides) and in the handout, and a text that the first page of that part shows (expect).
- * The key is `<deck>#<part>`; part() in steps.ts takes it.
+ * A part that Carlos wrote on in class also gives its page in the annotated PDF (annotated),
+ * which the button Annotated opens. The key is `<deck>#<part>`; part() in steps.ts takes it.
  *
  * The page numbers move when a deck gains or loses frames before them. After refreshing a
  * deck, run `npm run anchors` (scripts/check_anchors.py, which needs pypdf): it opens both
@@ -11,8 +12,8 @@ import type { DeckName, DeckPages } from './links';
  * anchor per line: the script reads this file line by line.
  */
 export const anchors = {
-  'language-models#3': { slides: 84, handout: 27, expect: 'A network computes the table' },
-  'language-models#6': { slides: 176, handout: 55, expect: 'The notebook' },
+  'language-models#3': { slides: 84, handout: 27, annotated: 27, expect: 'A network computes the table' },
+  'language-models#6': { slides: 176, handout: 55, annotated: 56, expect: 'The notebook' },
   'attention-cscs#4': { slides: 81, handout: 22, expect: 'Multi-headed attention' },
   'attention-cscs#5': { slides: 94, handout: 25, expect: 'Cross-attention' },
   'attention-cscs#6': { slides: 103, handout: 28, expect: 'Masked self-attention' },

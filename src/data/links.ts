@@ -23,10 +23,22 @@ type SlidesOf<F> = F extends `slides/${infer N}-slides.pdf` ? N : never;
 type HandoutOf<F> = F extends `slides/${infer N}-handout.pdf` ? N : never;
 export type DeckName = SlidesOf<PublicFile> & HandoutOf<PublicFile>;
 
-/** The pages at which a step opens a deck, in each of its two PDFs (see data/anchors.ts). */
+/**
+ * A deck that also has <name>-annotated.pdf in public/slides/: the PDF that Carlos wrote on in
+ * class, as exported from his iPad (the handout or the slides, with any page he added).
+ */
+type AnnotatedOf<F> = F extends `slides/${infer N}-annotated.pdf` ? N : never;
+export type AnnotatedDeckName = DeckName & AnnotatedOf<PublicFile>;
+
+/**
+ * The pages at which a step opens a deck, in each of its PDFs (see data/anchors.ts). `annotated`
+ * is the page in <name>-annotated.pdf, for a part that Carlos wrote on in class; a page he added
+ * moves the pages after it, so it can differ from the handout's.
+ */
 export interface DeckPages {
   slides: number;
   handout: number;
+  annotated?: number;
 }
 
 /**
@@ -41,6 +53,15 @@ export function deckLinks(name: DeckName, at?: DeckPages): Link[] {
     { label: 'Slides', url: at ? `${slides}#page=${at.slides}` : slides },
     { label: 'Handout', url: at ? `${handout}#page=${at.handout}` : handout },
   ];
+}
+
+/**
+ * The button Annotated of a deck that Carlos wrote on in class: <name>-annotated.pdf, opened at
+ * `page` when given. Only the rows of the parts that carry ink get it.
+ */
+export function annotatedLink(name: AnnotatedDeckName, page?: number): Link {
+  const url = file(`slides/${name}-annotated.pdf`);
+  return { label: 'Annotated', url: page ? `${url}#page=${page}` : url };
 }
 
 /** A notebook of public/notebooks/, opened in Google Colab from this public repository. */

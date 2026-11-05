@@ -11,8 +11,8 @@ Within each section the visualizations come first, then the slides and the noteb
 
 | Kind | What |
 |---|---|
-| Visualizations | Eight pages that run in the browser: *Will it last?*, the four grasshopper pages on gradient descent, the hinge-fan and hinge-chain networks, and the Wuggish game. |
-| Slides | Five decks, each as projected (a page for every click) and as a handout (a page per slide). The decks link the pages of this site wherever they refer to one. |
+| Visualizations | Nine pages that run in the browser: *Will it last?*, the four grasshopper pages on gradient descent, the hinge-fan and hinge-chain networks, the Wuggish game and *One layer of attention*. |
+| Slides | Six decks, each as projected (a page for every click) and as a handout (a page per slide); two of them also as annotated in the lecture. The decks link the pages of this site wherever they refer to one. |
 | Notebook | A tiny language model, to run in Google Colab. |
 
 Every file is in [`public/`](public/): the decks in `slides/`, each page in
@@ -46,7 +46,8 @@ missing.
 - [`src/data/materials.ts`](src/data/materials.ts) holds the catalogue: one entry per material, with
   its kind, its title and its links.
 - [`src/data/anchors.ts`](src/data/anchors.ts) holds the pages at which `part()` opens a deck, in
-  the projected PDF and in the handout. `npm run anchors` checks them against the PDFs.
+  the projected PDF, in the handout and, for a part with ink, in the annotated PDF. `npm run
+  anchors` checks them against the PDFs.
 
 The files in `public/slides/`, `public/notes/`, `public/viz/` and `public/notebooks/` are copies
 from the private course repository, made by its script `scripts/publish_nn_site.py`; they are

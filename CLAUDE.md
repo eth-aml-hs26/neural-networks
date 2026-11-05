@@ -33,7 +33,8 @@ The order and all of that text are one file, `src/data/sequence.ts`, a list of s
    replaces the material's own title, e.g. `'Language models, parts 1 and 2'`. In a topic,
    `$...$` sets a formula as LaTeX sets math (variables in serif italic, `ReLU` upright).
 2. A part's pages live in `src/data/anchors.ts`, one per line: the page of the projected PDF, the
-   page of the handout, and a text that the part's first page shows. Read the pages off the PDF's
+   page of the handout, for a part that Carlos wrote on in class the page of the annotated PDF,
+   and a text that the part's first page shows. Read the pages off the PDF's
    bookmarks or text (pypdf), then run `npm run anchors`.
 3. `npm run build` (an unknown id or anchor fails the type check), then commit and push; the
    push deploys.
@@ -53,6 +54,13 @@ folders by hand: the script rebuilds them from scratch on every run.
   here, commit and push. The script refuses to run when `aml-hs26` is behind its remote or a file
   it would copy has uncommitted changes. A deck that gained or lost frames moves the pages of its
   anchors: `npm run anchors` names each one that moved.
+- **A PDF that Carlos wrote on in class:** the export from his iPad is kept unchanged in
+  `aml-hs26` as `docs/slides/<deck>/<deck>-annotated.pdf`, and the script copies it when the deck
+  is in its list `ANNOTATED`. Then give the button Annotated (`annotatedLink()` in
+  `src/data/links.ts`) to the rows of the parts that carry ink, and to those only: on the
+  catalogue entry, for a row that shows the whole deck, or as an `annotated` page on the anchor of
+  a part. Every page he added moves the pages after it, so take the page of a part in the export
+  from `scripts/find_ink.py` of `aml-hs26`, then run `npm run anchors`.
 - **A new material:** add it to the lists at the top of that script (`DECKS`, `NOTES`, `PAGES`,
   `NOTEBOOKS`), run it, add an entry to `src/data/materials.ts` (kind, title, links), then give it
   a row in its section of the sequence. A page is copied with `index.html`, `css/`, `js/`,
@@ -64,15 +72,15 @@ folders by hand: the script rebuilds them from scratch on every run.
 |---|---|
 | `src/data/sequence.ts` | **The order and the text.** The sections, each with its sentence and its rows. |
 | `src/data/materials.ts` | **The catalogue.** One entry per material: kind, title, links. |
-| `src/data/anchors.ts` | The pages at which `part()` opens a deck, checked by `scripts/check_anchors.py`. |
+| `src/data/anchors.ts` | The pages at which `part()` opens a deck, and its annotated PDF where a part carries ink, checked by `scripts/check_anchors.py`. |
 | `src/data/steps.ts` | `step()`, `part()` and `soon()`, which turn a catalogue entry, an anchor or a placeholder into a row. |
-| `src/data/links.ts` | `file()` for a file of `public/` (typed: the path must exist), `deckLinks()` for the two PDFs of a deck, optionally at a page, `colab()` for a notebook opened in Colab from this repository, `SOON`, `REPO`. |
+| `src/data/links.ts` | `file()` for a file of `public/` (typed: the path must exist), `deckLinks()` for the two PDFs of a deck, optionally at a page, `annotatedLink()` for the PDF that Carlos wrote on in class, `colab()` for a notebook opened in Colab from this repository, `SOON`, `REPO`. |
 | `src/data/public-files.ts` | Written by `scripts/list-public-files.mjs` before every `dev` and `build` run, never committed: the type `PublicFile`, every PDF, notebook, zip and page `index.html` in `public/`. |
 | `src/types.ts` | `Kind`, `Link`, `Material`, `Step`, `Section`. |
 | `src/pages/HomePage.tsx` | The one page: the title block with the contents, then the sections, each grouped by kind in the order of `KIND_ORDER`. |
 | `src/components/` | `Header` (the ETH logo, Contents, Source), `Footer`, `MaterialRow` (one row, and `Formula`, which sets the `$...$` of a topic), `EthLogo`. |
 | `src/index.css` | All styling: the ETH flat style of the BMAI and CSCS sites made sober, ETH blue as the one accent. |
-| `scripts/check_anchors.py` | `npm run anchors`: opens both PDFs of every anchored deck and fails unless each anchored page is the first that shows its text. Needs pypdf; run it locally, CI does not. |
+| `scripts/check_anchors.py` | `npm run anchors`: opens the PDFs of every anchored deck, the annotated one included, and fails unless each anchored page is the first that shows its text. Needs pypdf; run it locally, CI does not. |
 | `public/favicon.svg` | A ReLU hinge in white on ETH blue. |
 | `public/slides/`, `notes/`, `viz/`, `notebooks/` | The copies, see above. |
 | `.github/workflows/deploy.yml` | Builds on every push to `main` and publishes `dist/` to GitHub Pages. |
@@ -107,6 +115,12 @@ folders by hand: the script rebuilds them from scratch on every run.
   (`viz/attention-walkthrough`, from `docs/visualizations/attention-walkthrough/` of `aml-hs26`):
   one attention layer on the sentence of the attention deck, worked out matrix by matrix. Its
   script loads two pictures from `img/`, which the publish script copies since that day.
+- On 5 November 2026, at Carlos's request, the site gained the PDFs he wrote on in class that day,
+  `slides/<deck>-annotated.pdf`: the training slide, with three pages he added after the title
+  (row 3.2), and the language model handout, with ink on parts 3, 4 and 6 and two pages he added
+  (rows 6.1 and 6.2, opened at their parts). Those rows have a third button, Annotated, which the
+  legend under the title explains. Row 4.1, parts 1 and 2, has two buttons: those parts carry no
+  ink.
 - **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
   is rebuilt for them, refresh the copies here. The game, the attention deck and *One layer of
   attention* run on the Wuggish of a cat, a duck and a fish

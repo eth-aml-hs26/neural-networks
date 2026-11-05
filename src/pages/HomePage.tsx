@@ -70,7 +70,8 @@ export function HomePage() {
             Lecture material in logical order. Within each section, visualizations come first, then slides.
           </p>
           <p className="title__legend">
-            Slides: as projected, one page per click. Handout: one page per slide.
+            Slides: as projected, one page per click. Handout: one page per slide. Annotated: as
+            written on in the lecture.
           </p>
           <nav className="toc" id="contents" aria-labelledby="toc-head">
             <h2 className="toc__head" id="toc-head">

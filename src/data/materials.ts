@@ -1,5 +1,5 @@
 import type { Material } from '../types';
-import { colab, deckLinks, file } from './links';
+import { annotatedLink, colab, deckLinks, file } from './links';
 
 /**
  * Every material the site serves, one entry each: its kind, its own title and its links. The
@@ -58,7 +58,8 @@ export const materials = {
     links: [{ label: 'Open', url: file('viz/attention-walkthrough/index.html') }],
   },
 
-  // Slides: every deck as projected (a page per click) and as a handout (a page per frame).
+  // Slides: every deck as projected (a page per click) and as a handout (a page per frame), and
+  // a deck that Carlos wrote on in class as annotated (rows of parts get it through anchors.ts).
   'slides/experimental-studies': {
     kind: 'slides',
     title: 'The experimental studies',
@@ -72,7 +73,7 @@ export const materials = {
   'slides/training-neural-networks': {
     kind: 'slides',
     title: 'Training a neural network',
-    links: deckLinks('training-neural-networks'),
+    links: [...deckLinks('training-neural-networks'), annotatedLink('training-neural-networks')],
   },
   'slides/language-models': {
     kind: 'slides',
