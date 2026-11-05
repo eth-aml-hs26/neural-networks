@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg class="art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 200" width="400" height="364" role="img">
+<style>
+.f-ink { fill: #1a1a1a; }
+.f-bg { fill: #f9f7f1; }
+.s-ink { stroke: #1a1a1a; }
+.s-floor { stroke: #d8d4ca; }
+.f-cat { fill: #eab26c; }
+.s-cat { stroke: #eab26c; }
+.s-cat-far { stroke: #cf9550; }
+.f-cat-inner { fill: #f7dcb9; }
+.f-duck { fill: #fdfcf8; }
+.f-duck-wing { fill: #e6e1d6; }
+.f-duck-far { fill: #d9d3c6; }
+.f-bill { fill: #f39a2b; }
+.f-bill-far { fill: #d6801a; }
+.s-bill { stroke: #f39a2b; }
+.s-bill-far { stroke: #d6801a; }
+.f-fish { fill: #ee6c4d; }
+.f-fish-fin { fill: #f6a58c; }
+.f-fish-far { fill: #d4553a; }
+.f-boot { fill: #9b3a24; }
+.f-boot-far { fill: #7b2c19; }
+.f-cuff { fill: #c9643f; }
+.f-water { fill: #8cbfe6; }
+.s-water-line { stroke: #2d78b4; }
+.s-wave { stroke: #d4e9f7; }
+.f-bubble { fill: #eef6fc; }
+.f-deep { fill: #3f7fbf; }
+.f-snorkel { fill: #f9ee19; }
+.s-snorkel { stroke: #f9ee19; }
+.f-glass { fill: #e8f6fc; }
+.f-glint { fill: #ffffff; }
+.s-glint { stroke: #ffffff; }
+.s-speed { stroke: #77736b; }
+.f-dust { fill: #ddd8cd; }
+</style>
+<line class="s-floor" stroke-width="2" x1="12" y1="185" x2="208" y2="185"/><g transform="translate(0,0)"><path class="f-water" d="M0,18 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 L220,200 L0,200 Z"/><path class="f-deep" fill-opacity="0.45" d="M0,84 C66,77 154,91 220,84 L220,200 L0,200 Z"/><path class="f-deep" fill-opacity="0.75" d="M0,140 C66,133 154,147 220,140 L220,200 L0,200 Z"/><path class="f-glint" fill-opacity="0.16" d="M52,18 L74,18 L40,200 L6,200 Z"/><path class="f-glint" fill-opacity="0.16" d="M118,18 L132,18 L116,200 L88,200 Z"/><g transform="translate(106,142) rotate(6)"><path class="f-fish-fin s-ink" stroke-width="3.5" stroke-linejoin="round" d="M-48,0 L-82,-30 C-88,-12 -88,12 -82,30 Z"/><path class="f-fish-fin s-ink" stroke-width="3.5" stroke-linejoin="round" d="M-18,-26 C-10,-46 14,-48 28,-24 Z"/><path class="f-fish-fin s-ink" stroke-width="3.5" stroke-linejoin="round" d="M-8,26 C-2,40 14,42 20,24 Z"/><path class="f-fish s-ink" stroke-width="4" stroke-linejoin="round" d="M-54,0 C-34,-34 32,-38 62,-10 C69,-4 69,4 62,10 C32,38 -34,34 -54,0 Z"/><path class="s-ink" stroke-width="3" fill="none" stroke-linecap="round" d="M38,-20 C30,-8 30,8 38,20"/><circle class="f-ink" cx="49" cy="-7" r="5.5"/><circle class="f-bg" cx="50.8" cy="-8.8" r="1.7"/><path class="s-ink" stroke-width="2.5" fill="none" stroke-linecap="round" d="M66,3 q-6,4 -11,2"/><path class="f-fish-fin s-ink" stroke-width="3" stroke-linejoin="round" d="M22,2 C12,8 6,16 8,24 C18,20 26,12 28,4 Z"/><path class="s-ink" d="M41,-11 C38,-18 36,-24 34,-30" stroke-width="9.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="s-snorkel" d="M41,-11 C38,-18 36,-24 34,-30" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><ellipse class="s-ink" fill="none" stroke-width="9.5" cx="50" cy="-8" rx="9.5" ry="8.5"/><ellipse class="s-snorkel" fill="none" stroke-width="4.5" cx="50" cy="-8" rx="9.5" ry="8.5"/><ellipse class="f-glass" fill-opacity="0.55" cx="50" cy="-8" rx="7.5" ry="6.5"/><path class="s-glint" fill="none" stroke-width="2" stroke-linecap="round" d="M45.725,-10.125 q1.9000000000000001,-3.4000000000000004 5.2250000000000005,-3.825"/><path class="s-ink" d="M63,5 C58,13 48,13 44,5 L40,-60" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="s-snorkel" d="M63,5 C58,13 48,13 44,5 L40,-60" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect class="f-snorkel s-ink" stroke-width="2.5" x="34" y="-67" width="12" height="9" rx="2.5"/></g><path class="f-water" fill-opacity="0.12" d="M0,18 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 L220,200 L0,200 Z"/><g class="f-bubble s-water-line" stroke-width="2.5"><circle cx="148" cy="72" r="3.5"/><circle cx="153" cy="58" r="4.5"/><circle cx="147" cy="42" r="5.5"/></g><path class="s-wave" fill="none" stroke-width="3" stroke-linecap="round" d="M24,38 q7,-4 14,0 q7,4 14,0 M146,52 q7,-4 14,0 q7,4 14,0"/><path class="s-water-line" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M0,18 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0 q5.5,-5 11,0 q5.5,5 11,0"/></g></svg>

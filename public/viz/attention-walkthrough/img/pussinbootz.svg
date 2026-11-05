@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg class="art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 200" width="400" height="364" role="img">
+<style>
+.f-ink { fill: #1a1a1a; }
+.f-bg { fill: #f9f7f1; }
+.s-ink { stroke: #1a1a1a; }
+.s-floor { stroke: #d8d4ca; }
+.f-cat { fill: #eab26c; }
+.s-cat { stroke: #eab26c; }
+.s-cat-far { stroke: #cf9550; }
+.f-cat-inner { fill: #f7dcb9; }
+.f-duck { fill: #fdfcf8; }
+.f-duck-wing { fill: #e6e1d6; }
+.f-duck-far { fill: #d9d3c6; }
+.f-bill { fill: #f39a2b; }
+.f-bill-far { fill: #d6801a; }
+.s-bill { stroke: #f39a2b; }
+.s-bill-far { stroke: #d6801a; }
+.f-fish { fill: #ee6c4d; }
+.f-fish-fin { fill: #f6a58c; }
+.f-fish-far { fill: #d4553a; }
+.f-boot { fill: #9b3a24; }
+.f-boot-far { fill: #7b2c19; }
+.f-cuff { fill: #c9643f; }
+.f-water { fill: #8cbfe6; }
+.s-water-line { stroke: #2d78b4; }
+.s-wave { stroke: #d4e9f7; }
+.f-bubble { fill: #eef6fc; }
+.f-deep { fill: #3f7fbf; }
+.f-snorkel { fill: #f9ee19; }
+.s-snorkel { stroke: #f9ee19; }
+.f-glass { fill: #e8f6fc; }
+.f-glint { fill: #ffffff; }
+.s-glint { stroke: #ffffff; }
+.s-speed { stroke: #77736b; }
+.f-dust { fill: #ddd8cd; }
+</style>
+<line class="s-floor" stroke-width="2" x1="12" y1="185" x2="208" y2="185"/><g transform="translate(0,0)"><path class="s-ink" d="M60,114 C38,108 28,86 34,64 C37,54 45,51 50,56" stroke-width="19" fill="none" stroke-linecap="round"/><path class="s-cat" d="M60,114 C38,108 28,86 34,64 C37,54 45,51 50,56" stroke-width="12" fill="none" stroke-linecap="round"/><path class="s-ink" d="M138,130 L139,151 L140,172" stroke-width="19" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="s-cat-far" d="M138,130 L139,151 L140,172" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="s-ink" d="M88,132 L90,152 L88,172" stroke-width="19" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="s-cat-far" d="M88,132 L90,152 L88,172" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/><g transform="translate(140.45,181.49) rotate(-2.73) scale(0.86)"><path class="f-boot-far s-ink" stroke-width="3.95" stroke-linejoin="round" d="M-12,-30 L12,-30 L12,-13 Q27,-12 28,-4 L28,0 L-13,0 L-13,-7 Q-13,-13 -12,-19 Z"/><path class="f-ink" d="M-13,-5 L28,-5 L28,0 L-13,0 Z"/><path class="f-cuff s-ink" stroke-width="3.95" stroke-linejoin="round" d="M-16,-41 L16,-41 L13,-28 L-13,-28 Z"/></g><g transform="translate(87.05,181.45) rotate(5.71) scale(0.86)"><path class="f-boot-far s-ink" stroke-width="3.95" stroke-linejoin="round" d="M-12,-30 L12,-30 L12,-13 Q27,-12 28,-4 L28,0 L-13,0 L-13,-7 Q-13,-13 -12,-19 Z"/><path class="f-ink" d="M-13,-5 L28,-5 L28,0 L-13,0 Z"/><path class="f-cuff s-ink" stroke-width="3.95" stroke-linejoin="round" d="M-16,-41 L16,-41 L13,-28 L-13,-28 Z"/></g><path class="f-cat s-ink" stroke-width="4" stroke-linejoin="round" transform="translate(0,0)" d="M60,116 C60,100 82,94 106,96 C132,98 152,98 160,112 C166,128 154,144 130,146 C104,149 80,148 66,140 C58,134 58,126 60,116 Z"/><path class="s-ink" d="M152,132 L153,152 L154,172" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="s-cat" d="M152,132 L153,152 L154,172" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="s-ink" d="M72,136 L70,154 L68,172" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="s-cat" d="M72,136 L70,154 L68,172" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="f-cat s-ink" stroke-width="4" stroke-linejoin="round" transform="translate(0,0)" d="M58,124 C60,106 96,106 98,124 C98,138 82,146 72,146 C62,146 57,136 58,124 Z"/><g transform="translate(154.5,181.99) rotate(-2.86) scale(0.88)"><path class="f-boot s-ink" stroke-width="3.86" stroke-linejoin="round" d="M-12,-30 L12,-30 L12,-13 Q27,-12 28,-4 L28,0 L-13,0 L-13,-7 Q-13,-13 -12,-19 Z"/><path class="f-ink" d="M-13,-5 L28,-5 L28,0 L-13,0 Z"/><path class="f-cuff s-ink" stroke-width="3.86" stroke-linejoin="round" d="M-16,-41 L16,-41 L13,-28 L-13,-28 Z"/></g><g transform="translate(66.9,181.94) rotate(6.34) scale(0.88)"><path class="f-boot s-ink" stroke-width="3.86" stroke-linejoin="round" d="M-12,-30 L12,-30 L12,-13 Q27,-12 28,-4 L28,0 L-13,0 L-13,-7 Q-13,-13 -12,-19 Z"/><path class="f-ink" d="M-13,-5 L28,-5 L28,0 L-13,0 Z"/><path class="f-cuff s-ink" stroke-width="3.86" stroke-linejoin="round" d="M-16,-41 L16,-41 L13,-28 L-13,-28 Z"/></g><g transform="translate(0,0)"><path class="f-cat s-ink" stroke-width="4" stroke-linejoin="round" d="M150,76 L153,42 L172,62 Z"/><path class="f-cat s-ink" stroke-width="4" stroke-linejoin="round" d="M171,61 L190,40 L194,72 Z"/><path class="f-cat-inner" d="M155,70 L157,50 L167,62 Z"/><path class="f-cat-inner" d="M177,62 L187,49 L190,69 Z"/><circle class="f-cat s-ink" stroke-width="4" cx="170" cy="86" r="25"/><ellipse class="f-ink" cx="181" cy="81" rx="4.3" ry="5.8"/><circle class="f-bg" cx="182.5" cy="79.2" r="1.5"/><path class="f-ink" d="M190,89 l6,1 l-3,5 z"/><path class="s-ink" stroke-width="2.5" fill="none" stroke-linecap="round" d="M193,96 q-4,4 -9,2"/><path class="s-ink" stroke-width="2" fill="none" stroke-linecap="round" d="M186,94 L212,90 M186,98 L212,100"/></g></g></svg>

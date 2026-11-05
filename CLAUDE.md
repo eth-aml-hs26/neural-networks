@@ -56,7 +56,7 @@ folders by hand: the script rebuilds them from scratch on every run.
 - **A new material:** add it to the lists at the top of that script (`DECKS`, `NOTES`, `PAGES`,
   `NOTEBOOKS`), run it, add an entry to `src/data/materials.ts` (kind, title, links), then give it
   a row in its section of the sequence. A page is copied with `index.html`, `css/`, `js/`,
-  `vendor/` and `data/` only; its README, checks and dev scripts stay private.
+  `vendor/`, `data/` and `img/` only; its README, checks and dev scripts stay private.
 
 ## Files
 
@@ -103,11 +103,15 @@ folders by hand: the script rebuilds them from scratch on every run.
 - The transformer section opens the workshop version (`slides/attention-cscs`, the CSCS deck in
   the course's format) at seven of its parts, in the order of the section "The transformer part,
   in order" of the running order (T2 to T8), until a port in the new encoding of Wuggish exists.
+- On 5 November 2026 section 5 gained, after the game, the page *One layer of attention*
+  (`viz/attention-walkthrough`, from `docs/visualizations/attention-walkthrough/` of `aml-hs26`):
+  one attention layer on the sentence of the attention deck, worked out matrix by matrix. Its
+  script loads two pictures from `img/`, which the publish script copies since that day.
 - **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
-  is rebuilt for them, refresh the copies here. The game and the attention deck run on the
-  Wuggish of a cat, a duck and a fish (`docs/visualizations/wuggish-game/SPEC.md` of `aml-hs26`);
-  the game has 12 sentences, three a lesson, since 1 November 2026. The page *One layer of
-  attention* (`docs/visualizations/attention-walkthrough/` of `aml-hs26`) is not published here.
+  is rebuilt for them, refresh the copies here. The game, the attention deck and *One layer of
+  attention* run on the Wuggish of a cat, a duck and a fish
+  (`docs/visualizations/wuggish-game/SPEC.md` of `aml-hs26`); the game has 12 sentences, three a
+  lesson, since 1 November 2026.
 
 ## The decks link this site
 

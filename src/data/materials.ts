@@ -52,6 +52,11 @@ export const materials = {
     title: 'Wuggish in ten minutes',
     links: [{ label: 'Open', url: file('viz/wuggish-game/index.html') }],
   },
+  'viz/attention-walkthrough': {
+    kind: 'viz',
+    title: 'One layer of attention',
+    links: [{ label: 'Open', url: file('viz/attention-walkthrough/index.html') }],
+  },
 
   // Slides: every deck as projected (a page per click) and as a handout (a page per frame).
   'slides/experimental-studies': {

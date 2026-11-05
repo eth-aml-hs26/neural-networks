@@ -1,0 +1,233 @@
+/* style.css: tokens, the stage, the blocks and their cells, the labels, the work under the band,
+ * the flying cells, and both themes. Light is the lecture default: index.html sets
+ * data-theme="light", and t switches. Where nothing sets data-theme (the bundle that
+ * scripts/bundle.js writes for a link), the page follows the system's setting; the two dark blocks
+ * below hold the same tokens (scripts/check-palette.js asserts it).
+ *
+ * Colours follow the attention deck (Okabe and Ito): the features, the embeddings E, the values
+ * V = E and the new rows S V green, queries blue, keys vermillion, scores graphite. Each has a fill
+ * (tints, frames, rings) and a darker -ink for text. scripts/check-palette.js gates them for
+ * colour-blind viewers.
+ */
+
+:root,
+:root[data-theme="light"] {
+  --bg: #f7f2e7;
+  --paper: #fffdf8;
+  --ink: #1d1a16;
+  --muted: #756e62;
+  --rule: #d9d1c1;
+  --stripe: #efe8d8;
+  --feat: #009e73;
+  --feat-ink: #00694c;
+  --q: #0072b2;
+  --q-ink: #0068a8;
+  --k: #d55e00;
+  --k-ink: #b04a00;
+  --focus: #f0e442;
+  --shadow: rgba(70, 50, 20, 0.16);
+  --mix: 30%;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #191714;
+    --paper: #25221d;
+    --ink: #ede7da;
+    --muted: #a39b8c;
+    --rule: #4a443a;
+    --stripe: #221f1b;
+    --feat: #2fbf8f;
+    --feat-ink: #5fd3a8;
+    --q: #56b4e9;
+    --q-ink: #7cc4f0;
+    --k: #e8742a;
+    --k-ink: #f29055;
+    --focus: #f0e442;
+    --shadow: rgba(0, 0, 0, 0.5);
+    --mix: 38%;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #191714;
+  --paper: #25221d;
+  --ink: #ede7da;
+  --muted: #a39b8c;
+  --rule: #4a443a;
+  --stripe: #221f1b;
+  --feat: #2fbf8f;
+  --feat-ink: #5fd3a8;
+  --q: #56b4e9;
+  --q-ink: #7cc4f0;
+  --k: #e8742a;
+  --k-ink: #f29055;
+  --focus: #f0e442;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --mix: 38%;
+  color-scheme: dark;
+}
+
+/* ===== the stage: 1920 x 1080, scaled to the window by js/engine.js, inside the safe area of a
+   phone (its notch and its system bars) */
+
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+#viewport {
+  position: fixed; inset: 0; overflow: hidden; background: var(--bg); box-sizing: border-box;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  display: flex; align-items: center; justify-content: center;
+}
+/* a phone held upright shows the stage as a thin strip: say how to see it */
+#turn {
+  display: none; position: absolute; left: 0; right: 0;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+  text-align: center; font: 15px var(--sans); color: var(--muted); padding: 0 16px;
+}
+@media (orientation: portrait) and (max-width: 760px) {
+  #turn { display: block; }
+}
+#stage {
+  position: relative; width: 1920px; height: 1080px; flex: 0 0 auto;
+  transform-origin: center center; font-family: var(--sans); color: var(--ink);
+}
+.layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; pointer-events: none; }
+#svg-back { z-index: 1; }
+#html-mid { z-index: 2; }
+#html-top { z-index: 4; }
+
+/* shown or not: render toggles the class "on"; a forward click fades, a jump does not */
+.vis { opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0s linear 0.4s; }
+.vis.on { opacity: 1; visibility: visible; transition: opacity 0.4s ease, visibility 0s; }
+#stage.still, #stage.still * { transition: none !important; }
+
+#title {
+  position: absolute; left: 50px; top: 24px; z-index: 5;
+  font: 500 36px var(--serif); letter-spacing: 0.01em;
+}
+#sentence { position: absolute; left: 52px; top: 80px; z-index: 5; font: italic 30px var(--serif); }
+#sentence .w { display: inline-block; }
+
+/* ===== the rows of the band */
+
+.stripe { position: absolute; background: transparent; }
+.stripe.odd { background: var(--stripe); }
+
+/* ===== blocks and cells */
+
+.blk { position: absolute; background: var(--paper); box-shadow: 3px 4px 0 var(--shadow); }
+.blk .frame {
+  position: absolute; left: -1px; top: -1px; right: -1px; bottom: -1px;
+  border: 2px solid var(--ink); border-radius: 2px; pointer-events: none;
+}
+.blk.learned .frame { border-style: dashed; }
+.cell {
+  position: absolute; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  font: 21px KaTeX_Main, "Times New Roman", serif; transition: opacity 0.35s ease;
+}
+.cell.rb { border-right: 1px solid var(--rule); }
+.cell.bb { border-bottom: 1px solid var(--rule); }
+.blk.learned .cell { font-size: 15px; }
+.cell.zero { color: var(--muted); }
+.cell.one { color: var(--ink); font-weight: bold; }
+.cell.empty .v { visibility: hidden; }
+.t-feat .cell.one, .chip.one.t-feat { background: color-mix(in srgb, var(--feat) var(--mix), var(--paper)); }
+.t-q .cell.one, .chip.one.t-q { background: color-mix(in srgb, var(--q) var(--mix), var(--paper)); }
+.t-k .cell.one, .chip.one.t-k { background: color-mix(in srgb, var(--k) var(--mix), var(--paper)); }
+.t-s .cell.one, .chip.one.t-s { background: color-mix(in srgb, var(--ink) 18%, var(--paper)); }
+
+/* ===== labels */
+
+.lab { position: absolute; white-space: nowrap; line-height: 1; }
+.word { font: italic 22px var(--serif); color: var(--ink); }
+.word.small { font-size: 16px; color: var(--muted); }
+.feature { font: 15px var(--serif); font-variant: small-caps; letter-spacing: 0.03em; color: var(--feat-ink); }
+.feature.small { font-size: 14px; }
+.turned {
+  writing-mode: vertical-rl;
+  transform: translate(-50%, -100%) rotate(180deg);
+}
+.slot { font: bold 16px KaTeX_Main, serif; color: var(--ink); }
+.group { font: italic 15px var(--serif); color: var(--muted); }
+.name { font-size: 22px; }
+.size { font-size: 14px; color: var(--muted); }
+.op { font-size: 16px; color: var(--muted); }
+.brace-line { fill: none; stroke: var(--muted); stroke-width: 1.6; }
+
+/* ===== the boxes round what a click is about */
+
+.focus {
+  position: absolute; box-sizing: border-box; pointer-events: none;
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus) 65%, transparent);
+}
+
+/* ===== the work under the band */
+
+.work { position: absolute; text-align: center; font-size: 26px; white-space: nowrap; }
+.wline { margin: 0 0 8px; }
+.work.grid { display: grid; grid-template-columns: auto auto; column-gap: 56px; row-gap: 2px; }
+.work.rules { display: grid; grid-template-columns: auto auto; column-gap: 48px; row-gap: 2px; justify-items: start; }
+.work.rules .wline.head { grid-column: 1 / -1; justify-self: center; }
+.work .piece { display: inline-block; border-radius: 4px; transition: opacity 0.3s ease; }
+.cq { color: var(--q-ink); }
+.ck { color: var(--k-ink); }
+.ft { color: var(--feat-ink); font-variant: small-caps; }
+
+/* ===== what flies */
+
+.fly { position: absolute; white-space: nowrap; pointer-events: none; z-index: 10; }
+.chip {
+  box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+  font: 21px KaTeX_Main, serif; background: var(--paper); color: var(--ink);
+  border: 1.5px solid var(--ink); border-radius: 3px; box-shadow: 2px 3px 0 var(--shadow);
+}
+.chip.zero { color: var(--muted); }
+.chip.one { font-weight: bold; }
+.fly-word { font-family: var(--serif); font-style: italic; color: var(--ink); }
+
+.flash { animation: flash 1.4s ease-out; }
+@keyframes flash {
+  0% { background-color: var(--focus); }
+  100% { }
+}
+
+/* ===== the end: the new rows read as words, and the formula */
+
+.read { position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+.plate {
+  width: 60px; height: 60px; box-sizing: border-box; padding: 3px;
+  background: #fbf8f1; border: 1px solid var(--rule); border-radius: 8px;
+}
+.read-word { font: italic 26px var(--serif); color: var(--ink); }
+.read-word.same { color: var(--muted); }
+.read-word.changed { font-weight: 600; }
+.formula { position: absolute; font-size: 34px; }
+.fline.small { font-size: 24px; margin-top: 14px; color: var(--muted); }
+
+/* ===== controls, bottom left */
+
+#controls {
+  position: absolute; left: 50px; top: 1004px; z-index: 20;
+  display: flex; align-items: center; gap: 14px;
+}
+#controls button.btn {
+  font: 600 22px var(--sans); letter-spacing: 0.02em;
+  padding: 9px 22px 10px; border: 2.5px solid var(--ink); border-radius: 10px;
+  background: var(--paper); color: var(--ink); box-shadow: 3px 4px 0 var(--shadow); cursor: pointer;
+}
+#controls button.btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+#controls button.btn:disabled { opacity: 0.35; cursor: default; }
+#controls button.quiet { padding: 9px 16px 10px; }
+#next .chev { font-size: 26px; line-height: 0; }
+#where { font: 16px var(--sans); color: var(--muted); letter-spacing: 0.04em; min-width: 70px; }
+#theme { background: none; border: none; font-size: 22px; color: var(--muted); cursor: pointer; padding: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vis, .vis.on { transition-duration: 0.01s; }
+}

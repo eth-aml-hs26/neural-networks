@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One layer of attention</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="viewport">
+  <div id="stage" class="still" role="img"
+       aria-label="One layer of attention on a Wuggish sentence, click by click: the embeddings, the queries and keys with their weights, the values V = E, every inner product of the scores, and the new rows, the product of the scores with the values">
+    <svg id="svg-back" class="layer" viewBox="0 0 1920 1080" width="1920" height="1080"></svg>
+    <div id="html-mid" class="layer"></div>
+    <div id="html-top" class="layer"></div>
+    <div id="title">One layer of attention</div>
+    <div id="sentence"></div>
+    <div id="controls">
+      <button id="back" class="btn quiet" type="button" title="Back (left arrow)" aria-label="Back">&#8249;</button>
+      <button id="next" class="btn" type="button" title="Next (right arrow, space, page down)">Next <span class="chev">&#8250;</span></button>
+      <span id="where"></span>
+      <button id="theme" type="button" title="Theme (t)" aria-label="Switch the theme">&#9680;</button>
+    </div>
+  </div>
+  <div id="turn">Turn the phone sideways. Tap to go on; tap the left third to go back.</div>
+</div>
+<script src="vendor/katex/katex.min.js"></script>
+<script src="data/lexicon.js"></script>
+<script src="data/sentence.js"></script>
+<script src="js/math.js"></script>
+<script src="js/kit.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/work.js"></script>
+<script src="js/blocks.js"></script>
+<script src="js/steps.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>
