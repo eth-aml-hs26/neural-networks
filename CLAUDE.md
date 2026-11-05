@@ -126,9 +126,10 @@ folders by hand: the script rebuilds them from scratch on every run.
   at eight of its parts, the last one generating a text one token at a time; the site no longer
   serves that deck.
 - Since 5 November 2026 an unnumbered prologue to sections 6 and 7 comes before attention:
-  `slides/wittgenstein-cold-intro`, the cold intro of the attention deck on Wittgenstein as a deck
-  of its own (`docs/slides/wittgenstein-cold-intro/` of `aml-hs26`), which Carlos asked to have on
-  the site. The attention deck still opens with the same frames.
+  `slides/wittgenstein-cold-intro`, the cold intro on Wittgenstein, built that day for the attention
+  deck and then made a deck of its own (`docs/slides/wittgenstein-cold-intro/` of `aml-hs26`), which
+  Carlos asked to have on the site. Since that night the attention deck opens on its title page, so
+  the site shows the frames once.
 - On 5 November 2026 the section on attention (then 5, now 6) gained, after the game, the page
   *One layer of attention* (`viz/attention-walkthrough`, from
   `docs/visualizations/attention-walkthrough/` of `aml-hs26`): one attention layer on the sentence of the attention deck, worked out matrix by matrix. Its
