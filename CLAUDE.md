@@ -19,7 +19,8 @@ slides. [...] I need the presentation to be a bit more academic [...] Dry text [
 explain[s] the minimum necessary for me to guide what each section contains." So the page is a
 title block with a table of contents, then an unnumbered introduction and seven numbered sections
 in logical order (gradient descent, shallow ReLU networks, deep ReLU networks, language models,
-attention, a neural language model, transformers), then, since 5 November 2026, an unnumbered
+a neural language model, attention, transformers; since 5 November 2026 the neural language
+model comes before attention), then, since 5 November 2026, an unnumbered
 prologue and three numbered sections on images (convolutional neural networks, U-Nets, diffusion
 models). Each section has one dry sentence, and
 its rows are grouped by kind in the order of `KIND_ORDER` in `HomePage.tsx`: visualizations first,
@@ -103,24 +104,28 @@ folders by hand: the script rebuilds them from scratch on every run.
   ReLU networks, and frame 9 of the hinge-fan deck. Sections 2 and 3 show only their pages, and
   the site serves no notes. The same day the parts of the language model deck were split as he
   asked: parts 1 and 2 (the table, too big to store) in section 4; parts 3 to 5 (the network, the
-  loss, training) in section 6, before part 6 (the notebook's network and its results) and the
-  notebook.
+  loss, training) in the section on the neural language model, before part 6 (the notebook's
+  network and its results) and the notebook.
 - On 4 November 2026 the notebook lost its attention layer: its network reads a window of the last
-  11 words through two plain layers, and part 6 of the language model deck presents it so. Section
-  6, until then "A language model with attention", became "A neural language model"; its id,
+  11 words through two plain layers, and part 6 of the language model deck presents it so. Its
+  section, until then "A language model with attention", became "A neural language model"; its id,
   `tiny-language-model`, stayed.
+- On 5 November 2026, after the lecture of that day had taught parts 3 to 6 of the language model
+  deck, Carlos had sections 5 and 6 swap places: 5, a neural language model; 6, attention; then 7,
+  transformers. The language model deck now reaches the network, the loss and training before
+  attention, as the attention deck's first frame assumes.
 - The page names no dates and no frames to skip: the running order keeps those.
 - The transformer section opens the workshop version (`slides/attention-cscs`, the CSCS deck in
   the course's format) at seven of its parts, in the order of the section "The transformer part,
   in order" of the running order (T2 to T8), until a port in the new encoding of Wuggish exists.
-- On 5 November 2026 section 5 gained, after the game, the page *One layer of attention*
-  (`viz/attention-walkthrough`, from `docs/visualizations/attention-walkthrough/` of `aml-hs26`):
-  one attention layer on the sentence of the attention deck, worked out matrix by matrix. Its
+- On 5 November 2026 the section on attention (then 5, now 6) gained, after the game, the page
+  *One layer of attention* (`viz/attention-walkthrough`, from
+  `docs/visualizations/attention-walkthrough/` of `aml-hs26`): one attention layer on the sentence of the attention deck, worked out matrix by matrix. Its
   script loads two pictures from `img/`, which the publish script copies since that day.
 - On 5 November 2026, at Carlos's request, the site gained the PDFs he wrote on in class that day,
   `slides/<deck>-annotated.pdf`: the training slide, with three pages he added after the title
   (row 3.2), and the language model handout, with ink on parts 3, 4 and 6 and two pages he added
-  (rows 6.1 and 6.2, opened at their parts). Those rows have a third button, Annotated, which the
+  (rows 5.1 and 5.2, opened at their parts). Those rows have a third button, Annotated, which the
   legend under the title explains. Row 4.1, parts 1 and 2, has two buttons: those parts carry no
   ink.
 - On 5 November 2026 Carlos asked for the block on convolutions, U-Nets and diffusion of

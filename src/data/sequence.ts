@@ -73,16 +73,6 @@ export const sections: Section[] = [
     ],
   },
   {
-    id: 'attention',
-    title: 'Attention',
-    summary: 'How each token reads the other tokens: queries, keys, scores and values.',
-    steps: [
-      step('viz/wuggish-game', 'A toy language read by attention'),
-      step('viz/attention-walkthrough', 'One attention layer, matrix by matrix'),
-      step('slides/attention', 'Queries, keys, scores and values; the attention mechanism'),
-    ],
-  },
-  {
     id: 'tiny-language-model',
     title: 'A neural language model',
     summary:
@@ -91,6 +81,16 @@ export const sections: Section[] = [
       part('language-models#3', 'The network that computes the table, the loss and training', 'Language models, parts 3 to 5'),
       part('language-models#6', 'The network and its results', 'Language models, part 6'),
       step('notebooks/tiny_language_model', 'Implementation and training in PyTorch'),
+    ],
+  },
+  {
+    id: 'attention',
+    title: 'Attention',
+    summary: 'How each token reads the other tokens: queries, keys, scores and values.',
+    steps: [
+      step('viz/wuggish-game', 'A toy language read by attention'),
+      step('viz/attention-walkthrough', 'One attention layer, matrix by matrix'),
+      step('slides/attention', 'Queries, keys, scores and values; the attention mechanism'),
     ],
   },
   {
