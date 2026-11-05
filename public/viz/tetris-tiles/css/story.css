@@ -1,0 +1,58 @@
+/* story.css: the five cards of the story (js/story.js). The frame and the words follow the cards
+ * of the grasshopper pages (../grasshoppers-find-w-and-b/css/story.css); the islands and the
+ * pieces take the tokens of css/style.css, so they look as in the steps. Only the satellite has
+ * colours of its own, the same in both themes. */
+
+.story { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; visibility: hidden; }
+.story.on { visibility: visible; }
+.story-pic, .story-words { opacity: 0; visibility: hidden; transition: opacity 0.45s ease, visibility 0s linear 0.45s; }
+.story-pic.cur, .story-words.cur { opacity: 1; visibility: visible; transition: opacity 0.45s ease, visibility 0s; }
+.story-pic {
+  position: absolute; box-sizing: border-box; overflow: hidden;
+  border: 3px solid var(--ink); border-radius: 18px; background: var(--paper);
+  box-shadow: 6px 7px 0 var(--shadow);
+}
+.story-svg { display: block; width: 100%; height: 100%; }
+.story-words { position: absolute; color: var(--ink); font-family: var(--serif); }
+.story-words h2 { margin: 0 0 26px; font-weight: 500; font-size: 50px; line-height: 1.08; letter-spacing: 0.005em; }
+.story-words p { margin: 0; font-size: 29px; line-height: 1.42; }
+.story-dots { position: absolute; display: flex; gap: 12px; }
+.story-dots .dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--muted); box-sizing: border-box; }
+.story-dots .dot.cur { background: var(--ink); border-color: var(--ink); }
+
+/* ===== the pictures */
+
+/* the three pictures along the strip, and the one being taken */
+.photo { fill: none; stroke: var(--ink); stroke-width: 3; }
+.photo.now { stroke-width: 5; }
+.view { fill: var(--ink); fill-opacity: 0.06; stroke: none; }
+.view-line { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-dasharray: 7 6; stroke-opacity: 0.7; }
+
+/* the satellite */
+.sat-strut { fill: #5b6170; }
+.sat-wing { fill: #2c3e66; stroke: #1b2744; stroke-width: 2; }
+.sat-cell { fill: none; stroke: #7f95c4; stroke-width: 1.6; }
+.sat-body { fill: #d7dbe2; stroke: #4a5060; stroke-width: 2.5; }
+.sat-band { fill: #9aa2b1; }
+.sat-mast { fill: none; stroke: #4a5060; stroke-width: 3; }
+.sat-dish { fill: #d7dbe2; stroke: #4a5060; stroke-width: 2.5; }
+.sat-lens-box { fill: #4a5060; }
+.sat-lens { fill: #1b2744; stroke: #9aa2b1; stroke-width: 2; }
+
+/* the counts under the pictures */
+.count { font: 66px var(--serif); fill: var(--ink); text-anchor: middle; }
+.count-word { font: italic 27px var(--serif); fill: var(--muted); text-anchor: middle; }
+
+/* the finder nobody has yet, and the islands it would find */
+.finder { fill: var(--paper); stroke: var(--ink); stroke-width: 3; }
+.ask { font: 120px var(--serif); fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+.found { fill: none; stroke: var(--ink); stroke-width: 3.5; }
+.arrow-line { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.arrow-head { fill: var(--ink); }
+
+/* the Tetris pieces in their colours */
+.f-magenta { fill: var(--magenta); }
+.f-violet { fill: var(--violet); }
+.f-orange { fill: var(--orange); }
+.f-cyan { fill: var(--cyan); }
+.piece-name { font: 600 36px var(--serif); fill: var(--ink); text-anchor: middle; }

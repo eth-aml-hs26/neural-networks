@@ -1,0 +1,187 @@
+/* style.css: tokens, the stage, the drawing of the steps, the controls, both themes.
+ *
+ * The look of the grasshopper pages (../grasshoppers-find-w-and-b/css/style.css): a stage of
+ * 1600 x 900 scaled to the window, a warm page, serif names, the controls at the bottom left.
+ * Light is the lecture default; t switches to dark.
+ *
+ * The islands and the tiles keep the Tetris-tile kit of BMAI (convolution-walkthrough/css/style.css)
+ * and of the decks of this block: land #32B08C, sea #EEF3F1, the J tile #BB1B78, the L tile
+ * #996BC7, the O tile #E69F00, the I tile #66CCEE. The dark theme keeps the four tile colours and
+ * darkens the sea. The window of the pointer is drawn in ink: BMAI's ink blue #26456E reads as the
+ * J tile's magenta under protanopia (CIEDE2000 3.5). scripts/check-palette.js gates every pair of
+ * both themes for colour-blind viewers.
+ *
+ * Every colour is a token here. The drawing sets classes and never writes a colour.
+ */
+
+:root,
+:root[data-theme="light"] {
+  --bg: #f7f2e7;
+  --paper: #fffdf8;
+  --ink: #1d1a16;
+  --muted: #756e62;
+  --rule: #d9d1c1;
+  --shadow: rgba(70, 50, 20, 0.18);
+  --land: #32b08c;
+  --sea: #eef3f1;
+  --hair: #c9c6c0;
+  --magenta: #bb1b78;
+  --violet: #996bc7;
+  --orange: #e69f00;
+  --cyan: #66ccee;
+  --probe: #1d1a16;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #191714;
+  --paper: #25221d;
+  --ink: #f2ede2;
+  --muted: #a39b8c;
+  --rule: #4a443a;
+  --shadow: rgba(0, 0, 0, 0.55);
+  --land: #2fa985;
+  --sea: #1e2f33;
+  --hair: #3a4c50;
+  --magenta: #bb1b78;
+  --violet: #996bc7;
+  --orange: #e69f00;
+  --cyan: #66ccee;
+  --probe: #f2ede2;
+  color-scheme: dark;
+}
+
+/* ===== the stage: 1600 x 900, scaled to the window by js/engine.js */
+
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); }
+#viewport {
+  position: fixed; inset: 0; overflow: hidden; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+#stage {
+  position: relative; width: 1600px; height: 900px; flex: 0 0 auto;
+  transform-origin: center center; font-family: var(--sans); color: var(--ink);
+}
+.layer { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; pointer-events: none; }
+#drawing { z-index: 1; }
+#html-mid { z-index: 2; }
+#html-top { z-index: 4; }
+
+/* a phone held upright shows the stage as a strip: say how to see it whole */
+#turn {
+  display: none; position: absolute; left: 0; right: 0; bottom: 28px;
+  text-align: center; font: 15px var(--sans); color: var(--muted); padding: 0 16px;
+}
+@media (orientation: portrait) and (max-width: 760px) {
+  #turn { display: block; }
+}
+
+/* shown or not: render toggles the class "on"; a forward click fades, a jump does not */
+.vis { opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0s linear 0.4s; }
+.vis.on { opacity: 1; visibility: visible; transition: opacity 0.4s ease, visibility 0s; }
+#stage.still, #stage.still * { transition: none !important; animation: none !important; }
+
+#title {
+  position: absolute; left: 40px; top: 22px; z-index: 5;
+  font: 500 30px var(--serif); color: var(--ink); letter-spacing: 0.01em;
+  transition: opacity 0.4s ease;
+}
+#stage.in-story #title { opacity: 0.55; }
+
+/* ===== the drawing: cells, frames, the colours of the tiles */
+
+.sea { fill: var(--sea); }
+.land { fill: var(--land); }
+.paperfill { fill: var(--paper); }
+.hair { stroke: var(--hair); stroke-width: 1; fill: none; }
+.frame { stroke: var(--ink); stroke-width: 2; fill: none; }
+.shade { fill: var(--shadow); }
+
+.s-magenta { stroke: var(--magenta); fill: none; }
+.s-violet { stroke: var(--violet); fill: none; }
+.s-orange { stroke: var(--orange); fill: none; }
+.s-cyan { stroke: var(--cyan); fill: none; }
+.w1 { stroke-width: 2; }
+.w2 { stroke-width: 3; }
+.w3 { stroke-width: 4; }
+.dash { stroke-dasharray: 10 7; }
+.round { stroke-linejoin: round; stroke-linecap: round; }
+
+/* SVG text: numbers in the face of the formulas, words in the serif */
+text { fill: var(--ink); }
+.dim { font: 22px KaTeX_Main, "Times New Roman", serif; fill: var(--muted); dominant-baseline: central; text-anchor: middle; }
+.label { font: 24px var(--serif); fill: var(--ink); dominant-baseline: central; text-anchor: start; }
+.note { font: italic 22px var(--serif); fill: var(--muted); dominant-baseline: central; text-anchor: start; }
+
+/* the formula under the feature map, set in KaTeX */
+.formula { position: absolute; font-size: 21px; color: var(--muted); white-space: nowrap; }
+
+/* ===== animations of a forward click (js/steps.js); a jump shows the end at once */
+
+.pop { transform-box: fill-box; transform-origin: center; animation: pop 0.6s ease-out; }
+@keyframes pop {
+  0% { transform: scale(0.2); opacity: 0; }
+  60% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.rise { animation: rise 0.55s ease-out both; }
+@keyframes rise {
+  0% { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: none; }
+}
+.waiting { opacity: 0; }
+.fly-tile { pointer-events: none; }
+
+/* ===== pointing at a cell of the feature map: its 4 by 4 window on the image */
+
+.probe { fill: none; stroke: var(--probe); stroke-width: 4; stroke-dasharray: 11 7; pointer-events: none; }
+.probe.off { display: none; }
+.hit { fill: transparent; cursor: pointer; pointer-events: all; }
+.hit:hover { fill: color-mix(in srgb, var(--probe) 12%, transparent); }
+
+/* ===== controls, bottom left */
+
+#controls {
+  position: absolute; left: 40px; top: 822px; z-index: 20;
+  display: flex; align-items: center; gap: 14px;
+}
+#controls button.btn {
+  font: 600 20px var(--sans); letter-spacing: 0.02em;
+  padding: 9px 22px 10px; border: 2.5px solid var(--ink); border-radius: 10px;
+  background: var(--paper); color: var(--ink); box-shadow: 3px 4px 0 var(--shadow); cursor: pointer;
+}
+#controls button.btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+#controls button.btn:disabled { opacity: 0.35; cursor: default; }
+#controls button.quiet { padding: 9px 16px 10px; }
+#next .chev, #back .chev { font-size: 24px; line-height: 0; }
+/* the three Play buttons of the grasshopper pages: one, two or three triangles; the one playing
+   shows a pause sign */
+#play { display: flex; gap: 8px; }
+.play {
+  height: 44px; min-width: 50px; padding: 0 12px; border: 2px solid var(--muted); border-radius: 10px;
+  background: var(--paper); color: var(--ink); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 1px;
+}
+.play .tri {
+  width: 0; height: 0; border-style: solid; border-width: 8px 0 8px 12px;
+  border-color: transparent transparent transparent currentColor;
+}
+.play.picked { border-color: var(--ink); box-shadow: 2px 3px 0 var(--shadow); }
+.play.playing .tri { display: none; }
+.play.playing::before, .play.playing::after {
+  content: ""; width: 5px; height: 17px; margin: 0 2px; background: currentColor; border-radius: 1px;
+}
+#where { font: 15px var(--sans); color: var(--muted); letter-spacing: 0.04em; min-width: 110px; }
+#theme { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
+#controls button { pointer-events: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vis, .vis.on { transition-duration: 0.01s; }
+}
+
+/* a ring pops about its own centre */
+.ring { transform-box: fill-box; transform-origin: center; }
+/* the land of a tile put back waits under the flying copy */
+.vis.on.waiting, .waiting { opacity: 0; }

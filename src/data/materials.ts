@@ -57,6 +57,11 @@ export const materials = {
     title: 'One layer of attention',
     links: [{ label: 'Open', url: file('viz/attention-walkthrough/index.html') }],
   },
+  'viz/tetris-tiles': {
+    kind: 'viz',
+    title: 'Decomposing an image into tiles',
+    links: [{ label: 'Open', url: file('viz/tetris-tiles/index.html') }],
+  },
 
   // Slides: every deck as projected (a page per click) and as a handout (a page per frame), and
   // a deck that Carlos wrote on in class as annotated (rows of parts get it through anchors.ts).
@@ -89,6 +94,26 @@ export const materials = {
     kind: 'slides',
     title: 'Attention and transformers',
     links: deckLinks('attention-cscs'),
+  },
+  'slides/leonardo-cold-intro': {
+    kind: 'slides',
+    title: 'Leonardo da Vinci, Trattato della pittura',
+    links: deckLinks('leonardo-cold-intro'),
+  },
+  'slides/convolutional-filters': {
+    kind: 'slides',
+    title: 'Convolutional filters',
+    links: deckLinks('convolutional-filters'),
+  },
+  'slides/convolutional-neural-networks': {
+    kind: 'slides',
+    title: 'Convolutional neural networks',
+    links: deckLinks('convolutional-neural-networks'),
+  },
+  'slides/u-nets': {
+    kind: 'slides',
+    title: 'U-Nets',
+    links: deckLinks('u-nets'),
   },
 
   // Notebooks: open in Google Colab, or download and run anywhere.

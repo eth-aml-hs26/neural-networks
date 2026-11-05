@@ -19,7 +19,9 @@ slides. [...] I need the presentation to be a bit more academic [...] Dry text [
 explain[s] the minimum necessary for me to guide what each section contains." So the page is a
 title block with a table of contents, then an unnumbered introduction and seven numbered sections
 in logical order (gradient descent, shallow ReLU networks, deep ReLU networks, language models,
-attention, a neural language model, transformers). Each section has one dry sentence, and
+attention, a neural language model, transformers), then, since 5 November 2026, an unnumbered
+prologue and three numbered sections on images (convolutional neural networks, U-Nets, diffusion
+models). Each section has one dry sentence, and
 its rows are grouped by kind in the order of `KIND_ORDER` in `HomePage.tsx`: visualizations first,
 then slides, notebook, notes. A row is numbered n.i and shows a few dry words on what it covers
 (the topic, in bold) above the material that covers it (in italics, linked). Keep the text that
@@ -121,6 +123,15 @@ folders by hand: the script rebuilds them from scratch on every run.
   (rows 6.1 and 6.2, opened at their parts). Those rows have a third button, Annotated, which the
   legend under the title explains. Row 4.1, parts 1 and 2, has two buttons: those parts carry no
   ink.
+- On 5 November 2026 Carlos asked for the block on convolutions, U-Nets and diffusion of
+  `aml-hs26` (`docs/lecture-plans/convolutions-unets-diffusion.md`) as a new section of this page,
+  "in an adequate order and structure". It follows section 7 in the order of that file: an
+  unnumbered prologue, the Leonardo cold intro (three excerpts of the *Trattato della pittura*, one
+  per section that follows); 8, convolutional neural networks (the tiles page with its islands, the
+  convolutional filters deck, the CNN deck in two rows, sections 1 to 5 and, anchored, section 6 on
+  training a CNN to count islands); 9, U-Nets (the deconvolution page, the U-Net deck); 10, diffusion
+  models (the deck of the CSCS workshop). Rows marked soon wait for their material: the
+  deconvolution page and the diffusion deck. The page's title became "Neural networks" the same day.
 - **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
   is rebuilt for them, refresh the copies here. The game, the attention deck and *One layer of
   attention* run on the Wuggish of a cat, a duck and a fish

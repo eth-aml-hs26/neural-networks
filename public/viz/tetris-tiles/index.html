@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decomposing an image into tiles</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/story.css">
+</head>
+<body>
+<div id="viewport">
+  <div id="stage" class="still" role="img"
+       aria-label="Counting islands in satellite pictures of the sea, then a 7 by 7 image of four islands decomposed into the Tetris tiles J, L, O and I: a 4 by 4 feature map marks the corner of each tile, and the four tiles put back at those corners give the image back">
+    <svg id="drawing" class="layer" viewBox="0 0 1600 900" width="1600" height="900"></svg>
+    <div id="html-mid" class="layer"></div>
+    <div id="html-top" class="layer"></div>
+    <div id="title">Decomposing an image into tiles</div>
+    <div id="controls">
+      <button id="back" class="btn quiet" type="button" title="Back (left arrow)" aria-label="Back"><span class="chev">&#8249;</span></button>
+      <button id="next" class="btn" type="button" title="Next (right arrow, space, page down)">Next <span class="chev">&#8250;</span></button>
+      <div id="play" role="group" aria-label="Play">
+        <button id="play1" class="play" type="button" title="Play everything, the story and the steps (p plays or pauses)" aria-label="Play everything"><span class="tri"></span></button>
+        <button id="play2" class="play" type="button" title="Play the steps only" aria-label="Play the steps"><span class="tri"></span><span class="tri"></span></button>
+        <button id="play3" class="play" type="button" title="Play the steps quickly, without their animations" aria-label="Play the steps quickly"><span class="tri"></span><span class="tri"></span><span class="tri"></span></button>
+      </div>
+      <span id="where"></span>
+      <button id="theme" type="button" title="Theme (t)" aria-label="Switch the theme">&#9680;</button>
+    </div>
+  </div>
+  <div id="turn">Turn the phone sideways to see the whole page.</div>
+</div>
+<script src="vendor/katex/katex.min.js"></script>
+<script src="data/examples.js"></script>
+<script src="js/kit.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/steps.js"></script>
+<script src="js/story.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>

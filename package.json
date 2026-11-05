@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Neural networks, language models and transformers: the material of the AML lectures, ETH Zürich, autumn semester 2026",
+  "description": "Neural networks: the material of the AML lectures, ETH Zürich, autumn semester 2026",
   "scripts": {
     "files": "node scripts/list-public-files.mjs",
     "dev": "npm run files && vite",

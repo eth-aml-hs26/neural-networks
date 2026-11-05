@@ -65,7 +65,7 @@ export function HomePage() {
           <p className="eyebrow">
             Advanced Machine Learning <span className="nowrap">(252-0535-00L)</span> · ETH Zürich · Autumn semester 2026
           </p>
-          <h1>Neural networks, language models and transformers</h1>
+          <h1>Neural networks</h1>
           <p className="title__lead">
             Lecture material in logical order. Within each section, visualizations come first, then slides.
           </p>
