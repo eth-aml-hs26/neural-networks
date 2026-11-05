@@ -17,7 +17,8 @@ import { part, step } from './steps';
  *
  * The order follows the running order of the private course repository,
  * docs/lecture-plans/neural-networks-llms-transformers.md, by topic: the transformer
- * section follows its part "The transformer part, in order" (T2 to T8), on the workshop deck.
+ * section opens the transformer deck at each of its parts, in the order Carlos gave on
+ * 5 November 2026.
  */
 export const sections: Section[] = [
   {
@@ -98,14 +99,13 @@ export const sections: Section[] = [
     title: 'Transformers',
     summary: 'From one attention layer to the transformer architecture.',
     steps: [
-      part('attention-cscs#6', 'Masked self-attention', 'Attention and transformers, section 6'),
-      part('attention-cscs#8', 'Positional encodings', 'Attention and transformers, section 8'),
-      part('attention-cscs#9', 'Residual blocks', 'Attention and transformers, section 9'),
-      part('attention-cscs#4', 'Multi-head attention', 'Attention and transformers, section 4'),
-      part('attention-cscs#5', 'Cross-attention', 'Attention and transformers, section 5'),
-      part('attention-cscs#6-architecture', 'A simplified transformer', 'Attention and transformers, end of section 6'),
-      part('attention-cscs#10', 'The transformer of Vaswani et al. (2017)', 'Attention and transformers, section 10'),
-      part('attention-cscs#7-generation', 'Generation, one token at a time', 'Attention and transformers, end of section 7'),
+      part('transformers#multi-head', 'Multi-head attention', 'Transformers, part 1'),
+      part('transformers#masked', 'Masked self-attention', 'Transformers, part 2'),
+      part('transformers#cross', 'Cross-attention', 'Transformers, part 3'),
+      part('transformers#positions', 'Positional encodings', 'Transformers, part 4'),
+      part('transformers#residual', 'Residual blocks', 'Transformers, part 5'),
+      part('transformers#simplified', 'A simplified transformer', 'Transformers, part 6'),
+      part('transformers#vaswani', 'The transformer of Vaswani et al. (2017)', 'Transformers, end of part 6'),
     ],
   },
   {

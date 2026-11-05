@@ -115,9 +115,14 @@ folders by hand: the script rebuilds them from scratch on every run.
   transformers. The language model deck now reaches the network, the loss and training before
   attention, as the attention deck's first frame assumes.
 - The page names no dates and no frames to skip: the running order keeps those.
-- The transformer section opens the workshop version (`slides/attention-cscs`, the CSCS deck in
-  the course's format) at seven of its parts, in the order of the section "The transformer part,
-  in order" of the running order (T2 to T8), until a port in the new encoding of Wuggish exists.
+- Since 5 November 2026 the transformer section opens a deck of its own, `slides/transformers`
+  (`docs/slides/transformers/` of `aml-hs26`), at each of its parts, in the order Carlos gave that
+  day: multi-head attention, masked self-attention, cross-attention, positional encodings, residual
+  blocks, a simplified transformer, and the transformer of Vaswani et al. (2017). It has the
+  notation of the attention deck and covers the architecture only, since the language model deck
+  covers training. Until then the section opened the workshop version (`slides/attention-cscs`) at
+  eight of its parts, the last one generating a text one token at a time; the site no longer
+  serves that deck.
 - On 5 November 2026 the section on attention (then 5, now 6) gained, after the game, the page
   *One layer of attention* (`viz/attention-walkthrough`, from
   `docs/visualizations/attention-walkthrough/` of `aml-hs26`): one attention layer on the sentence of the attention deck, worked out matrix by matrix. Its

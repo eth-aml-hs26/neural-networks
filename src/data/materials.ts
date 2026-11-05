@@ -95,10 +95,10 @@ export const materials = {
     title: 'Attention',
     links: deckLinks('attention'),
   },
-  'slides/attention-cscs': {
+  'slides/transformers': {
     kind: 'slides',
-    title: 'Attention and transformers',
-    links: deckLinks('attention-cscs'),
+    title: 'Transformers',
+    links: deckLinks('transformers'),
   },
   'slides/leonardo-cold-intro': {
     kind: 'slides',
