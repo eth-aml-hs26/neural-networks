@@ -140,6 +140,10 @@ folders by hand: the script rebuilds them from scratch on every run.
   (rows 5.1 and 5.2, opened at their parts). Those rows have a third button, Annotated, which the
   legend under the title explains. Row 4.1, parts 1 and 2, has two buttons: those parts carry no
   ink.
+- On 9 November 2026 the site gained the slides he wrote on in class that day: the attention deck,
+  with ink on nine pages and a copy he made of one of them (row 6.3), and the transformer deck,
+  with ink on six pages (row 7.1). Both rows show a whole deck, so the button Annotated sits on
+  their catalogue entries and opens the export at its first page.
 - On 5 November 2026 Carlos asked for the block on convolutions, U-Nets and diffusion of
   `aml-hs26` (`docs/lecture-plans/convolutions-unets-diffusion.md`) as a new section of this page,
   "in an adequate order and structure". It follows section 7 in the order of that file: an
