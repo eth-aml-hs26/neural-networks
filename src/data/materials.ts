@@ -130,6 +130,11 @@ export const materials = {
     title: 'Diffusion models',
     links: deckLinks('diffusion-models'),
   },
+  'slides/langevin-sampling': {
+    kind: 'slides',
+    title: 'Sampling with Langevin dynamics',
+    links: deckLinks('langevin-sampling'),
+  },
 
   // Notebooks: open in Google Colab, or download and run anywhere.
   'notebooks/tiny_language_model': {
@@ -138,6 +143,14 @@ export const materials = {
     links: [
       { label: 'Colab', url: colab('notebooks/tiny_language_model.ipynb') },
       { label: 'Download', url: file('notebooks/tiny_language_model.ipynb'), download: true },
+    ],
+  },
+  'notebooks/langevin_sampling': {
+    kind: 'notebook',
+    title: 'Sampling with Langevin dynamics on two bumps',
+    links: [
+      { label: 'Colab', url: colab('notebooks/langevin_sampling.ipynb') },
+      { label: 'Download', url: file('notebooks/langevin_sampling.ipynb'), download: true },
     ],
   },
 } satisfies Record<string, Material>;

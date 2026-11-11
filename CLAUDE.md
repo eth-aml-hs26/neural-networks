@@ -23,7 +23,8 @@ a neural language model, attention, transformers; since 5 November 2026 the neur
 model comes before attention, and an unnumbered prologue, the cold intro on Wittgenstein, comes
 before sections 6 and 7), then, since 5 November 2026, an unnumbered
 prologue and three numbered sections on images (convolutional neural networks, U-Nets, diffusion
-models). Each section has one dry sentence, and
+models), and since 11 November 2026 section 11, sampling with Langevin dynamics. Each section has
+one dry sentence, and
 its rows are grouped by kind in the order of `KIND_ORDER` in `HomePage.tsx`: visualizations first,
 then slides, notebook, notes. A row is numbered n.i and shows a few dry words on what it covers
 (the topic, in bold) above the material that covers it (in italics, linked). Keep the text that
@@ -153,6 +154,12 @@ folders by hand: the script rebuilds them from scratch on every run.
   training a CNN to count islands); 9, U-Nets (the deconvolution page, the U-Net deck); 10, diffusion
   models (the deck of the CSCS workshop in two rows, frames 1 to 5 and, anchored, frames 6 and 7 on
   conditional diffusion). The page's title became "Neural networks" the same day.
+- On 11 November 2026 Carlos asked for the deck *Sampling with Langevin dynamics* of `aml-hs26`
+  (`docs/slides/langevin-sampling/`) and its notebook (`docs/notebooks/langevin-sampling/`) as a new
+  section of this page: section 11, after diffusion models, to which the deck's last two frames tie
+  annealed Langevin sampling. Two rows: the whole deck, and the notebook
+  (`notebooks/langevin_sampling`), which runs the deck's Algorithms 2 to 4 on a distribution with two
+  bumps.
 - **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
   is rebuilt for them, refresh the copies here. The game, the attention deck and *One layer of
   attention* run on the Wuggish of a cat, a duck and a fish

@@ -166,4 +166,17 @@ export const sections: Section[] = [
       ),
     ],
   },
+  {
+    id: 'langevin-sampling',
+    title: 'Sampling with Langevin dynamics',
+    summary:
+      'Random steps that end at the distribution of the data, its score learned from samples, annealed Langevin sampling, and its relation to diffusion models.',
+    steps: [
+      step(
+        'slides/langevin-sampling',
+        'Itô calculus, the Fokker-Planck equation, score matching, annealed Langevin sampling, the relation to diffusion models',
+      ),
+      step('notebooks/langevin_sampling', 'Score matching and annealed Langevin sampling on a distribution with two bumps'),
+    ],
+  },
 ];
