@@ -1,5 +1,5 @@
 import type { Section } from '../types';
-import { part, step } from './steps';
+import { step } from './steps';
 
 /**
  * THE ORDER: the sections of the page, in the logical order of the material. Edit this file
@@ -10,15 +10,16 @@ import { part, step } from './steps';
  * within a section the page lists the rows by kind, in the order of KIND_ORDER (HomePage.tsx):
  * visualizations, slides, notebook, notes. Rows of one kind keep the order written here.
  *
- * A row is step(id, topic, title?) for a whole material of materials.ts (tsc rejects an
- * unknown id), part(anchor, topic, title) for a deck opened at one of its parts (anchors.ts),
- * or soon(kind, topic, title) for material still to be made. `topic` is the bold line of the
- * row, in a few dry words; write $...$ around a formula to set it as math.
+ * A row is step(id, topic) for a whole material of materials.ts (tsc rejects an unknown id), or
+ * soon(kind, topic, title) for material still to be made. `topic` is the bold line of the row,
+ * in a few dry words; write $...$ around a formula to set it as math.
+ *
+ * Every material has one row, in one section: a deck is shown whole, with one link per PDF
+ * (Carlos, 12 November 2026: "Just for one slide deck, there is only one link").
  *
  * The order follows the running order of the private course repository,
- * docs/lecture-plans/neural-networks-llms-transformers.md, by topic. Since 5 November 2026 the
- * transformer section shows its deck whole, in one row (Carlos found one row per part too
- * fragmented), and the cold intro on Wittgenstein is the prologue to sections 6 and 7.
+ * docs/lecture-plans/neural-networks-llms-transformers.md, by topic. The cold intro on
+ * Wittgenstein is the prologue to sections 5 and 6, and the one on Leonardo to sections 7 to 9.
  */
 export const sections: Section[] = [
   {
@@ -64,29 +65,19 @@ export const sections: Section[] = [
   {
     id: 'language-models',
     title: 'Language models',
-    summary: 'Next-word prediction as a table of conditional probabilities, and why the table is too large to store.',
+    summary:
+      'Next-word prediction as a table of conditional probabilities, too large to store, and a neural network that computes it, with its loss and its training; a feed-forward network on a window of the last eleven words, trained on a language of six words.',
     steps: [
       step(
         'slides/language-models',
-        'The next-word table, and why it is too large to store',
-        'Language models, parts 1 and 2',
+        'The next-word table; the network that computes it, its loss, its training and its results',
       ),
-    ],
-  },
-  {
-    id: 'tiny-language-model',
-    title: 'A neural language model',
-    summary:
-      'A neural network that computes the next-word table, its loss and its training; a feed-forward network on a window of the last eleven words, trained on a language of six words.',
-    steps: [
-      part('language-models#3', 'The network that computes the table, the loss and training', 'Language models, parts 3 to 5'),
-      part('language-models#6', 'The network and its results', 'Language models, part 6'),
       step('notebooks/tiny_language_model', 'Implementation and training in PyTorch'),
     ],
   },
   {
     id: 'prologue-attention',
-    title: 'Prologue to sections 6 and 7',
+    title: 'Prologue to sections 5 and 6',
     numbered: false,
     summary: 'Ludwig Wittgenstein on language: excerpts of the Philosophische Untersuchungen and The Brown Book.',
     steps: [step('slides/wittgenstein-cold-intro', 'Four excerpts')],
@@ -114,7 +105,7 @@ export const sections: Section[] = [
   },
   {
     id: 'prologue-images',
-    title: 'Prologue to sections 8 to 10',
+    title: 'Prologue to sections 7 to 9',
     numbered: false,
     summary: 'Leonardo da Vinci on painting: one excerpt for each of the three sections that follow.',
     steps: [step('slides/leonardo-cold-intro', 'Three excerpts, one per section')],
@@ -129,13 +120,7 @@ export const sections: Section[] = [
       step('slides/convolutional-filters', 'Filters, activations and pooling on images of islands'),
       step(
         'slides/convolutional-neural-networks',
-        'Filters, pooling, the network and softmax',
-        'Convolutional neural networks, sections 1 to 5',
-      ),
-      part(
-        'convolutional-neural-networks#6',
-        'Training a CNN to count islands: the filters are the parameters',
-        'Convolutional neural networks, section 6',
+        'Filters, pooling, the network and softmax; training a CNN to count islands, the filters as its parameters',
       ),
     ],
   },
@@ -156,13 +141,7 @@ export const sections: Section[] = [
     steps: [
       step(
         'slides/diffusion-models',
-        'The forward and backward process, training, and what the model learns',
-        'Diffusion models, frames 1 to 5',
-      ),
-      part(
-        'diffusion-models#conditional',
-        'Conditional diffusion: a prompt at every backward step, and its training',
-        'Diffusion models, frames 6 and 7',
+        'The forward and backward process, training, what the model learns; conditional diffusion and its training',
       ),
     ],
   },

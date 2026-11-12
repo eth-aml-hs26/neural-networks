@@ -19,14 +19,14 @@ export interface Material {
   links: Link[];
 }
 
-/** One numbered row of a section, made by step(), part() or soon() in data/steps.ts. */
+/** One numbered row of a section, made by step() or soon() in data/steps.ts. */
 export interface Step {
   kind: Kind;
   /** True for a placeholder: material still to be made, shown greyed out with no link. */
   soon?: boolean;
   /** What the row covers, in a few dry words: the bold line of the row. */
   topic: string;
-  /** The material, or the part of it, that covers it: the linked line of the row. */
+  /** The material that covers it: the linked line of the row. */
   title: string;
   links: Link[];
 }

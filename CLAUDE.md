@@ -17,32 +17,30 @@ Since 1 November 2026 the page is part of the lecture, and Carlos asked for it s
 so it contains minimal dry text and that it shows the logical order. First visualizations, then
 slides. [...] I need the presentation to be a bit more academic [...] Dry text [that] just
 explain[s] the minimum necessary for me to guide what each section contains." So the page is a
-title block with a table of contents, then an unnumbered introduction and seven numbered sections
+title block with a table of contents, then an unnumbered introduction and six numbered sections
 in logical order (gradient descent, shallow ReLU networks, deep ReLU networks, language models,
-a neural language model, attention, transformers; since 5 November 2026 the neural language
-model comes before attention, and an unnumbered prologue, the cold intro on Wittgenstein, comes
-before sections 6 and 7), then, since 5 November 2026, an unnumbered
-prologue and three numbered sections on images (convolutional neural networks, U-Nets, diffusion
-models), and since 11 November 2026 section 11, sampling with Langevin dynamics. Each section has
-one dry sentence, and
-its rows are grouped by kind in the order of `KIND_ORDER` in `HomePage.tsx`: visualizations first,
-then slides, notebook, notes. A row is numbered n.i and shows a few dry words on what it covers
-(the topic, in bold) above the material that covers it (in italics, linked). Keep the text that
-dry: no stories, no summaries of the materials, no notes on how to use them.
+attention, transformers, with an unnumbered prologue, the cold intro on Wittgenstein, before
+sections 5 and 6), then an unnumbered prologue and three numbered sections on images
+(convolutional neural networks, U-Nets, diffusion models), and section 10, sampling with Langevin
+dynamics. Each section has one dry sentence, and its rows are grouped by kind in the order of
+`KIND_ORDER` in `HomePage.tsx`: visualizations first, then slides, notebook, notes. A row is
+numbered n.i and shows a few dry words on what it covers (the topic, in bold) above the material
+that covers it (in italics, linked). Keep the text that dry: no stories, no summaries of the
+materials, no notes on how to use them.
+
+Every material has one row, in one section, and a deck shows whole: one button per PDF, each
+opening it at its first page. Carlos asked for this on 12 November 2026: "Just for one slide deck,
+there is only one link. Make it one-to-one, not many sections in the website to one slide deck.
+Don't break slide decks into multiple sections on the website." `scripts/check-one-row.mjs` fails
+the build when a material has two rows or two catalogue entries link one file.
 
 The order and all of that text are one file, `src/data/sequence.ts`, a list of sections:
 
-1. A row is `step('<id>', topic, title?)` for a whole material of the catalogue,
-   `part('<deck>#<part>', topic, title)` for a deck opened at one of its parts, or
-   `soon(kind, topic, title)`, a greyed placeholder for material still to be made. `title`
-   replaces the material's own title, e.g. `'Language models, parts 1 and 2'`. In a topic,
+1. A row is `step('<id>', topic)` for a material of the catalogue, under its own title, or
+   `soon(kind, topic, title)`, a greyed placeholder for material still to be made. In a topic,
    `$...$` sets a formula as LaTeX sets math (variables in serif italic, `ReLU` upright).
-2. A part's pages live in `src/data/anchors.ts`, one per line: the page of the projected PDF, the
-   page of the handout, for a part that Carlos wrote on in class the page of the annotated PDF,
-   and a text that the part's first page shows. Read the pages off the PDF's
-   bookmarks or text (pypdf), then run `npm run anchors`.
-3. `npm run build` (an unknown id or anchor fails the type check), then commit and push; the
-   push deploys.
+2. `npm run build` (an unknown id fails the type check, a second row of a material fails
+   `scripts/check-one-row.mjs`), then commit and push; the push deploys.
 
 The ids are the keys of `src/data/materials.ts`: `slides/<deck>`, `viz/<page>`, `notes/<note>`,
 `notebooks/<notebook>`, the path of the material in `public/` without its extension. An entry holds
@@ -55,17 +53,14 @@ made by `scripts/publish_nn_site.py` of `aml-hs26`. Never edit, add or delete a 
 folders by hand: the script rebuilds them from scratch on every run.
 
 - **A deck, page, note or notebook was rebuilt in `aml-hs26`:** commit and push it there, run
-  `python3 scripts/publish_nn_site.py` from `aml-hs26`, then `npm run build` and `npm run anchors`
-  here, commit and push. The script refuses to run when `aml-hs26` is behind its remote or a file
-  it would copy has uncommitted changes. A deck that gained or lost frames moves the pages of its
-  anchors: `npm run anchors` names each one that moved.
+  `python3 scripts/publish_nn_site.py` from `aml-hs26`, then `npm run build` here, commit and
+  push. The script refuses to run when `aml-hs26` is behind its remote or a file it would copy has
+  uncommitted changes; while another session holds such changes, publish from a sparse clone, as
+  the `CLAUDE.md` of `aml-hs26` says.
 - **A PDF that Carlos wrote on in class:** the export from his iPad is kept unchanged in
   `aml-hs26` as `docs/slides/<deck>/<deck>-annotated.pdf`, and the script copies it when the deck
-  is in its list `ANNOTATED`. Then give the button Annotated (`annotatedLink()` in
-  `src/data/links.ts`) to the rows of the parts that carry ink, and to those only: on the
-  catalogue entry, for a row that shows the whole deck, or as an `annotated` page on the anchor of
-  a part. Every page he added moves the pages after it, so take the page of a part in the export
-  from `scripts/find_ink.py` of `aml-hs26`, then run `npm run anchors`.
+  is in its list `ANNOTATED`. Then add the button Annotated (`annotatedLink()` in
+  `src/data/links.ts`) to the deck's entry in the catalogue; it opens the export at its first page.
 - **A new material:** add it to the lists at the top of that script (`DECKS`, `NOTES`, `PAGES`,
   `NOTEBOOKS`), run it, add an entry to `src/data/materials.ts` (kind, title, links), then give it
   a row in its section of the sequence. A page is copied with `index.html`, `css/`, `js/`,
@@ -77,15 +72,14 @@ folders by hand: the script rebuilds them from scratch on every run.
 |---|---|
 | `src/data/sequence.ts` | **The order and the text.** The sections, each with its sentence and its rows. |
 | `src/data/materials.ts` | **The catalogue.** One entry per material: kind, title, links. |
-| `src/data/anchors.ts` | The pages at which `part()` opens a deck, and its annotated PDF where a part carries ink, checked by `scripts/check_anchors.py`. |
-| `src/data/steps.ts` | `step()`, `part()` and `soon()`, which turn a catalogue entry, an anchor or a placeholder into a row. |
-| `src/data/links.ts` | `file()` for a file of `public/` (typed: the path must exist), `deckLinks()` for the two PDFs of a deck, optionally at a page, `annotatedLink()` for the PDF that Carlos wrote on in class, `colab()` for a notebook opened in Colab from this repository, `SOON`, `REPO`. |
+| `src/data/steps.ts` | `step()` and `soon()`, which turn a catalogue entry or a placeholder into a row. |
+| `src/data/links.ts` | `file()` for a file of `public/` (typed: the path must exist), `deckLinks()` for the two PDFs of a deck, `annotatedLink()` for the PDF that Carlos wrote on in class, `colab()` for a notebook opened in Colab from this repository, `SOON`, `REPO`. |
 | `src/data/public-files.ts` | Written by `scripts/list-public-files.mjs` before every `dev` and `build` run, never committed: the type `PublicFile`, every PDF, notebook, zip and page `index.html` in `public/`. |
 | `src/types.ts` | `Kind`, `Link`, `Material`, `Step`, `Section`. |
 | `src/pages/HomePage.tsx` | The one page: the title block with the contents, then the sections, each grouped by kind in the order of `KIND_ORDER`. |
 | `src/components/` | `Header` (the ETH logo, Contents, Source), `Footer`, `MaterialRow` (one row, and `Formula`, which sets the `$...$` of a topic), `EthLogo`. |
 | `src/index.css` | All styling: the ETH flat style of the BMAI and CSCS sites made sober, ETH blue as the one accent. |
-| `scripts/check_anchors.py` | `npm run anchors`: opens the PDFs of every anchored deck, the annotated one included, and fails unless each anchored page is the first that shows its text. Needs pypdf; run it locally, CI does not. |
+| `scripts/check-one-row.mjs` | `npm run rows`, run by `build` before the type check: fails when a material has two rows in the sequence, or two entries of the catalogue link one file of `public/`. |
 | `public/favicon.svg` | A ReLU hinge in white on ETH blue. |
 | `public/slides/`, `notes/`, `viz/`, `notebooks/` | The copies, see above. |
 | `.github/workflows/deploy.yml` | Builds on every push to `main` and publishes `dist/` to GitHub Pages. |
@@ -104,18 +98,11 @@ folders by hand: the script rebuilds them from scratch on every run.
 - On 2 November 2026 Carlos took the slides and the notes of the shallow and deep ReLU networks
   off the site: the hinge-fan and hinge-chain decks, the notes on hinge-chain, shallow and narrow
   ReLU networks, and frame 9 of the hinge-fan deck. Sections 2 and 3 show only their pages, and
-  the site serves no notes. The same day the parts of the language model deck were split as he
-  asked: parts 1 and 2 (the table, too big to store) in section 4; parts 3 to 5 (the network, the
-  loss, training) in the section on the neural language model, before part 6 (the notebook's
-  network and its results) and the notebook.
+  the site serves no notes.
 - On 4 November 2026 the notebook lost its attention layer: its network reads a window of the last
-  11 words through two plain layers, and part 6 of the language model deck presents it so. Its
-  section, until then "A language model with attention", became "A neural language model"; its id,
-  `tiny-language-model`, stayed.
-- On 5 November 2026, after the lecture of that day had taught parts 3 to 6 of the language model
-  deck, Carlos had sections 5 and 6 swap places: 5, a neural language model; 6, attention; then 7,
-  transformers. The language model deck now reaches the network, the loss and training before
-  attention, as the attention deck's first frame assumes.
+  11 words through two plain layers, and part 6 of the language model deck presents it so.
+- Section 4 holds the whole language model deck and its notebook, before attention: the attention
+  deck's first frame assumes the network, the loss and training.
 - The page names no dates and no frames to skip: the running order keeps those.
 - Since 5 November 2026 the transformer section shows a deck of its own, `slides/transformers`
   (`docs/slides/transformers/` of `aml-hs26`), whole, in one row. Its parts, in the order Carlos
@@ -126,40 +113,42 @@ folders by hand: the script rebuilds them from scratch on every run.
   which Carlos found too fragmented, and before that the workshop version (`slides/attention-cscs`)
   at eight of its parts, the last one generating a text one token at a time; the site no longer
   serves that deck.
-- Since 5 November 2026 an unnumbered prologue to sections 6 and 7 comes before attention:
+- Since 5 November 2026 an unnumbered prologue to the sections on attention and transformers, now
+  5 and 6, comes before attention:
   `slides/wittgenstein-cold-intro`, the cold intro on Wittgenstein, built that day for the attention
   deck and then made a deck of its own (`docs/slides/wittgenstein-cold-intro/` of `aml-hs26`), which
   Carlos asked to have on the site. Since that night the attention deck opens on its title page, so
   the site shows the frames once.
-- On 5 November 2026 the section on attention (then 5, now 6) gained, after the game, the page
+- On 5 November 2026 the section on attention (now 5) gained, after the game, the page
   *One layer of attention* (`viz/attention-walkthrough`, from
   `docs/visualizations/attention-walkthrough/` of `aml-hs26`): one attention layer on the sentence of the attention deck, worked out matrix by matrix. Its
   script loads two pictures from `img/`, which the publish script copies since that day.
 - On 5 November 2026, at Carlos's request, the site gained the PDFs he wrote on in class that day,
   `slides/<deck>-annotated.pdf`: the training slide, with three pages he added after the title
   (row 3.2), and the language model handout, with ink on parts 3, 4 and 6 and two pages he added
-  (rows 5.1 and 5.2, opened at their parts). Those rows have a third button, Annotated, which the
-  legend under the title explains. Row 4.1, parts 1 and 2, has two buttons: those parts carry no
-  ink.
+  (row 4.1). Those rows have a third button, Annotated, which the legend under the title explains.
 - On 9 November 2026 the site gained the slides he wrote on in class that day: the attention deck,
-  with ink on nine pages and a copy he made of one of them (row 6.3), and the transformer deck,
-  with ink on six pages (row 7.1). Both rows show a whole deck, so the button Annotated sits on
-  their catalogue entries and opens the export at its first page.
+  with ink on nine pages and a copy he made of one of them (row 5.3), and the transformer deck,
+  with ink on six pages (row 6.1).
 - On 5 November 2026 Carlos asked for the block on convolutions, U-Nets and diffusion of
   `aml-hs26` (`docs/lecture-plans/convolutions-unets-diffusion.md`) as a new section of this page,
-  "in an adequate order and structure". It follows section 7 in the order of that file: an
+  "in an adequate order and structure". It follows the transformers in the order of that file: an
   unnumbered prologue, the Leonardo cold intro (three excerpts of the *Trattato della pittura*, one
-  per section that follows); 8, convolutional neural networks (the tiles page with its islands, the
-  convolutional filters deck, the CNN deck in two rows, sections 1 to 5 and, anchored, section 6 on
-  training a CNN to count islands); 9, U-Nets (the deconvolution page, the U-Net deck); 10, diffusion
-  models (the deck of the CSCS workshop in two rows, frames 1 to 5 and, anchored, frames 6 and 7 on
-  conditional diffusion). The page's title became "Neural networks" the same day.
+  per section that follows); 7, convolutional neural networks (the tiles page with its islands, the
+  convolutional filters deck, the CNN deck); 8, U-Nets (the deconvolution page, the U-Net deck); 9,
+  diffusion models (the deck of the CSCS workshop). The page's title became "Neural networks" the
+  same day.
 - On 11 November 2026 Carlos asked for the deck *Sampling with Langevin dynamics* of `aml-hs26`
   (`docs/slides/langevin-sampling/`) and its notebook (`docs/notebooks/langevin-sampling/`) as a new
-  section of this page: section 11, after diffusion models, to which the deck's last two frames tie
+  section of this page: section 10, after diffusion models, to which the deck's last two frames tie
   annealed Langevin sampling. Two rows: the whole deck, and the notebook
   (`notebooks/langevin_sampling`), which runs the deck's Algorithms 2 to 4 on a distribution with two
   bumps.
+- On 12 November 2026 Carlos asked for one row per deck (section "The page and its order"). Until
+  then the language model deck had a row in section 4 (parts 1 and 2) and two in a section of its
+  own on the neural language model (parts 3 to 5 and part 6, each opened at its page), and the CNN
+  and diffusion decks two rows each. That section joined section 4, so the sections after it moved
+  up by one, and `part()`, `src/data/anchors.ts` and `npm run anchors` went.
 - **OPEN.** The title pages say "Autumn semester 2026" until the lecture dates are set; when a deck
   is rebuilt for them, refresh the copies here. The game, the attention deck and *One layer of
   attention* run on the Wuggish of a cat, a duck and a fish

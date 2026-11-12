@@ -31,37 +31,19 @@ type AnnotatedOf<F> = F extends `slides/${infer N}-annotated.pdf` ? N : never;
 export type AnnotatedDeckName = DeckName & AnnotatedOf<PublicFile>;
 
 /**
- * The pages at which a step opens a deck, in each of its PDFs (see data/anchors.ts). `annotated`
- * is the page in <name>-annotated.pdf, for a part that Carlos wrote on in class; a page he added
- * moves the pages after it, so it can differ from the handout's.
- */
-export interface DeckPages {
-  slides: number;
-  handout: number;
-  annotated?: number;
-}
-
-/**
  * The two buttons of a deck: Slides (a page per click, as projected) and Handout (a page per
- * frame). With `at`, each opens at the given page (#page=N, honoured by the PDF viewers of
- * Chrome, Firefox and Safari).
+ * frame). Each opens its PDF at the first page, since a row shows a whole deck.
  */
-export function deckLinks(name: DeckName, at?: DeckPages): Link[] {
-  const slides = file(`slides/${name}-slides.pdf`);
-  const handout = file(`slides/${name}-handout.pdf`);
+export function deckLinks(name: DeckName): Link[] {
   return [
-    { label: 'Slides', url: at ? `${slides}#page=${at.slides}` : slides },
-    { label: 'Handout', url: at ? `${handout}#page=${at.handout}` : handout },
+    { label: 'Slides', url: file(`slides/${name}-slides.pdf`) },
+    { label: 'Handout', url: file(`slides/${name}-handout.pdf`) },
   ];
 }
 
-/**
- * The button Annotated of a deck that Carlos wrote on in class: <name>-annotated.pdf, opened at
- * `page` when given. Only the rows of the parts that carry ink get it.
- */
-export function annotatedLink(name: AnnotatedDeckName, page?: number): Link {
-  const url = file(`slides/${name}-annotated.pdf`);
-  return { label: 'Annotated', url: page ? `${url}#page=${page}` : url };
+/** The button Annotated of a deck that Carlos wrote on in class: <name>-annotated.pdf. */
+export function annotatedLink(name: AnnotatedDeckName): Link {
+  return { label: 'Annotated', url: file(`slides/${name}-annotated.pdf`) };
 }
 
 /** A notebook of public/notebooks/, opened in Google Colab from this public repository. */

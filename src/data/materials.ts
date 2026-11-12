@@ -69,7 +69,7 @@ export const materials = {
   },
 
   // Slides: every deck as projected (a page per click) and as a handout (a page per frame), and
-  // a deck that Carlos wrote on in class as annotated (rows of parts get it through anchors.ts).
+  // a deck that Carlos wrote on in class as annotated.
   'slides/experimental-studies': {
     kind: 'slides',
     title: 'The experimental studies',
@@ -88,7 +88,7 @@ export const materials = {
   'slides/language-models': {
     kind: 'slides',
     title: 'Language models',
-    links: deckLinks('language-models'),
+    links: [...deckLinks('language-models'), annotatedLink('language-models')],
   },
   'slides/wittgenstein-cold-intro': {
     kind: 'slides',
