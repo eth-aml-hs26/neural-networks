@@ -130,6 +130,9 @@ folders by hand: the script rebuilds them from scratch on every run.
 - On 9 November 2026 the site gained the slides he wrote on in class that day: the attention deck,
   with ink on nine pages and a copy he made of one of them (row 5.3), and the transformer deck,
   with ink on six pages (row 6.1).
+- On 12 November 2026 the site gained the slides he wrote on in class that day: the CNN deck, with
+  ink on seven pages of its section 6 (row 7.3), and the U-Net deck, with ink on frames 2 and 4, on
+  seven copies he made of pages of frame 4 and on a page he added (row 8.2).
 - On 5 November 2026 Carlos asked for the block on convolutions, U-Nets and diffusion of
   `aml-hs26` (`docs/lecture-plans/convolutions-unets-diffusion.md`) as a new section of this page,
   "in an adequate order and structure". It follows the transformers in the order of that file: an

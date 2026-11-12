@@ -118,12 +118,12 @@ export const materials = {
   'slides/convolutional-neural-networks': {
     kind: 'slides',
     title: 'Convolutional neural networks',
-    links: deckLinks('convolutional-neural-networks'),
+    links: [...deckLinks('convolutional-neural-networks'), annotatedLink('convolutional-neural-networks')],
   },
   'slides/u-nets': {
     kind: 'slides',
     title: 'U-Nets',
-    links: deckLinks('u-nets'),
+    links: [...deckLinks('u-nets'), annotatedLink('u-nets')],
   },
   'slides/diffusion-models': {
     kind: 'slides',
