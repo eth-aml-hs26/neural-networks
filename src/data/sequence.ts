@@ -114,13 +114,13 @@ export const sections: Section[] = [
     id: 'convolutional-networks',
     title: 'Convolutional neural networks',
     summary:
-      'Filters slid over an image, pooling, and the network that classifies images; in training, the filters are its parameters.',
+      'Filters slid over an image, pooling, and the network that classifies images, trained on CIFAR-10.',
     steps: [
       step('viz/tetris-tiles', 'Counting islands: an image decomposed into tiles'),
       step('slides/convolutional-filters', 'Filters, activations and pooling on images of islands'),
       step(
         'slides/convolutional-neural-networks',
-        'Filters, pooling, the network and softmax; training a CNN to count islands, the filters as its parameters',
+        'Filters, pooling, the network and softmax; image classification on CIFAR-10: the problem, training, the layers of a CNN',
       ),
     ],
   },
@@ -128,10 +128,10 @@ export const sections: Section[] = [
     id: 'u-nets',
     title: 'U-Nets',
     summary:
-      'Deconvolutional filters, which make a feature map larger, and the U-Net of Ronneberger, Fischer and Brox (2015).',
+      'Deconvolutional filters, which make a feature map larger, and the U-Net of Ronneberger, Fischer and Brox (2015), which turns an image into a segmentation map.',
     steps: [
       step('viz/deconvolution', 'A deconvolutional filter on a 2 by 2 input'),
-      step('slides/u-nets', 'The U-Net, built up level by level'),
+      step('slides/u-nets', 'The input and the output of a U-Net, its training; the U-Net, built up level by level'),
     ],
   },
   {
