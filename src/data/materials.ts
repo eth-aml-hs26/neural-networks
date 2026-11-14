@@ -130,6 +130,11 @@ export const materials = {
     title: 'Diffusion models',
     links: deckLinks('diffusion-models'),
   },
+  'slides/ddpm': {
+    kind: 'slides',
+    title: 'Denoising diffusion probabilistic models',
+    links: deckLinks('ddpm'),
+  },
   'slides/langevin-sampling': {
     kind: 'slides',
     title: 'Sampling with Langevin dynamics',
